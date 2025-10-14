@@ -19,6 +19,7 @@
 
 **Language/Version**: [e.g., Java 17+, Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
 **Primary Dependencies**: [e.g., Spring Boot 3.x, FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
+**Build Tool**: [e.g., Gradle, Maven, npm, cargo or NEEDS CLARIFICATION]
 **Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
 **Testing**: [e.g., JUnit 5 + Mockito, pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
 **Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]

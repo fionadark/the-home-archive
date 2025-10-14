@@ -1,10 +1,10 @@
 <!--
 Sync Impact Report:
-- Version change: [INITIAL] → 1.0.0
-- New constitution: The Home Archive - Personal Book Archive System
-- Added principles: Data Integrity, REST API Design, Test-First Development, Database Consistency, Simplicity & Performance
-- Added sections: Technology Stack, Development Standards
-- Templates requiring updates: ✅ All template references validated
+- Version change: 1.0.0 → 1.0.1
+- Modified sections: Technology Stack (Maven → Gradle)
+- Added sections: None
+- Removed sections: None
+- Templates requiring updates: ✅ plan-template.md, ✅ tasks-template.md
 - Follow-up TODOs: None
 -->
 
@@ -42,7 +42,7 @@ Features MUST solve real user needs without unnecessary complexity. Database que
 **Core Framework**: Java 17+ with Spring Boot 3.x
 **Database**: PostgreSQL with Spring Data JPA
 **Testing**: JUnit 5, Mockito, TestContainers for integration tests
-**Build Tool**: Maven with standard Spring Boot starter dependencies
+**Build Tool**: Gradle with standard Spring Boot plugin and dependencies
 **Documentation**: OpenAPI 3.0 specification for REST endpoints
 
 Technology changes require constitutional amendment and migration plan.
@@ -69,4 +69,4 @@ Amendments require:
 
 Complexity must be explicitly justified against the Simplicity principle. Use `.specify/templates/agent-file-template.md` for runtime development guidance.
 
-**Version**: 1.0.0 | **Ratified**: 2025-10-14 | **Last Amended**: 2025-10-14
+**Version**: 1.0.1 | **Ratified**: 2025-10-14 | **Last Amended**: 2025-10-14
