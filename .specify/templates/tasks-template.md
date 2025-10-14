@@ -46,8 +46,8 @@ description: "Task list template for feature implementation"
 **Purpose**: Project initialization and basic structure
 
 - [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T002 Initialize [language] project with [framework] dependencies (e.g., Maven + Spring Boot)
+- [ ] T003 [P] Configure linting and formatting tools (e.g., Checkstyle, SpotBugs)
 
 ---
 
@@ -59,10 +59,10 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
+- [ ] T004 Setup database schema and migrations framework (e.g., Flyway, Liquibase)
+- [ ] T005 [P] Implement authentication/authorization framework (if required)
+- [ ] T006 [P] Setup API routing and middleware structure (Spring Web MVC)
+- [ ] T007 Create base models/entities that all stories depend on (JPA entities)
 - [ ] T008 Configure error handling and logging infrastructure
 - [ ] T009 Setup environment configuration management
 

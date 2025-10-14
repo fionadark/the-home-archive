@@ -1,50 +1,72 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: [INITIAL] → 1.0.0
+- New constitution: The Home Archive - Personal Book Archive System
+- Added principles: Data Integrity, REST API Design, Test-First Development, Database Consistency, Simplicity & Performance
+- Added sections: Technology Stack, Development Standards
+- Templates requiring updates: ✅ All template references validated
+- Follow-up TODOs: None
+-->
+
+# The Home Archive Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Data Integrity (NON-NEGOTIABLE)
+Book data MUST be preserved accurately and consistently. No book information shall be lost due to system failures, user errors, or data migrations. All book modifications MUST be validated before persistence. Data backup and recovery procedures are mandatory for any production deployment.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Rationale**: Personal book collections represent significant time investment and emotional value. Data loss is unacceptable for a personal archive system.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. REST API Design
+All data operations MUST follow RESTful conventions with clear resource endpoints. HTTP methods shall map correctly to operations (GET for retrieval, POST for creation, PUT for updates, DELETE for removal). API responses MUST include appropriate HTTP status codes and consistent JSON structure.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Standard REST patterns ensure predictable behavior and enable future integrations with mobile apps, web interfaces, or third-party tools.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Test-First Development (NON-NEGOTIABLE)
+Unit tests MUST be written before implementation for all business logic. Integration tests are required for database operations and API endpoints. Test coverage MUST exceed 80% for service layer and repository layer code. All tests must pass before any feature is considered complete.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: Personal data systems require high reliability. Comprehensive testing prevents data corruption and ensures consistent behavior across all features.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Database Consistency
+All database operations MUST use appropriate transaction boundaries. Foreign key relationships shall be enforced at the database level. Database migrations MUST be versioned and reversible. No direct SQL manipulation outside of defined repository patterns.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Referential integrity ensures data remains coherent as the collection grows and prevents orphaned records or inconsistent states.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Simplicity & Performance
+Features MUST solve real user needs without unnecessary complexity. Database queries shall be optimized for collections up to 10,000 books. UI responses MUST complete within 500ms for typical operations. New dependencies require explicit justification.
+
+**Rationale**: Personal tools should be fast and reliable. Over-engineering reduces maintainability and introduces potential failure points.
+
+## Technology Stack
+
+**Core Framework**: Java 17+ with Spring Boot 3.x
+**Database**: PostgreSQL with Spring Data JPA
+**Testing**: JUnit 5, Mockito, TestContainers for integration tests
+**Build Tool**: Maven with standard Spring Boot starter dependencies
+**Documentation**: OpenAPI 3.0 specification for REST endpoints
+
+Technology changes require constitutional amendment and migration plan.
+
+## Development Standards
+
+**Code Organization**: Standard Spring Boot structure with separate layers for controllers, services, repositories, and entities. Package by feature, not by layer.
+
+**Error Handling**: Global exception handling with user-friendly error messages. All exceptions MUST be logged with appropriate context. API errors return standardized JSON error responses.
+
+**Validation**: Input validation at controller level using Bean Validation annotations. Business rule validation in service layer. Database constraints for data integrity.
+
+**Documentation**: README with setup instructions, API documentation via OpenAPI, inline code comments for complex business logic only.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other development practices and coding standards. All feature specifications, implementation plans, and code reviews MUST verify compliance with these principles.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Amendments require:
+1. Documentation of rationale and impact assessment
+2. Review of affected templates and existing code
+3. Migration plan for breaking changes
+4. Version increment following semantic versioning
+
+Complexity must be explicitly justified against the Simplicity principle. Use `.specify/templates/agent-file-template.md` for runtime development guidance.
+
+**Version**: 1.0.0 | **Ratified**: 2025-10-14 | **Last Amended**: 2025-10-14
