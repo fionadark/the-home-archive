@@ -14,8 +14,8 @@ TDD mandatory: Unit tests → Integration tests → User acceptance → Implemen
 ### IV. Security by Design
 Authentication and authorization required for all endpoints except health checks. Input validation mandatory at controller level. SQL injection prevention through JPA/prepared statements only. Sensitive data encryption at rest and in transit. Security headers and CORS properly configured.
 
-### V. External Integration Standards
-All external REST API calls must use RestTemplate/WebClient with proper error handling, timeouts, and retry mechanisms. Circuit breaker pattern required for external service calls. Database connections must use connection pooling with proper transaction management. Configuration externalized for different environments.
+### V. Book Archive Domain Standards
+Book objects must contain minimum required fields: title (String, required) and author (String, required). Optional standard fields include: ISBN, publication year, genre, publisher, page count, description, reading status, date added, personal rating, and physical location in home. All book operations must validate required fields and provide meaningful error messages for invalid data.
 
 ## Technology Stack Requirements
 
@@ -27,18 +27,21 @@ All external REST API calls must use RestTemplate/WebClient with proper error ha
 - Gradle for dependency management
 
 ### Database Standards
-- MySQL 8.0+ as primary database
-- Flyway or Liquibase for database migrations
-- JPA entities with proper validation annotations
-- Database connection pooling (HikariCP)
-- Separate read/write data sources for scalability
+- Amazon RDS MySQL 8.0+ as target production database
+- Local development supports both MySQL and in-memory H2 for testing
+- Data mockable through local data structures (ArrayList/HashMap) during development
+- Flyway for database migrations with version control
+- JPA entities with proper validation annotations for book domain
+- Database connection pooling (HikariCP) with environment-specific configurations
+- Book repository pattern with CRUD operations and custom queries (search by title, author, genre)
 
 ### External Integration
-- OpenFeign or WebClient for REST API consumption
+- Book information enrichment APIs (Google Books API, OpenLibrary API) for metadata lookup
+- OpenFeign or WebClient for REST API consumption with proper error handling
 - Jackson for JSON serialization/deserialization
-- Resilience4j for circuit breaker and retry patterns
-- Redis for caching external API responses
+- Resilience4j for circuit breaker and retry patterns on external book APIs
 - Configuration properties for API endpoints and credentials
+- Graceful degradation when external APIs are unavailable
 
 ### Quality & Monitoring
 - SLF4J with Logback for structured logging
@@ -50,10 +53,11 @@ All external REST API calls must use RestTemplate/WebClient with proper error ha
 ## Development Workflow & Quality Gates
 
 ### Code Organization
-- Package structure: controller → service → repository → entity
-- DTOs for API requests/responses, separate from entities
-- Configuration classes for external services and security
-- Utility classes for common operations (validation, transformation)
+- Package structure: controller → service → repository → entity (focused on book domain)
+- Book DTOs for API requests/responses, separate from JPA entities
+- Configuration classes for database profiles (local/RDS) and external book APIs
+- Utility classes for book validation, ISBN formatting, and search operations
+- Mock data service for development when database is unavailable
 
 ### Development Process
 1. Feature branch from main with descriptive name
@@ -65,12 +69,13 @@ All external REST API calls must use RestTemplate/WebClient with proper error ha
 7. Automated testing pipeline before merge
 
 ### Quality Standards
-- No direct database queries in controllers
-- All external calls must have timeout and error handling
-- Logging at appropriate levels (INFO for business events, DEBUG for troubleshooting)
-- No hardcoded values - use application.properties/yml
-- Proper exception handling with meaningful error messages
-- API documentation updated with code changes
+- No direct database queries in controllers - all data access through service layer
+- Book validation must occur at service layer (title and author required)
+- All external book API calls must have timeout and error handling
+- Logging at appropriate levels (INFO for book operations, DEBUG for troubleshooting)
+- Environment-specific configurations (local mock data vs RDS connection)
+- Proper exception handling with user-friendly error messages for book operations
+- API documentation updated with book schema changes
 
 ## Governance
 
