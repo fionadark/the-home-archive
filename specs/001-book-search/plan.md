@@ -95,7 +95,7 @@ src/test/java/com/homearchive/
     └── BookSearchIntegrationTest.java
 ```
 
-**Structure Decision**: Single Spring Boot application following standard Maven/Gradle structure with clear separation of concerns (controller → service → repository → entity) as required by constitution.
+**Structure Decision**: Single Spring Boot application following standard Gradle structure with clear separation of concerns (controller → service → repository → entity) as required by constitution.
 
 ## Complexity Tracking
 

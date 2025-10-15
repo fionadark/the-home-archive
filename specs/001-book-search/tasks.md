@@ -12,14 +12,14 @@
 
 ## Path Conventions
 - **Single project**: `src/main/java/com/homearchive/`, `src/test/java/com/homearchive/` at repository root
-- All paths follow Spring Boot Maven structure as defined in plan.md
+- All paths follow Spring Boot Gradle structure as defined in plan.md
 
 ## Phase 1: Setup (Shared Infrastructure)
 
 **Purpose**: Project initialization and basic Spring Boot structure
 
 - [ ] T001 Create Spring Boot project structure with Java 17+ and Spring Boot 3.x dependencies
-- [ ] T002 Configure build.gradle or pom.xml with required dependencies: Spring Data JPA, Spring Web, Spring Security, MySQL Connector, H2, JUnit 5, Mockito, TestContainers
+- [ ] T002 Configure build.gradle with required dependencies: Spring Data JPA, Spring Web, Spring Security, MySQL Connector, H2, JUnit 5, Mockito, TestContainers
 - [ ] T003 [P] Setup application.yml configuration files for dev/test/prod environments in src/main/resources/
 - [ ] T004 [P] Create main Application.java class in src/main/java/com/homearchive/
 - [ ] T005 [P] Configure Flyway for database migrations in src/main/resources/db/migration/
