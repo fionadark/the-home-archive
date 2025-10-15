@@ -32,14 +32,14 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Create V1__create_book_table.sql migration script with all book fields and indexes in src/main/resources/db/migration/
-- [ ] T007 Implement Book entity with JPA annotations and validation in src/main/java/com/homearchive/entity/Book.java
-- [ ] T008 Create ReadingStatus enum in src/main/java/com/homearchive/entity/ReadingStatus.java
-- [ ] T009 [P] Configure CORS settings in src/main/java/com/homearchive/config/CorsConfig.java
-- [ ] T010 [P] Setup basic security configuration in src/main/java/com/homearchive/config/SecurityConfig.java
-- [ ] T011 [P] Create base exception classes for error handling in src/main/java/com/homearchive/exception/
-- [ ] T012 [P] Configure Jackson for JSON serialization/deserialization
-- [ ] T013 Setup basic logging configuration in src/main/resources/logback-spring.xml
+- [x] T006 Create V1__create_book_table.sql migration script with all book fields and indexes in src/main/resources/db/migration/
+- [x] T007 Implement Book entity with JPA annotations and validation in src/main/java/com/homearchive/entity/Book.java
+- [x] T008 Create ReadingStatus enum in src/main/java/com/homearchive/entity/ReadingStatus.java
+- [x] T009 [P] Configure CORS settings in src/main/java/com/homearchive/config/CorsConfig.java
+- [x] T010 [P] Setup basic security configuration in src/main/java/com/homearchive/config/SecurityConfig.java
+- [x] T011 [P] Create base exception classes for error handling in src/main/java/com/homearchive/exception/
+- [x] T012 [P] Configure Jackson for JSON serialization/deserialization
+- [x] T013 Setup basic logging configuration in src/main/resources/logback-spring.xml
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
