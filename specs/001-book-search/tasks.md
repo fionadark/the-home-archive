@@ -18,11 +18,11 @@
 
 **Purpose**: Project initialization and basic Spring Boot structure
 
-- [ ] T001 Create Spring Boot project structure with Java 17+ and Spring Boot 3.x dependencies
-- [ ] T002 Configure build.gradle with required dependencies: Spring Data JPA, Spring Web, Spring Security, MySQL Connector, H2, JUnit 5, Mockito, TestContainers
-- [ ] T003 [P] Setup application.yml configuration files for dev/test/prod environments in src/main/resources/
-- [ ] T004 [P] Create main Application.java class in src/main/java/com/homearchive/
-- [ ] T005 [P] Configure Flyway for database migrations in src/main/resources/db/migration/
+- [x] T001 Create Spring Boot project structure with Java 17+ and Spring Boot 3.x dependencies
+- [x] T002 Configure build.gradle with required dependencies: Spring Data JPA, Spring Web, Spring Security, MySQL Connector, H2, JUnit 5, Mockito, TestContainers
+- [x] T003 [P] Setup application.yml configuration files for dev/test/prod environments in src/main/resources/
+- [x] T004 [P] Create main Application.java class in src/main/java/com/homearchive/
+- [x] T005 [P] Configure Flyway for database migrations in src/main/resources/db/migration/
 
 ---
 
