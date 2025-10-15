@@ -5,17 +5,25 @@
 ### I. Service-Oriented Architecture
 Every feature must be implemented as a service layer with clear boundaries. Services must be loosely coupled, independently testable, and follow single responsibility principle. Database operations, external API calls, and business logic must be separated into distinct service layers.
 
-### II. RESTful API Design
-All endpoints must follow REST conventions with proper HTTP methods (GET, POST, PUT, DELETE). Response formats must be consistent JSON with standardized error handling. API versioning required for breaking changes. OpenAPI/Swagger documentation mandatory for all endpoints.
+### II. RESTful API Design for Web/Mobile Clients
+All endpoints must follow REST conventions with proper HTTP methods (GET, POST, PUT, DELETE). Response formats must be consistent JSON with standardized error handling. API versioning required for breaking changes. OpenAPI/Swagger documentation mandatory for all endpoints. CORS configuration must support web and mobile client origins. Book collection endpoints must support sorting by author, title, genre, and physical location (alphabetical by first letter within categories).
 
 ### III. Test-First Development (NON-NEGOTIABLE)
 TDD mandatory: Unit tests → Integration tests → User acceptance → Implementation. Test coverage minimum 80% for service layers, 90% for critical business logic. Mock external dependencies in unit tests, use TestContainers for integration testing.
 
 ### IV. Security by Design
-Authentication and authorization required for all endpoints except health checks. Input validation mandatory at controller level. SQL injection prevention through JPA/prepared statements only. Sensitive data encryption at rest and in transit. Security headers and CORS properly configured.
+Authentication and authorization required for all endpoints except health checks and OPTIONS requests for CORS. Input validation mandatory at controller level. SQL injection prevention through JPA/prepared statements only. Sensitive data encryption at rest and in transit. Security headers and CORS properly configured for web/mobile client access. JWT token-based authentication recommended for stateless client interactions.
 
 ### V. Book Archive Domain Standards
 Book objects must contain minimum required fields: title (String, required) and author (String, required). Optional standard fields include: ISBN, publication year, genre, publisher, page count, description, reading status, date added, personal rating, and physical location in home. All book operations must validate required fields and provide meaningful error messages for invalid data.
+
+### VI. Book API Standards for Web/Mobile Clients
+- RESTful endpoints for book collection management: GET /api/books (with sorting), POST /api/books, PUT /api/books/{id}, DELETE /api/books/{id}
+- Sorting parameters: ?sortBy=author|title|genre|location&order=asc|desc (alphabetical by first letter within categories)
+- Filtering support: ?author={name}&genre={genre}&location={location}
+- Pagination support for large collections: ?page={number}&size={count}
+- Consistent JSON response format with metadata (total count, current page, etc.)
+- Error responses with HTTP status codes and descriptive messages for client handling
 
 ## Technology Stack Requirements
 
@@ -23,8 +31,9 @@ Book objects must contain minimum required fields: title (String, required) and 
 - Spring Boot 3.x with Java 17+ LTS
 - Spring Data JPA for database operations
 - Spring Security for authentication/authorization
-- Spring Web for REST API development
+- Spring Web for REST API development serving web/mobile clients
 - Gradle for dependency management
+- Spring Boot CORS configuration for cross-origin requests
 
 ### Database Standards
 - Amazon RDS MySQL 8.0+ as target production database
@@ -55,8 +64,9 @@ Book objects must contain minimum required fields: title (String, required) and 
 ### Code Organization
 - Package structure: controller → service → repository → entity (focused on book domain)
 - Book DTOs for API requests/responses, separate from JPA entities
-- Configuration classes for database profiles (local/RDS) and external book APIs
-- Utility classes for book validation, ISBN formatting, and search operations
+- RESTful controllers with proper HTTP status codes and JSON responses for web/mobile clients
+- Configuration classes for database profiles (local/RDS), external book APIs, and CORS settings
+- Utility classes for book validation, ISBN formatting, and search/sort operations
 - Mock data service for development when database is unavailable
 
 ### Development Process
@@ -76,6 +86,9 @@ Book objects must contain minimum required fields: title (String, required) and 
 - Environment-specific configurations (local mock data vs RDS connection)
 - Proper exception handling with user-friendly error messages for book operations
 - API documentation updated with book schema changes
+- CORS preflight request handling for web/mobile clients
+- Consistent JSON response structure for all client-facing endpoints
+- Sorting and filtering operations must be performed at database level for performance
 
 ## Governance
 
