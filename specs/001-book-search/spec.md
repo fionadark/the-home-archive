@@ -1,6 +1,6 @@
 # Feature Specification: Book Search
 
-**Feature Branch**: `001-the-user-should`  
+**Feature Branch**: `001-book-search`  
 **Created**: 2025-10-15  
 **Status**: Draft  
 **Input**: User description: "The user should be able to search the books in their home library by any field, with the results being displayed from most to least relevant."
