@@ -16,6 +16,8 @@
 - Q: How should system handle search terms with equal relevance? → A: Use alphabetical order by title as tiebreaker
 - Q: How should system handle extremely common words that match many books? → A: Return all matching results but limit to top 50 most relevant
 - Q: What should happen when user submits empty search query? → A: Show all books in library ordered alphabetically by title
+- Q: How should users set physical location for books? → A: Users select from predefined room list: Lisa's office, Alx's office, Master bedroom, Fiona's bedroom, Dining room, Guest bedroom, Living room, Corwin's bedroom
+- Q: How should search results be displayed to users? → A: Show all 50 results in a scrollable list without pagination
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -95,6 +97,8 @@ A user wants to search using multiple words or complex queries to find books tha
 - **FR-014**: System MUST strip/ignore special characters from search queries before processing
 - **FR-015**: System MUST use alphabetical order by title as tiebreaker when search results have equal relevance scores
 - **FR-016**: System MUST limit search results to maximum 50 books, showing the most relevant matches
+- **FR-017**: System MUST provide predefined physical location options for book entry: Lisa's office, Alx's office, Master bedroom, Fiona's bedroom, Dining room, Guest bedroom, Living room, Corwin's bedroom
+- **FR-018**: System MUST display all search results in a single scrollable list without pagination
 
 ### Key Entities *(include if feature involves data)*
 
