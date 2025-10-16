@@ -53,10 +53,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] Create SearchRequest DTO with query validation in src/main/java/com/homearchive/dto/SearchRequest.java
-- [ ] T015 [P] [US1] Create SearchResponse DTO in src/main/java/com/homearchive/dto/SearchResponse.java
-- [ ] T016 [P] [US1] Create BookSearchDto for result display in src/main/java/com/homearchive/dto/BookSearchDto.java
-- [ ] T017 [P] [US1] Create SortBy and SortOrder enums in src/main/java/com/homearchive/dto/
+- [x] T014 [P] [US1] Create SearchRequest DTO with query validation in src/main/java/com/homearchive/dto/SearchRequest.java
+- [x] T015 [P] [US1] Create SearchResponse DTO in src/main/java/com/homearchive/dto/SearchResponse.java
+- [x] T016 [P] [US1] Create BookSearchDto for result display in src/main/java/com/homearchive/dto/BookSearchDto.java
+- [x] T017 [P] [US1] Create SortBy and SortOrder enums in src/main/java/com/homearchive/dto/
 - [ ] T018 [US1] Create BookRepository with basic search methods in src/main/java/com/homearchive/repository/BookRepository.java
 - [ ] T019 [US1] Implement BookSearchService with title/author search logic in src/main/java/com/homearchive/service/BookSearchService.java
 - [ ] T020 [US1] Create BookMapper for entity-to-DTO conversion in src/main/java/com/homearchive/mapper/BookMapper.java
