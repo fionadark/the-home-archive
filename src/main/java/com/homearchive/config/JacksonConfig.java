@@ -1,5 +1,6 @@
 package com.homearchive.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -28,8 +29,8 @@ public class JacksonConfig {
         // Don't fail on unknown properties during deserialization
         mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         
-        // Don't write null values
-        mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        // Don't write null values (using modern approach)
+        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         
         // Write dates as ISO strings instead of timestamps
         mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
