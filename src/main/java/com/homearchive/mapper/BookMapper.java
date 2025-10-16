@@ -2,6 +2,8 @@ package com.homearchive.mapper;
 
 import com.homearchive.dto.BookSearchDto;
 import com.homearchive.entity.Book;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
 @Component
 public class BookMapper {
     
+    private static final Logger logger = LoggerFactory.getLogger(BookMapper.class);
+    
     /**
      * Convert a Book entity to BookSearchDto.
      */
@@ -22,12 +26,15 @@ public class BookMapper {
     }
     
     /**
-     * Convert a Book entity to BookSearchDto with match indication.
+     * Convert a Book entity to a BookSearchDto with match indication.
      */
     public BookSearchDto toSearchDto(Book book, String searchQuery) {
         if (book == null) {
+            logger.warn("Attempted to map null Book entity to BookSearchDto");
             return null;
         }
+        
+        logger.debug("Mapping Book entity to BookSearchDto: id={}, title='{}'", book.getId(), book.getTitle());
         
         BookSearchDto dto = new BookSearchDto();
         dto.setId(book.getId());
@@ -38,11 +45,9 @@ public class BookMapper {
         dto.setIsbn(book.getIsbn());
         dto.setPublisher(book.getPublisher());
         dto.setPhysicalLocation(book.getPhysicalLocation());
-        dto.setReadingStatus(book.getReadingStatus());
-        dto.setPersonalRating(book.getPersonalRating());
         
-        // Add match indication if search query is provided
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            logger.debug("Adding match indication for search query: '{}' to book: '{}'", searchQuery, book.getTitle());
             addMatchIndication(dto, book, searchQuery);
         }
         
@@ -61,12 +66,20 @@ public class BookMapper {
      */
     public List<BookSearchDto> toSearchDtoList(List<Book> books, String searchQuery) {
         if (books == null) {
+            logger.warn("Attempted to map null Book list to BookSearchDto list");
             return null;
         }
         
-        return books.stream()
+        logger.debug("Mapping {} Book entities to BookSearchDto list{}", 
+                    books.size(), 
+                    searchQuery != null ? " with search query: '" + searchQuery + "'" : "");
+        
+        List<BookSearchDto> result = books.stream()
                 .map(book -> toSearchDto(book, searchQuery))
                 .collect(Collectors.toList());
+        
+        logger.debug("Successfully mapped {} books to DTOs", result.size());
+        return result;
     }
     
     /**
