@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@SuppressWarnings("removal") // Suppress deprecation warnings for @MockBean until Spring Boot provides stable replacement
 class SimpleE2ETest {
 
     @Autowired

@@ -81,6 +81,51 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> searchBooksWithRelevance(@Param("query") String query, Pageable pageable);
     
     /**
+     * H2-compatible search method using only LIKE operations for testing.
+     * Used when full-text search is not available (e.g., H2 test database).
+     */
+    @Query(value = """
+        SELECT b.*, 
+               (CASE 
+                   WHEN LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) THEN 3.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%')) THEN 2.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.5
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.isbn) = LOWER(:query) THEN 10.0
+                   WHEN LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%')) THEN 4.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.0
+                   ELSE 0
+               END) as relevance_score
+        FROM books b
+        WHERE (
+            LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%'))
+        )
+        HAVING relevance_score > 0
+        ORDER BY relevance_score DESC, b.title ASC
+        """, nativeQuery = true)
+    List<Book> searchBooksWithRelevanceH2(@Param("query") String query, Pageable pageable);
+    
+    /**
      * Simple title/author search for basic functionality.
      */
     @Query("SELECT b FROM Book b WHERE " +
@@ -109,6 +154,23 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         )
         """, nativeQuery = true)
     int countSearchResults(@Param("query") String query);
+    
+    /**
+     * H2-compatible count method using only LIKE operations.
+     */
+    @Query(value = """
+        SELECT COUNT(*) 
+        FROM books b
+        WHERE (
+            LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%'))
+        )
+        """, nativeQuery = true)
+    int countSearchResultsH2(@Param("query") String query);
     
     /**
      * Search books by title only.
@@ -203,6 +265,50 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> searchBooksWithRelevanceByLocation(@Param("query") String query, @Param("location") String location, Pageable pageable);
     
     /**
+     * H2-compatible search method with location filter using only LIKE operations.
+     */
+    @Query(value = """
+        SELECT b.*, 
+               (CASE 
+                   WHEN LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) THEN 3.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%')) THEN 2.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.5
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.isbn) = LOWER(:query) THEN 10.0
+                   WHEN LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%')) THEN 4.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.0
+                   ELSE 0
+               END) as relevance_score
+        FROM books b
+        WHERE (
+            LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%'))
+        ) AND b.physical_location = :location
+        HAVING relevance_score > 0
+        ORDER BY relevance_score DESC, b.title ASC
+        """, nativeQuery = true)
+    List<Book> searchBooksWithRelevanceByLocationH2(@Param("query") String query, @Param("location") String location, Pageable pageable);
+    
+    /**
      * Simple title/author search filtered by physical location.
      */
     @Query("SELECT b FROM Book b WHERE b.physicalLocation = :location AND (" +
@@ -231,6 +337,23 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         ) AND b.physical_location = :location
         """, nativeQuery = true)
     int countSearchResultsByLocation(@Param("query") String query, @Param("location") String location);
+    
+    /**
+     * H2-compatible count method for location search using only LIKE operations.
+     */
+    @Query(value = """
+        SELECT COUNT(*) 
+        FROM books b
+        WHERE (
+            LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%'))
+        ) AND b.physical_location = :location
+        """, nativeQuery = true)
+    int countSearchResultsByLocationH2(@Param("query") String query, @Param("location") String location);
     
     /**
      * Find all books ordered by title filtered by physical location.

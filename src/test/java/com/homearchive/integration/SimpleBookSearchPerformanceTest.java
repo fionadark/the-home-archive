@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@SuppressWarnings("removal") // Suppress deprecation warnings for @MockBean until Spring Boot provides stable replacement
 class SimpleBookSearchPerformanceTest {
 
     @Autowired

@@ -99,11 +99,21 @@ public class BookSearchService {
             // Perform search with relevance scoring
             books = performSearch(query, request.getSortBy(), request.getPhysicalLocation(), pageable);
             if (request.hasPhysicalLocationFilter()) {
-                totalResults = bookRepository.countSearchResultsByLocation(preprocessQuery(query), request.getPhysicalLocation().name());
+                try {
+                    totalResults = bookRepository.countSearchResultsByLocation(preprocessQuery(query), request.getPhysicalLocation().name());
+                } catch (Exception e) {
+                    logger.debug("MySQL count search failed, falling back to H2-compatible count: {}", e.getMessage());
+                    totalResults = bookRepository.countSearchResultsByLocationH2(preprocessQuery(query), request.getPhysicalLocation().name());
+                }
                 logger.debug("Search for '{}' with location '{}' returned {} books out of {} total matches", 
                            originalQuery, request.getPhysicalLocation(), books.size(), totalResults);
             } else {
-                totalResults = bookRepository.countSearchResults(preprocessQuery(query));
+                try {
+                    totalResults = bookRepository.countSearchResults(preprocessQuery(query));
+                } catch (Exception e) {
+                    logger.debug("MySQL count search failed, falling back to H2-compatible count: {}", e.getMessage());
+                    totalResults = bookRepository.countSearchResultsH2(preprocessQuery(query));
+                }
                 logger.debug("Search for '{}' returned {} books out of {} total matches", 
                            originalQuery, books.size(), totalResults);
             }
@@ -248,10 +258,23 @@ public class BookSearchService {
         // 2. If that yields few results, search for individual terms and combine
         
         List<Book> fullTextResults;
-        if (physicalLocation != null) {
-            fullTextResults = bookRepository.searchBooksWithRelevanceByLocation(query, physicalLocation.name(), pageable);
-        } else {
-            fullTextResults = bookRepository.searchBooksWithRelevance(query, pageable);
+        try {
+            // Try MySQL full-text search first
+            if (physicalLocation != null) {
+                logger.debug("Attempting MySQL full-text search with location for query: {}", query);
+                fullTextResults = bookRepository.searchBooksWithRelevanceByLocation(query, physicalLocation.name(), pageable);
+            } else {
+                logger.debug("Attempting MySQL full-text search for query: {}", query);
+                fullTextResults = bookRepository.searchBooksWithRelevance(query, pageable);
+            }
+        } catch (Exception e) {
+            // If MySQL full-text search fails (e.g., H2 database), fall back to LIKE-based search
+            logger.debug("MySQL full-text search failed, falling back to H2-compatible search: {}", e.getMessage());
+            if (physicalLocation != null) {
+                fullTextResults = bookRepository.searchBooksWithRelevanceByLocationH2(query, physicalLocation.name(), pageable);
+            } else {
+                fullTextResults = bookRepository.searchBooksWithRelevanceH2(query, pageable);
+            }
         }
         
         if (fullTextResults.size() >= 10) {
