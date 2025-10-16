@@ -1,5 +1,7 @@
 package com.homearchive.entity;
 
+import java.util.Arrays;
+
 /**
  * Enum representing predefined physical locations for books in the home.
  * Provides standardized room options for better organization and searching.
@@ -27,38 +29,27 @@ public enum PhysicalLocation {
     }
 
     /**
-     * Get PhysicalLocation from display name or enum name.
-     * Case-insensitive lookup.
-     * 
-     * @param value The display name or enum name to lookup
-     * @return The corresponding PhysicalLocation, or OTHER if not found
+     * Finds a PhysicalLocation enum value by name or display name.
+     * This method performs a case-insensitive search and returns the matching enum value.
+     * If no match is found, it returns PhysicalLocation.OTHER.
+     *
+     * @param value The string value to search for (can be enum name or display name)
+     * @return The matching PhysicalLocation enum value, or OTHER if no match is found
      */
     public static PhysicalLocation fromString(String value) {
         if (value == null || value.trim().isEmpty()) {
             return OTHER;
         }
 
-        String normalized = value.trim().toUpperCase();
+        String normalizedValue = value.trim().toLowerCase();
 
-        // First try exact enum name match
-        for (PhysicalLocation location : values()) {
-            if (location.name().equals(normalized)) {
-                return location;
-            }
-        }
-
-        // Then try display name match
-        for (PhysicalLocation location : values()) {
-            if (location.displayName.toUpperCase().equals(normalized)) {
-                return location;
-            }
-        }
-
-        // Return OTHER for unrecognized values
-        return OTHER;
-    }
-
-    @Override
+        // Single-pass lookup using Stream API with optional chaining
+        return Arrays.stream(PhysicalLocation.values())
+                .filter(location -> location.name().toLowerCase().equals(normalizedValue) ||
+                                  location.getDisplayName().toLowerCase().equals(normalizedValue))
+                .findFirst()
+                .orElse(OTHER);
+    }    @Override
     public String toString() {
         return displayName;
     }
