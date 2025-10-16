@@ -1,0 +1,60 @@
+# Test configuration for Spring Boot application
+# Note: spring.profiles.active should NOT be defined here as this is a profile-specific file
+
+# Use H2 in-memory database for tests
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+    
+  h2:
+    console:
+      enabled: true
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  
+  # Disable Flyway for tests (use JPA DDL instead)
+  flyway:
+    enabled: false
+  
+  # Basic security for tests
+  security:
+    user:
+      name: testuser
+      password: testpass
+      roles: ADMIN
+
+# Logging configuration for tests
+logging:
+  level:
+    com.homearchive: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    com.zaxxer.hikari: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Server configuration for tests
+server:
+  port: 0  # Random port for tests
+  servlet:
+    context-path: /api
+
+# Disable actuator endpoints for tests (simplify)
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    health:
+      enabled: true
