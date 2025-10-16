@@ -4,6 +4,7 @@ import com.homearchive.dto.BookSearchDto;
 import com.homearchive.dto.SearchRequest;
 import com.homearchive.dto.SearchResponse;
 import com.homearchive.dto.SortBy;
+import com.homearchive.dto.SortOrder;
 import com.homearchive.entity.Book;
 import com.homearchive.mapper.BookMapper;
 import com.homearchive.repository.BookRepository;
@@ -47,7 +48,11 @@ public class BookSearchService {
             request = new SearchRequest();
         }
         
-        String query = request.getTrimmedQuery();
+        // Validate search parameters
+        validateSearchRequest(request);
+        
+        String originalQuery = request.getTrimmedQuery();
+        String query = originalQuery;
         int limit = Math.min(request.getLimit(), 50); // Enforce max limit
         Pageable pageable = PageRequest.of(0, limit);
         
@@ -62,16 +67,16 @@ public class BookSearchService {
         } else {
             // Perform search with relevance scoring
             books = performSearch(query, request.getSortBy(), pageable);
-            totalResults = bookRepository.countSearchResults(query);
+            totalResults = bookRepository.countSearchResults(preprocessQuery(query));
             logger.debug("Search for '{}' returned {} books out of {} total matches", 
-                        query, books.size(), totalResults);
+                        originalQuery, books.size(), totalResults);
         }
         
         // Convert to DTOs
         List<BookSearchDto> bookDtos = bookMapper.toSearchDtoList(books);
         
         // Create response
-        SearchResponse response = new SearchResponse(bookDtos, totalResults, query, 
+        SearchResponse response = new SearchResponse(bookDtos, totalResults, originalQuery, 
                                                    request.getSortBy(), request.getSortOrder());
         
         logger.debug("Search completed: {}", response);
@@ -96,6 +101,7 @@ public class BookSearchService {
     
     /**
      * Preprocess search query to improve search results.
+     * Removes special characters, normalizes whitespace, and handles ISBN formatting.
      */
     private String preprocessQuery(String query) {
         if (query == null || query.trim().isEmpty()) {
@@ -104,11 +110,48 @@ public class BookSearchService {
         
         // Remove special characters that might interfere with search
         String cleaned = query.trim()
-                             .replaceAll("[\"'`]", "") // Remove quotes
-                             .replaceAll("\\s+", " "); // Normalize whitespace
+                             .replaceAll("[\"'`()\\[\\]{}]", "") // Remove quotes and brackets
+                             .replaceAll("[;,!?]", " ") // Replace punctuation with space
+                             .replaceAll("[-_]", "") // Remove hyphens and underscores (especially for ISBN)
+                             .replaceAll("\\s+", " ") // Normalize whitespace
+                             .toLowerCase(); // Convert to lowercase for consistent searching
         
         logger.debug("Preprocessed query: '{}' -> '{}'", query, cleaned);
         return cleaned;
+    }
+    
+    /**
+     * Validate search request parameters.
+     */
+    private void validateSearchRequest(SearchRequest request) {
+        if (request == null) {
+            return;
+        }
+        
+        // Validate query length (should be caught by controller validation, but double-check)
+        String query = request.getQuery();
+        if (query != null && query.length() > 100) {
+            logger.warn("Search query exceeds maximum length: {} characters", query.length());
+            // Truncate query to max length
+            request.setQuery(query.substring(0, 100));
+        }
+        
+        // Validate limit
+        Integer limit = request.getLimit();
+        if (limit != null && (limit < 1 || limit > 50)) {
+            logger.warn("Invalid search limit: {}, setting to default", limit);
+            request.setLimit(50);
+        }
+        
+        // Validate sort parameters
+        if (request.getSortBy() == null) {
+            request.setSortBy(SortBy.RELEVANCE);
+        }
+        if (request.getSortOrder() == null) {
+            request.setSortOrder(SortOrder.DESC);
+        }
+        
+        logger.debug("Validated search request: {}", request);
     }
     
     /**

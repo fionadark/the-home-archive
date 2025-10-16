@@ -51,6 +51,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
                    ELSE 0
                END +
                CASE 
+                   WHEN LOWER(b.isbn) = LOWER(:query) THEN 10.0
                    WHEN LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%')) THEN 4.0
                    ELSE 0
                END +

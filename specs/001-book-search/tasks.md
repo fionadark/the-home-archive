@@ -78,13 +78,13 @@
 
 ### Implementation for User Story 2
 
-- [ ] T026 [US2] Extend BookRepository with full-text search across all fields in src/main/java/com/homearchive/repository/BookRepository.java
-- [ ] T027 [US2] Update BookSearchService to search genre, ISBN, publisher, description fields in src/main/java/com/homearchive/service/BookSearchService.java
-- [ ] T028 [US2] Implement field-weighted relevance scoring (title=3.0, author=2.0, genre=1.5, ISBN=exact, description=1.0)
-- [ ] T029 [US2] Add special character stripping/preprocessing for search queries
-- [ ] T030 [US2] Implement ISBN exact match priority handling
-- [ ] T031 [US2] Add comprehensive field validation for search parameters
-- [ ] T032 [US2] Optimize database queries with proper indexing strategy
+- [x] T026 [US2] Extend BookRepository with full-text search across all fields in src/main/java/com/homearchive/repository/BookRepository.java
+- [x] T027 [US2] Update BookSearchService to search genre, ISBN, publisher, description fields in src/main/java/com/homearchive/service/BookSearchService.java
+- [x] T028 [US2] Implement field-weighted relevance scoring (title=3.0, author=2.0, genre=1.5, ISBN=exact, description=1.0)
+- [x] T029 [US2] Add special character stripping/preprocessing for search queries
+- [x] T030 [US2] Implement ISBN exact match priority handling
+- [x] T031 [US2] Add comprehensive field validation for search parameters
+- [x] T032 [US2] Optimize database queries with proper indexing strategy
 
 **Checkpoint**: Advanced field search working across all book metadata with proper relevance weighting
 
