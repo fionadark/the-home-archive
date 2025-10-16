@@ -21,7 +21,7 @@ public class QueryPerformanceInterceptor implements StatementInspector {
 
     private static final Logger logger = LoggerFactory.getLogger(QueryPerformanceInterceptor.class);
     
-    private final MeterRegistry meterRegistry;
+    private MeterRegistry meterRegistry;
     private final AtomicLong queryCounter = new AtomicLong(0);
     
     // Performance thresholds
@@ -32,6 +32,12 @@ public class QueryPerformanceInterceptor implements StatementInspector {
     public QueryPerformanceInterceptor(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
         logger.info("Query performance interceptor initialized");
+    }
+    
+    // Default constructor for Hibernate instantiation
+    public QueryPerformanceInterceptor() {
+        this.meterRegistry = null;
+        logger.info("Query performance interceptor initialized without metrics (test mode)");
     }
 
     @Override
@@ -47,7 +53,7 @@ public class QueryPerformanceInterceptor implements StatementInspector {
         logger.debug("Executing query #{}: {} - {}", queryId, queryType, truncateQuery(sql));
         
         // Create timer for this specific query
-        Timer.Sample sample = Timer.start(meterRegistry);
+        Timer.Sample sample = meterRegistry != null ? Timer.start(meterRegistry) : null;
         
         // Schedule completion logging (will be called by Hibernate after execution)
         scheduleCompletionLogging(queryId, queryType, sql, startTime, sample);
@@ -99,11 +105,13 @@ public class QueryPerformanceInterceptor implements StatementInspector {
                 Duration executionTime = Duration.between(startTime, Instant.now());
                 long executionTimeMs = executionTime.toMillis();
                 
-                // Stop the timer and record metrics
-                sample.stop(Timer.builder("database.query.execution.time")
-                        .tag("type", queryType)
-                        .description("Database query execution time by type")
-                        .register(meterRegistry));
+                // Stop the timer and record metrics (if metrics are available)
+                if (sample != null && meterRegistry != null) {
+                    sample.stop(Timer.builder("database.query.execution.time")
+                            .tag("type", queryType)
+                            .description("Database query execution time by type")
+                            .register(meterRegistry));
+                }
                 
                 // Log query completion with performance metrics
                 if (executionTimeMs >= VERY_SLOW_QUERY_THRESHOLD_MS) {
@@ -116,11 +124,13 @@ public class QueryPerformanceInterceptor implements StatementInspector {
                     logger.debug("Query #{}: {} completed in {}ms", queryId, queryType, executionTimeMs);
                 }
                 
-                // Record detailed metrics
-                meterRegistry.counter("database.query.count", "type", queryType).increment();
-                
-                if (executionTimeMs >= SLOW_QUERY_THRESHOLD_MS) {
-                    meterRegistry.counter("database.query.slow.count", "type", queryType).increment();
+                // Record detailed metrics (if metrics are available)
+                if (meterRegistry != null) {
+                    meterRegistry.counter("database.query.count", "type", queryType).increment();
+                    
+                    if (executionTimeMs >= SLOW_QUERY_THRESHOLD_MS) {
+                        meterRegistry.counter("database.query.slow.count", "type", queryType).increment();
+                    }
                 }
                 
             } catch (InterruptedException e) {

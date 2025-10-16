@@ -44,7 +44,7 @@ public class BookMapper {
         dto.setPublicationYear(book.getPublicationYear());
         dto.setIsbn(book.getIsbn());
         dto.setPublisher(book.getPublisher());
-        dto.setPhysicalLocation(book.getPhysicalLocation());
+        dto.setPhysicalLocation(book.getPhysicalLocation() != null ? book.getPhysicalLocation().getDisplayName() : null);
         
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             logger.debug("Adding match indication for search query: '{}' to book: '{}'", searchQuery, book.getTitle());

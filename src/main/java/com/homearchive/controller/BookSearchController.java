@@ -4,6 +4,7 @@ import com.homearchive.dto.SearchRequest;
 import com.homearchive.dto.SearchResponse;
 import com.homearchive.dto.SortBy;
 import com.homearchive.dto.SortOrder;
+import com.homearchive.entity.PhysicalLocation;
 import com.homearchive.service.BookSearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -181,14 +182,23 @@ public class BookSearchController {
             @RequestParam(value = "limit", required = false, defaultValue = "50") 
             @Min(value = 1, message = "Limit must be at least 1")
             @Max(value = 50, message = "Limit must not exceed 50")
-            Integer limit) {
+            Integer limit,
+            
+            @Parameter(
+                name = "physicalLocation",
+                description = "Filter books by physical location. Use enum values like LIVING_ROOM, BEDROOM, etc.",
+                example = "LIVING_ROOM"
+            )
+            @RequestParam(value = "physicalLocation", required = false) 
+            PhysicalLocation physicalLocation) {
         
-        logger.info("Search request - query: '{}', sortBy: {}, sortOrder: {}, limit: {}", 
-                   query, sortBy, sortOrder, limit);
+        logger.info("Search request - query: '{}', sortBy: {}, sortOrder: {}, limit: {}, physicalLocation: {}", 
+                   query, sortBy, sortOrder, limit, physicalLocation);
         
         try {
             // Create search request
             SearchRequest request = new SearchRequest(query, sortBy, sortOrder, limit);
+            request.setPhysicalLocation(physicalLocation);
             
             // Perform search
             SearchResponse response = bookSearchService.searchBooks(request);

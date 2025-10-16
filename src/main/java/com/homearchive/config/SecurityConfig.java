@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/actuator/info/**").permitAll()
                 .requestMatchers("/api/actuator/metrics/**").permitAll()
                 .requestMatchers("/api/actuator/database-performance/**").permitAll()
+                .requestMatchers("/api/health/**").permitAll() // Custom health endpoints
                 
                 // Allow access to H2 console in development
                 .requestMatchers("/h2-console/**").permitAll()

@@ -1,6 +1,7 @@
 package com.homearchive.repository;
 
 import com.homearchive.entity.Book;
+import com.homearchive.entity.PhysicalLocation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -138,4 +139,108 @@ public interface BookRepository extends JpaRepository<Book, Long> {
      */
     @Query("SELECT b FROM Book b WHERE b.publicationYear IS NOT NULL ORDER BY b.publicationYear DESC")
     List<Book> findAllOrderedByPublicationYear(Pageable pageable);
+    
+    /**
+     * Find books by physical location.
+     */
+    @Query("SELECT b FROM Book b WHERE b.physicalLocation = :location ORDER BY b.title ASC")
+    List<Book> findByPhysicalLocation(@Param("location") PhysicalLocation location, Pageable pageable);
+    
+    /**
+     * Search books with relevance scoring filtered by physical location.
+     */
+    @Query(value = """
+        SELECT b.*, 
+               (CASE 
+                   WHEN MATCH(b.title, b.author, b.description) AGAINST(:query IN NATURAL LANGUAGE MODE) > 0 
+                   THEN MATCH(b.title, b.author, b.description) AGAINST(:query IN NATURAL LANGUAGE MODE) * 2.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN MATCH(b.genre, b.publisher) AGAINST(:query IN NATURAL LANGUAGE MODE) > 0 
+                   THEN MATCH(b.genre, b.publisher) AGAINST(:query IN NATURAL LANGUAGE MODE) * 1.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) THEN 3.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%')) THEN 2.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.5
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.isbn) = LOWER(:query) THEN 10.0
+                   WHEN LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%')) THEN 4.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.0
+                   ELSE 0
+               END +
+               CASE 
+                   WHEN LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1.0
+                   ELSE 0
+               END) as relevance_score
+        FROM books b
+        WHERE (
+            MATCH(b.title, b.author, b.description) AGAINST(:query IN NATURAL LANGUAGE MODE)
+            OR MATCH(b.genre, b.publisher) AGAINST(:query IN NATURAL LANGUAGE MODE)
+            OR LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%'))
+        ) AND b.physical_location = :location
+        HAVING relevance_score > 0
+        ORDER BY relevance_score DESC, b.title ASC
+        """, nativeQuery = true)
+    List<Book> searchBooksWithRelevanceByLocation(@Param("query") String query, @Param("location") String location, Pageable pageable);
+    
+    /**
+     * Simple title/author search filtered by physical location.
+     */
+    @Query("SELECT b FROM Book b WHERE b.physicalLocation = :location AND (" +
+           "LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+           "LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))" +
+           ") ORDER BY " +
+           "CASE WHEN LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) THEN 1 ELSE 2 END, " +
+           "b.title ASC")
+    List<Book> searchByTitleAndAuthorByLocation(@Param("query") String query, @Param("location") PhysicalLocation location, Pageable pageable);
+    
+    /**
+     * Count total results for a search query filtered by physical location.
+     */
+    @Query(value = """
+        SELECT COUNT(*) 
+        FROM books b
+        WHERE (
+            MATCH(b.title, b.author, b.description) AGAINST(:query IN NATURAL LANGUAGE MODE)
+            OR MATCH(b.genre, b.publisher) AGAINST(:query IN NATURAL LANGUAGE MODE)
+            OR LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.publisher) LIKE LOWER(CONCAT('%', :query, '%'))
+            OR LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%'))
+        ) AND b.physical_location = :location
+        """, nativeQuery = true)
+    int countSearchResultsByLocation(@Param("query") String query, @Param("location") String location);
+    
+    /**
+     * Find all books ordered by title filtered by physical location.
+     */
+    @Query("SELECT b FROM Book b WHERE b.physicalLocation = :location ORDER BY b.title ASC")
+    List<Book> findAllOrderedByTitleByLocation(@Param("location") PhysicalLocation location, Pageable pageable);
+    
+    /**
+     * Count books by physical location.
+     */
+    @Query("SELECT COUNT(b) FROM Book b WHERE b.physicalLocation = :location")
+    int countByPhysicalLocation(@Param("location") PhysicalLocation location);
 }

@@ -119,10 +119,10 @@
 - [x] T042 [P] Add database performance monitoring and query optimization
 - [x] T043 [P] Configure production-ready security headers and CORS policies
 - [x] T044 [P] Add API documentation with OpenAPI/Swagger integration
-- [ ] T045 [P] Implement health checks and metrics collection
-- [ ] T046 [P] Add request/response logging for debugging
-- [ ] T047 [P] Configure environment-specific database connections (H2 for testing, MySQL for dev/prod)
-- [ ] T048 [P] Add physical location dropdown support with predefined room options
+- [x] T045 [P] Implement health checks and metrics collection
+- [x] T046 [P] Add request/response logging for debugging
+- [x] T047 [P] Configure environment-specific database connections (H2 for testing, MySQL for dev/prod)
+- [x] T048 [P] Add physical location dropdown support with predefined room options
 - [ ] T049 Perform end-to-end integration testing across all user stories
 - [ ] T050 Performance testing to ensure <2 second response times for 10,000 books
 

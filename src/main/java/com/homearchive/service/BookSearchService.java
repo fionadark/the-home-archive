@@ -6,6 +6,7 @@ import com.homearchive.dto.SearchResponse;
 import com.homearchive.dto.SortBy;
 import com.homearchive.dto.SortOrder;
 import com.homearchive.entity.Book;
+import com.homearchive.entity.PhysicalLocation;
 import com.homearchive.mapper.BookMapper;
 import com.homearchive.repository.BookRepository;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class BookSearchService {
      * Results are cached for performance optimization.
      */
     @Cacheable(value = "searchResults", 
-               key = "#request.query + '_' + #request.sortBy + '_' + #request.sortOrder + '_' + #request.limit",
+               key = "#request.query + '_' + #request.sortBy + '_' + #request.sortOrder + '_' + #request.limit + '_' + #request.physicalLocation",
                condition = "#request.query != null && #request.query.length() > 0")
     public SearchResponse searchBooks(SearchRequest request) {
         logger.debug("Searching books with request: {}", request);
@@ -84,15 +85,28 @@ public class BookSearchService {
         
         if (query.isEmpty()) {
             // Empty query - return all books ordered by title
-            books = bookRepository.findAllOrderedByTitle(pageable);
-            totalResults = (int) bookRepository.count();
-            logger.debug("Empty query - returning {} books out of {} total", books.size(), totalResults);
+            if (request.hasPhysicalLocationFilter()) {
+                books = bookRepository.findAllOrderedByTitleByLocation(request.getPhysicalLocation(), pageable);
+                totalResults = bookRepository.countByPhysicalLocation(request.getPhysicalLocation());
+                logger.debug("Empty query with location filter '{}' - returning {} books out of {} total", 
+                           request.getPhysicalLocation(), books.size(), totalResults);
+            } else {
+                books = bookRepository.findAllOrderedByTitle(pageable);
+                totalResults = (int) bookRepository.count();
+                logger.debug("Empty query - returning {} books out of {} total", books.size(), totalResults);
+            }
         } else {
             // Perform search with relevance scoring
-            books = performSearch(query, request.getSortBy(), pageable);
-            totalResults = bookRepository.countSearchResults(preprocessQuery(query));
-            logger.debug("Search for '{}' returned {} books out of {} total matches", 
-                        originalQuery, books.size(), totalResults);
+            books = performSearch(query, request.getSortBy(), request.getPhysicalLocation(), pageable);
+            if (request.hasPhysicalLocationFilter()) {
+                totalResults = bookRepository.countSearchResultsByLocation(preprocessQuery(query), request.getPhysicalLocation().name());
+                logger.debug("Search for '{}' with location '{}' returned {} books out of {} total matches", 
+                           originalQuery, request.getPhysicalLocation(), books.size(), totalResults);
+            } else {
+                totalResults = bookRepository.countSearchResults(preprocessQuery(query));
+                logger.debug("Search for '{}' returned {} books out of {} total matches", 
+                           originalQuery, books.size(), totalResults);
+            }
         }
         
         // Convert to DTOs
@@ -121,21 +135,29 @@ public class BookSearchService {
     /**
      * Perform the actual search based on query and sort criteria.
      */
-    private List<Book> performSearch(String query, SortBy sortBy, Pageable pageable) {
+    private List<Book> performSearch(String query, SortBy sortBy, PhysicalLocation physicalLocation, Pageable pageable) {
         // Preprocess query - remove special characters and trim
         String cleanQuery = preprocessQuery(query);
         
         if (sortBy == SortBy.RELEVANCE || sortBy == null) {
             // Check if this is a multi-word query
             if (isMultiWordQuery(cleanQuery)) {
-                return performMultiWordSearch(cleanQuery, pageable);
+                return performMultiWordSearch(cleanQuery, physicalLocation, pageable);
             } else {
                 // Use single-word full-text search with relevance scoring
-                return bookRepository.searchBooksWithRelevance(cleanQuery, pageable);
+                if (physicalLocation != null) {
+                    return bookRepository.searchBooksWithRelevanceByLocation(cleanQuery, physicalLocation.name(), pageable);
+                } else {
+                    return bookRepository.searchBooksWithRelevance(cleanQuery, pageable);
+                }
             }
         } else {
             // For other sort types, use simple search and let database handle sorting
-            return bookRepository.searchByTitleAndAuthor(cleanQuery, pageable);
+            if (physicalLocation != null) {
+                return bookRepository.searchByTitleAndAuthorByLocation(cleanQuery, physicalLocation, pageable);
+            } else {
+                return bookRepository.searchByTitleAndAuthor(cleanQuery, pageable);
+            }
         }
     }
     
@@ -217,7 +239,7 @@ public class BookSearchService {
     /**
      * Perform multi-word search with Boolean AND logic.
      */
-    private List<Book> performMultiWordSearch(String query, Pageable pageable) {
+    private List<Book> performMultiWordSearch(String query, PhysicalLocation physicalLocation, Pageable pageable) {
         String[] searchTerms = parseMultiWordQuery(query);
         logger.debug("Multi-word search with terms: {}", String.join(", ", searchTerms));
         
@@ -225,14 +247,19 @@ public class BookSearchService {
         // 1. Try full-text search with the complete query first
         // 2. If that yields few results, search for individual terms and combine
         
-        List<Book> fullTextResults = bookRepository.searchBooksWithRelevance(query, pageable);
+        List<Book> fullTextResults;
+        if (physicalLocation != null) {
+            fullTextResults = bookRepository.searchBooksWithRelevanceByLocation(query, physicalLocation.name(), pageable);
+        } else {
+            fullTextResults = bookRepository.searchBooksWithRelevance(query, pageable);
+        }
         
         if (fullTextResults.size() >= 10) {
             // Good number of results from full-text search
             return fullTextResults;
         } else {
             // Enhance with individual term searches for better recall
-            return performIndividualTermSearch(searchTerms, pageable);
+            return performIndividualTermSearch(searchTerms, physicalLocation, pageable);
         }
     }
     
@@ -265,14 +292,20 @@ public class BookSearchService {
     /**
      * Search for individual terms and combine results with compound scoring.
      */
-    private List<Book> performIndividualTermSearch(String[] searchTerms, Pageable pageable) {
+    private List<Book> performIndividualTermSearch(String[] searchTerms, PhysicalLocation physicalLocation, Pageable pageable) {
         Map<Long, Book> bookMap = new HashMap<>();
         Map<Long, Double> compoundScores = new HashMap<>();
         
         // Search for each term individually
         for (String term : searchTerms) {
-            List<Book> termResults = bookRepository.searchBooksWithRelevance(term, 
-                PageRequest.of(0, 100)); // Get more results for combining
+            List<Book> termResults;
+            if (physicalLocation != null) {
+                termResults = bookRepository.searchBooksWithRelevanceByLocation(term, physicalLocation.name(),
+                    PageRequest.of(0, 100)); // Get more results for combining
+            } else {
+                termResults = bookRepository.searchBooksWithRelevance(term, 
+                    PageRequest.of(0, 100)); // Get more results for combining
+            }
             
             for (Book book : termResults) {
                 Long bookId = book.getId();

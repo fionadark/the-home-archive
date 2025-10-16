@@ -60,9 +60,9 @@ public class Book {
     @Column(name = "page_count")
     private Integer pageCount;
     
-    @Size(max = 100, message = "Physical location must not exceed 100 characters")
-    @Column(name = "physical_location", length = 100)
-    private String physicalLocation;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "physical_location", length = 50)
+    private PhysicalLocation physicalLocation;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "reading_status", length = 20)
@@ -169,11 +169,11 @@ public class Book {
         this.pageCount = pageCount;
     }
     
-    public String getPhysicalLocation() {
+    public PhysicalLocation getPhysicalLocation() {
         return physicalLocation;
     }
     
-    public void setPhysicalLocation(String physicalLocation) {
+    public void setPhysicalLocation(PhysicalLocation physicalLocation) {
         this.physicalLocation = physicalLocation;
     }
     

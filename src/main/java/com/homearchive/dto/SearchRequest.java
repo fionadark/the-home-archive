@@ -1,5 +1,6 @@
 package com.homearchive.dto;
 
+import com.homearchive.entity.PhysicalLocation;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
@@ -20,6 +21,8 @@ public class SearchRequest {
     @Min(value = 1, message = "Limit must be at least 1")
     @Max(value = 50, message = "Limit must not exceed 50")
     private Integer limit = 50;
+    
+    private PhysicalLocation physicalLocation;
     
     // Constructors
     public SearchRequest() {}
@@ -68,6 +71,14 @@ public class SearchRequest {
         this.limit = limit != null ? limit : 50;
     }
     
+    public PhysicalLocation getPhysicalLocation() {
+        return physicalLocation;
+    }
+    
+    public void setPhysicalLocation(PhysicalLocation physicalLocation) {
+        this.physicalLocation = physicalLocation;
+    }
+    
     // Utility methods
     public boolean hasQuery() {
         return query != null && !query.trim().isEmpty();
@@ -77,6 +88,10 @@ public class SearchRequest {
         return query != null ? query.trim() : "";
     }
     
+    public boolean hasPhysicalLocationFilter() {
+        return physicalLocation != null;
+    }
+    
     @Override
     public String toString() {
         return "SearchRequest{" +
@@ -84,6 +99,7 @@ public class SearchRequest {
                 ", sortBy=" + sortBy +
                 ", sortOrder=" + sortOrder +
                 ", limit=" + limit +
+                ", physicalLocation=" + physicalLocation +
                 '}';
     }
 }

@@ -79,8 +79,21 @@ logging:
     com.zaxxer.hikari: DEBUG
     # Query performance logging
     org.springframework.jdbc.core: DEBUG
+    # Access logging
+    ACCESS: INFO
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  loggers:
+    ACCESS:
+      level: INFO
+      additivity: false
+      appenders:
+        - name: ACCESS_FILE
+          type: RollingFileAppender
+          fileName: logs/access.log
+          filePattern: logs/access.%d{yyyy-MM-dd}.log
+          maxFileSize: 10MB
+          maxHistory: 30
 
 server:
   port: 8080
@@ -110,3 +123,8 @@ app:
   security:
     headers:
       enabled: true
+  logging:
+    request-response:
+      enabled: true
+      include-payload: false
+      max-payload-length: 1000
