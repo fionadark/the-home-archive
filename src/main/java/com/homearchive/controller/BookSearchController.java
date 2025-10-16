@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
  * Provides endpoints for searching books with various criteria.
  */
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/api/books")
 @Validated
 @CrossOrigin(origins = "*") // Temporary - will be configured properly in security config
 public class BookSearchController {

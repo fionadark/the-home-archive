@@ -57,14 +57,14 @@
 - [x] T015 [P] [US1] Create SearchResponse DTO in src/main/java/com/homearchive/dto/SearchResponse.java
 - [x] T016 [P] [US1] Create BookSearchDto for result display in src/main/java/com/homearchive/dto/BookSearchDto.java
 - [x] T017 [P] [US1] Create SortBy and SortOrder enums in src/main/java/com/homearchive/dto/
-- [ ] T018 [US1] Create BookRepository with basic search methods in src/main/java/com/homearchive/repository/BookRepository.java
-- [ ] T019 [US1] Implement BookSearchService with title/author search logic in src/main/java/com/homearchive/service/BookSearchService.java
-- [ ] T020 [US1] Create BookMapper for entity-to-DTO conversion in src/main/java/com/homearchive/mapper/BookMapper.java
-- [ ] T021 [US1] Implement BookSearchController with GET /api/books/search endpoint in src/main/java/com/homearchive/controller/BookSearchController.java
-- [ ] T022 [US1] Add input validation and 100 character limit enforcement
-- [ ] T023 [US1] Implement "No results found" message handling
-- [ ] T024 [US1] Add relevance scoring for exact title/author matches
-- [ ] T025 [US1] Implement alphabetical tiebreaker for equal relevance scores
+- [x] T018 [US1] Create BookRepository with basic search methods in src/main/java/com/homearchive/repository/BookRepository.java
+- [x] T019 [US1] Implement BookSearchService with title/author search logic in src/main/java/com/homearchive/service/BookSearchService.java
+- [x] T020 [US1] Create BookMapper for entity-to-DTO conversion in src/main/java/com/homearchive/mapper/BookMapper.java
+- [x] T021 [US1] Implement BookSearchController with GET /api/books/search endpoint in src/main/java/com/homearchive/controller/BookSearchController.java
+- [x] T022 [US1] Add input validation and 100 character limit enforcement
+- [x] T023 [US1] Implement "No results found" message handling
+- [x] T024 [US1] Add relevance scoring for exact title/author matches
+- [x] T025 [US1] Implement alphabetical tiebreaker for equal relevance scores
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - basic search with title/author relevance ranking
 
