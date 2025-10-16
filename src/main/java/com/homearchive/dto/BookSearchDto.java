@@ -1,6 +1,7 @@
 package com.homearchive.dto;
 
 import com.homearchive.entity.ReadingStatus;
+import java.util.List;
 
 /**
  * DTO for book search results.
@@ -18,6 +19,11 @@ public class BookSearchDto {
     private String physicalLocation;
     private ReadingStatus readingStatus;
     private Integer personalRating;
+    
+    // Match indication fields
+    private List<String> matchedFields;
+    private List<String> matchedTerms;
+    private Double relevanceScore;
     
     // Constructors
     public BookSearchDto() {}
@@ -109,6 +115,30 @@ public class BookSearchDto {
     
     public void setPersonalRating(Integer personalRating) {
         this.personalRating = personalRating;
+    }
+    
+    public List<String> getMatchedFields() {
+        return matchedFields;
+    }
+    
+    public void setMatchedFields(List<String> matchedFields) {
+        this.matchedFields = matchedFields;
+    }
+    
+    public List<String> getMatchedTerms() {
+        return matchedTerms;
+    }
+    
+    public void setMatchedTerms(List<String> matchedTerms) {
+        this.matchedTerms = matchedTerms;
+    }
+    
+    public Double getRelevanceScore() {
+        return relevanceScore;
+    }
+    
+    public void setRelevanceScore(Double relevanceScore) {
+        this.relevanceScore = relevanceScore;
     }
     
     @Override

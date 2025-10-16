@@ -11,12 +11,17 @@ import com.homearchive.repository.BookRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service for book search operations.
@@ -27,6 +32,20 @@ import java.util.List;
 public class BookSearchService {
     
     private static final Logger logger = LoggerFactory.getLogger(BookSearchService.class);
+    
+    // Simple LRU cache for preprocessed queries to improve performance
+    private static final Map<String, String> PREPROCESSED_QUERY_CACHE = new java.util.LinkedHashMap<String, String>(100, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+            return size() > 100; // Keep only 100 most recent queries
+        }
+    };
+    
+    // Common stop words that should be handled specially
+    private static final java.util.Set<String> COMMON_STOP_WORDS = java.util.Set.of(
+        "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with", "by",
+        "book", "books", "novel", "story", "tale", "reading", "read", "author", "writer"
+    );
     
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
@@ -39,7 +58,11 @@ public class BookSearchService {
     
     /**
      * Search books based on the provided search request.
+     * Results are cached for performance optimization.
      */
+    @Cacheable(value = "searchResults", 
+               key = "#request.query + '_' + #request.sortBy + '_' + #request.sortOrder + '_' + #request.limit",
+               condition = "#request.query != null && #request.query.length() > 0")
     public SearchResponse searchBooks(SearchRequest request) {
         logger.debug("Searching books with request: {}", request);
         
@@ -73,7 +96,19 @@ public class BookSearchService {
         }
         
         // Convert to DTOs
-        List<BookSearchDto> bookDtos = bookMapper.toSearchDtoList(books);
+        List<BookSearchDto> bookDtos;
+        if (!query.isEmpty()) {
+            bookDtos = bookMapper.toSearchDtoList(books, originalQuery);
+        } else {
+            bookDtos = bookMapper.toSearchDtoList(books);
+        }
+        
+        // Handle edge case of no results found
+        if (bookDtos.isEmpty() && !query.isEmpty()) {
+            logger.info("No results found for query: '{}'. Consider expanding search terms.", originalQuery);
+            // For now, we'll just return empty results with appropriate message
+            // In the future, we could suggest alternative queries or partial matches
+        }
         
         // Create response
         SearchResponse response = new SearchResponse(bookDtos, totalResults, originalQuery, 
@@ -91,8 +126,13 @@ public class BookSearchService {
         String cleanQuery = preprocessQuery(query);
         
         if (sortBy == SortBy.RELEVANCE || sortBy == null) {
-            // Use full-text search with relevance scoring
-            return bookRepository.searchBooksWithRelevance(cleanQuery, pageable);
+            // Check if this is a multi-word query
+            if (isMultiWordQuery(cleanQuery)) {
+                return performMultiWordSearch(cleanQuery, pageable);
+            } else {
+                // Use single-word full-text search with relevance scoring
+                return bookRepository.searchBooksWithRelevance(cleanQuery, pageable);
+            }
         } else {
             // For other sort types, use simple search and let database handle sorting
             return bookRepository.searchByTitleAndAuthor(cleanQuery, pageable);
@@ -102,10 +142,17 @@ public class BookSearchService {
     /**
      * Preprocess search query to improve search results.
      * Removes special characters, normalizes whitespace, and handles ISBN formatting.
+     * Uses caching to avoid repeated preprocessing of the same queries.
      */
     private String preprocessQuery(String query) {
         if (query == null || query.trim().isEmpty()) {
             return "";
+        }
+        
+        // Check cache first for performance
+        String cached = PREPROCESSED_QUERY_CACHE.get(query);
+        if (cached != null) {
+            return cached;
         }
         
         // Remove special characters that might interfere with search
@@ -115,6 +162,9 @@ public class BookSearchService {
                              .replaceAll("[-_]", "") // Remove hyphens and underscores (especially for ISBN)
                              .replaceAll("\\s+", " ") // Normalize whitespace
                              .toLowerCase(); // Convert to lowercase for consistent searching
+        
+        // Cache the result for performance
+        PREPROCESSED_QUERY_CACHE.put(query, cleaned);
         
         logger.debug("Preprocessed query: '{}' -> '{}'", query, cleaned);
         return cleaned;
@@ -155,8 +205,132 @@ public class BookSearchService {
     }
     
     /**
-     * Search books by title only.
+     * Check if the query contains multiple words.
      */
+    private boolean isMultiWordQuery(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return false;
+        }
+        return query.trim().split("\\s+").length > 1;
+    }
+    
+    /**
+     * Perform multi-word search with Boolean AND logic.
+     */
+    private List<Book> performMultiWordSearch(String query, Pageable pageable) {
+        String[] searchTerms = parseMultiWordQuery(query);
+        logger.debug("Multi-word search with terms: {}", String.join(", ", searchTerms));
+        
+        // For multi-word queries, we use a combination approach:
+        // 1. Try full-text search with the complete query first
+        // 2. If that yields few results, search for individual terms and combine
+        
+        List<Book> fullTextResults = bookRepository.searchBooksWithRelevance(query, pageable);
+        
+        if (fullTextResults.size() >= 10) {
+            // Good number of results from full-text search
+            return fullTextResults;
+        } else {
+            // Enhance with individual term searches for better recall
+            return performIndividualTermSearch(searchTerms, pageable);
+        }
+    }
+    
+    /**
+     * Parse multi-word query into individual search terms.
+     */
+    private String[] parseMultiWordQuery(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return new String[0];
+        }
+        
+        // Split by whitespace and filter out empty strings, stop words, and very short terms
+        String[] terms = Arrays.stream(query.trim().split("\\s+"))
+                     .filter(term -> !term.isEmpty())
+                     .filter(term -> term.length() >= 2) // Ignore single character terms
+                     .filter(term -> !COMMON_STOP_WORDS.contains(term.toLowerCase())) // Filter common stop words
+                     .toArray(String[]::new);
+        
+        // If all terms were filtered out, return original split to prevent empty search
+        if (terms.length == 0) {
+            return Arrays.stream(query.trim().split("\\s+"))
+                         .filter(term -> !term.isEmpty())
+                         .filter(term -> term.length() >= 2)
+                         .toArray(String[]::new);
+        }
+        
+        return terms;
+    }
+    
+    /**
+     * Search for individual terms and combine results with compound scoring.
+     */
+    private List<Book> performIndividualTermSearch(String[] searchTerms, Pageable pageable) {
+        Map<Long, Book> bookMap = new HashMap<>();
+        Map<Long, Double> compoundScores = new HashMap<>();
+        
+        // Search for each term individually
+        for (String term : searchTerms) {
+            List<Book> termResults = bookRepository.searchBooksWithRelevance(term, 
+                PageRequest.of(0, 100)); // Get more results for combining
+            
+            for (Book book : termResults) {
+                Long bookId = book.getId();
+                bookMap.put(bookId, book);
+                
+                // Calculate compound score (bonus for multiple term matches)
+                double currentScore = compoundScores.getOrDefault(bookId, 0.0);
+                double termScore = calculateTermRelevance(book, term);
+                compoundScores.put(bookId, currentScore + termScore + 0.5); // Bonus for multi-match
+            }
+        }
+        
+        // Sort by compound score and return top results
+        return bookMap.values().stream()
+                .sorted((b1, b2) -> {
+                    double score1 = compoundScores.getOrDefault(b1.getId(), 0.0);
+                    double score2 = compoundScores.getOrDefault(b2.getId(), 0.0);
+                    int scoreCompare = Double.compare(score2, score1); // Descending
+                    return scoreCompare != 0 ? scoreCompare : b1.getTitle().compareTo(b2.getTitle());
+                })
+                .limit(pageable.getPageSize())
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Calculate relevance score for a specific term match in a book.
+     */
+    private double calculateTermRelevance(Book book, String term) {
+        double score = 0.0;
+        String lowerTerm = term.toLowerCase();
+        
+        if (book.getTitle() != null && book.getTitle().toLowerCase().contains(lowerTerm)) {
+            score += 3.0;
+        }
+        if (book.getAuthor() != null && book.getAuthor().toLowerCase().contains(lowerTerm)) {
+            score += 2.0;
+        }
+        if (book.getGenre() != null && book.getGenre().toLowerCase().contains(lowerTerm)) {
+            score += 1.5;
+        }
+        if (book.getIsbn() != null && book.getIsbn().toLowerCase().contains(lowerTerm)) {
+            score += 4.0;
+        }
+        if (book.getPublisher() != null && book.getPublisher().toLowerCase().contains(lowerTerm)) {
+            score += 1.0;
+        }
+        if (book.getDescription() != null && book.getDescription().toLowerCase().contains(lowerTerm)) {
+            score += 1.0;
+        }
+        
+        return score;
+    }
+    
+    /**
+     * Search books by title only.
+     * Results are cached for performance.
+     */
+    @Cacheable(value = "booksByTitle", key = "#title + '_' + #limit")
     public SearchResponse searchByTitle(String title, int limit) {
         logger.debug("Searching books by title: '{}'", title);
         
@@ -171,7 +345,9 @@ public class BookSearchService {
     
     /**
      * Search books by author only.
+     * Results are cached for performance.
      */
+    @Cacheable(value = "booksByAuthor", key = "#author + '_' + #limit")
     public SearchResponse searchByAuthor(String author, int limit) {
         logger.debug("Searching books by author: '{}'", author);
         

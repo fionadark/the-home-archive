@@ -87,7 +87,7 @@ class BookSearchServiceTest {
         
         when(bookRepository.searchBooksWithRelevance(eq("gatsby"), any(Pageable.class))).thenReturn(books);
         when(bookRepository.countSearchResults("gatsby")).thenReturn(1);
-        when(bookMapper.toSearchDtoList(books)).thenReturn(Collections.emptyList());
+        when(bookMapper.toSearchDtoList(books, "Gatsby")).thenReturn(Collections.emptyList());
 
         // Act
         SearchResponse response = bookSearchService.searchBooks(request);
@@ -98,7 +98,7 @@ class BookSearchServiceTest {
         assertEquals("Gatsby", response.getQuery());
         verify(bookRepository).searchBooksWithRelevance(eq("gatsby"), any(Pageable.class));
         verify(bookRepository).countSearchResults("gatsby");
-        verify(bookMapper).toSearchDtoList(books);
+        verify(bookMapper).toSearchDtoList(books, "Gatsby");
     }
 
     @Test
@@ -125,7 +125,7 @@ class BookSearchServiceTest {
         
         when(bookRepository.searchBooksWithRelevance(eq("test"), any(Pageable.class))).thenReturn(books);
         when(bookRepository.countSearchResults("test")).thenReturn(1);
-        when(bookMapper.toSearchDtoList(books)).thenReturn(Collections.emptyList());
+        when(bookMapper.toSearchDtoList(books, "test")).thenReturn(Collections.emptyList());
 
         // Act
         SearchResponse response = bookSearchService.searchBooks(request);
