@@ -46,6 +46,39 @@ public class BookSearchController {
     }
     
     /**
+     * Executes a search operation with common error handling.
+     * This utility method consolidates duplicate error handling patterns across all search endpoints.
+     * 
+     * @param searchOperation The search operation to execute
+     * @param operationName The name of the operation for logging purposes
+     * @return ResponseEntity with the search result or error response
+     */
+    private ResponseEntity<SearchResponse> executeSearchWithErrorHandling(
+            SearchOperation searchOperation, 
+            String operationName) {
+        
+        try {
+            SearchResponse response = searchOperation.execute();
+            logger.info("{} completed - found {} results", operationName, response.getResultCount());
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("Error performing {}", operationName.toLowerCase(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new SearchResponse());
+        }
+    }
+    
+    /**
+     * Functional interface for search operations.
+     * Allows different search methods to be passed as lambda expressions.
+     */
+    @FunctionalInterface
+    private interface SearchOperation {
+        SearchResponse execute() throws Exception;
+    }
+    
+    /**
      * Search books endpoint with multi-word query support and advanced filtering.
      * Supports fuzzy matching, relevance ranking, and multiple sorting options.
      */
@@ -195,7 +228,7 @@ public class BookSearchController {
         logger.info("Search request - query: '{}', sortBy: {}, sortOrder: {}, limit: {}, physicalLocation: {}", 
                    query, sortBy, sortOrder, limit, physicalLocation);
         
-        try {
+        return executeSearchWithErrorHandling(() -> {
             // Create search request
             SearchRequest request = new SearchRequest(query, sortBy, sortOrder, limit);
             request.setPhysicalLocation(physicalLocation);
@@ -206,13 +239,8 @@ public class BookSearchController {
             logger.info("Search completed - found {} results out of {} total", 
                        response.getResultCount(), response.getTotalResults());
             
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("Error performing search", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new SearchResponse());
-        }
+            return response;
+        }, "Search");
     }
     
     /**
@@ -232,18 +260,9 @@ public class BookSearchController {
         
         logger.info("Title search request - title: '{}', limit: {}", title, limit);
         
-        try {
-            SearchResponse response = bookSearchService.searchByTitle(title, limit);
-            
-            logger.info("Title search completed - found {} results", response.getResultCount());
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("Error performing title search", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new SearchResponse());
-        }
+        return executeSearchWithErrorHandling(
+                () -> bookSearchService.searchByTitle(title, limit), 
+                "Title search");
     }
     
     /**
@@ -263,18 +282,9 @@ public class BookSearchController {
         
         logger.info("Author search request - author: '{}', limit: {}", author, limit);
         
-        try {
-            SearchResponse response = bookSearchService.searchByAuthor(author, limit);
-            
-            logger.info("Author search completed - found {} results", response.getResultCount());
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("Error performing author search", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new SearchResponse());
-        }
+        return executeSearchWithErrorHandling(
+                () -> bookSearchService.searchByAuthor(author, limit), 
+                "Author search");
     }
     
     /**
@@ -294,18 +304,9 @@ public class BookSearchController {
         
         logger.info("Genre search request - genre: '{}', limit: {}", genre, limit);
         
-        try {
-            SearchResponse response = bookSearchService.searchByGenre(genre, limit);
-            
-            logger.info("Genre search completed - found {} results", response.getResultCount());
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("Error performing genre search", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new SearchResponse());
-        }
+        return executeSearchWithErrorHandling(
+                () -> bookSearchService.searchByGenre(genre, limit), 
+                "Genre search");
     }
     
     /**
@@ -324,19 +325,14 @@ public class BookSearchController {
         
         logger.info("Get all books request - sortBy: {}, limit: {}", sortBy, limit);
         
-        try {
+        return executeSearchWithErrorHandling(() -> {
             SearchResponse response = bookSearchService.getAllBooks(limit, sortBy);
             
             logger.info("Get all books completed - returned {} results out of {} total", 
                        response.getResultCount(), response.getTotalResults());
             
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("Error getting all books", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new SearchResponse());
-        }
+            return response;
+        }, "Get all books");
     }
     
     /**
