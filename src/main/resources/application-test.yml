@@ -1,0 +1,103 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+    hikari:
+      # Test environment connection pool settings
+      maximum-pool-size: 3
+      minimum-idle: 1
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      auto-commit: true
+      pool-name: "HomeArchive-Test-Pool"
+      # H2 specific settings for testing
+      data-source-properties:
+        # Fast connection validation for tests
+        validationQuery: "SELECT 1"
+        testWhileIdle: false
+        testOnBorrow: false
+        testOnReturn: false
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: false
+        # Test-specific settings for faster execution
+        jdbc:
+          batch_size: 10
+          order_inserts: false
+          order_updates: false
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+        # Test environment optimizations
+        connection:
+          provider_disables_autocommit: false
+    database-platform: org.hibernate.dialect.H2Dialect
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+        trace: false
+  
+  # Disable Flyway in tests - use DDL auto
+  flyway:
+    enabled: false
+
+# Test environment logging
+logging:
+  level:
+    com.homearchive: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.jdbc.core: DEBUG
+    com.zaxxer.hikari: DEBUG
+  
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}] - %msg%n"
+
+# Test server configuration
+server:
+  port: 0  # Random available port for tests
+  error:
+    include-stacktrace: always
+    include-message: always
+    include-binding-errors: always
+
+# Test application settings
+app:
+  cors:
+    allowed-origins: "http://localhost:*"
+  security:
+    headers:
+      enabled: false  # Disable for easier testing
+  logging:
+    request-response:
+      enabled: true
+      include-payload: true
+      max-payload-length: 10000  # Full payload for test debugging
+
+# Test actuator configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # All endpoints available in tests
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  security:
+    enabled: false  # Disable security for test endpoints

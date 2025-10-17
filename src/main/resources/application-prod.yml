@@ -1,0 +1,151 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/homearchive?useSSL=true&requireSSL=true&serverTimezone=UTC}
+    username: ${DATABASE_USERNAME:homearchive}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      # Production connection pool settings
+      maximum-pool-size: 20
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      # Production-specific settings
+      auto-commit: false
+      pool-name: "HomeArchive-Prod-Pool"
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 500
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
+        # Production SSL settings
+        useSSL: true
+        requireSSL: true
+        verifyServerCertificate: false
+        # Connection validation
+        validationQuery: "SELECT 1"
+        testWhileIdle: true
+        testOnBorrow: true
+        testOnReturn: false
+  
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        generate_statistics: true
+        # Production Hibernate settings
+        jdbc:
+          batch_size: 50
+          order_inserts: true
+          order_updates: true
+          batch_versioned_data: true
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        # Production-specific optimizations
+        order_by:
+          default_null_ordering: last
+        connection:
+          provider_disables_autocommit: true
+  
+  # Disable H2 console in production
+  h2:
+    console:
+      enabled: false
+
+# Production logging configuration
+logging:
+  level:
+    com.homearchive: INFO
+    org.springframework.security: WARN
+    org.hibernate: WARN
+    org.hibernate.SQL: WARN
+    org.springframework.jdbc.core: WARN
+    com.zaxxer.hikari: INFO
+    # Security: Hide sensitive information
+    org.springframework.security.web.authentication: ERROR
+    org.springframework.security.web.access: ERROR
+  
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}] - %msg%n"
+  
+  file:
+    name: ${LOG_FILE_PATH:/var/log/home-archive/app.log}
+    max-size: 100MB
+    max-history: 30
+    total-size-cap: 3GB
+
+# Production server configuration
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+  # Production security settings
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store: ${SSL_KEYSTORE_PATH}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD}
+    key-store-type: PKCS12
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,text/javascript,application/javascript
+  http2:
+    enabled: true
+
+# Production application settings
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://homearchive.com,https://www.homearchive.com}
+  security:
+    headers:
+      enabled: true
+  logging:
+    request-response:
+      enabled: ${REQUEST_RESPONSE_LOGGING:false}
+      include-payload: false
+      max-payload-length: 500
+
+# Production actuator configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,database-performance
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+    info:
+      enabled: true
+  security:
+    enabled: true
+  server:
+    port: ${MANAGEMENT_PORT:8081}
+
+# Production database migration settings
+spring.flyway:
+  enabled: true
+  baseline-on-migrate: false
+  validate-on-migrate: true
+  clean-disabled: true
+  baseline-version: 1
+  locations: classpath:db/migration
+  sql-migration-prefix: V
+  sql-migration-suffixes: .sql
+  placeholder-replacement: false

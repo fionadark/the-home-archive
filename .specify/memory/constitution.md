@@ -28,7 +28,7 @@ Book objects must contain minimum required fields: title (String, required) and 
 ## Technology Stack Requirements
 
 ### Backend Framework
-- Spring Boot 3.x with Java 17+ LTS
+- Spring Boot 3.x with Java 21+ LTS
 - Spring Data JPA for database operations
 - Spring Security for authentication/authorization
 - Spring Web for REST API development serving web/mobile clients

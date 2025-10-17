@@ -1,0 +1,212 @@
+openapi: 3.0.3
+info:
+  title: Home Archive - Book Search API
+  description: API for searching books in personal home library
+  version: 1.0.0
+  contact:
+    name: Home Archive
+    
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: https://api.homearchive.com
+    description: Production server
+
+paths:
+  /api/books/search:
+    get:
+      summary: Search books in library
+      description: Search across all book fields with relevance-based ranking
+      operationId: searchBooks
+      tags:
+        - Book Search
+      parameters:
+        - name: q
+          in: query
+          description: Search query (max 100 characters)
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+            example: "harry potter"
+        - name: sortBy
+          in: query
+          description: Sort criteria for results
+          required: false
+          schema:
+            type: string
+            enum: [relevance, title, author, dateAdded]
+            default: relevance
+        - name: sortOrder
+          in: query
+          description: Sort order for results
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - name: limit
+          in: query
+          description: Maximum number of results (max 50)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 50
+      responses:
+        '200':
+          description: Search results returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+              examples:
+                with_results:
+                  summary: Search with results
+                  value:
+                    books:
+                      - id: 1
+                        title: "Harry Potter and the Philosopher's Stone"
+                        author: "J.K. Rowling"
+                        genre: "Fantasy"
+                        publicationYear: 1997
+                      - id: 2
+                        title: "Harry Potter and the Chamber of Secrets"
+                        author: "J.K. Rowling"
+                        genre: "Fantasy"
+                        publicationYear: 1998
+                    totalCount: 2
+                    searchTime: 45
+                    hasMore: false
+                no_results:
+                  summary: No results found
+                  value:
+                    books: []
+                    totalCount: 0
+                    searchTime: 12
+                    hasMore: false
+        '400':
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "BAD_REQUEST"
+                message: "Search query exceeds maximum length of 100 characters"
+                timestamp: "2025-10-15T10:30:00Z"
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    SearchResponse:
+      type: object
+      required:
+        - books
+        - totalCount
+        - searchTime
+        - hasMore
+      properties:
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookSearchDto'
+          description: List of books matching search criteria
+        totalCount:
+          type: integer
+          description: Total number of books matching search (before limit)
+          minimum: 0
+        searchTime:
+          type: integer
+          description: Search execution time in milliseconds
+          minimum: 0
+        hasMore:
+          type: boolean
+          description: Whether more results exist beyond the limit
+          
+    BookSearchDto:
+      type: object
+      required:
+        - id
+        - title
+        - author
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique book identifier
+          example: 1
+        title:
+          type: string
+          description: Book title
+          maxLength: 255
+          example: "The Great Gatsby"
+        author:
+          type: string
+          description: Book author
+          maxLength: 255
+          example: "F. Scott Fitzgerald"
+        genre:
+          type: string
+          description: Book genre/category
+          maxLength: 100
+          example: "Classic Literature"
+          nullable: true
+        publicationYear:
+          type: integer
+          description: Year of publication
+          minimum: 1000
+          maximum: 2100
+          example: 1925
+          nullable: true
+          
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - timestamp
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "BAD_REQUEST"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Search query exceeds maximum length"
+        timestamp:
+          type: string
+          format: date-time
+          description: Error occurrence timestamp
+          example: "2025-10-15T10:30:00Z"
+        details:
+          type: object
+          description: Additional error details
+          nullable: true
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for API authentication
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Book Search
+    description: Operations for searching books in the library
