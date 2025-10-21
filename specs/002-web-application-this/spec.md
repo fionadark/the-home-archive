@@ -12,6 +12,8 @@
 - Q: How should users create accounts to access the application? → A: Self-registration with email verification (users create their own accounts)
 - Q: What level of dark academia visual design should the interface use? → A: Rich academic elements (elaborate typography, library motifs, vintage textures, warm lighting effects)
 - Q: How should the book database be managed for user additions? → A: Existing database with user additions (users can add from database OR create new book entries)
+- Q: How should user sessions be managed for security? → A: Remember me option (users choose between session types at login)
+- Q: How should books be displayed in the library interface? → A: Card-based grid with list view option (visual cards as default, switchable to table view)
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -82,7 +84,7 @@ A library owner wants to search for new books in the database and add selected b
 - **FR-001**: System MUST provide a rich dark academia themed user interface with elaborate typography, library motifs, vintage textures, warm lighting effects, and cohesive aesthetic elements across all pages
 - **FR-002**: System MUST allow users to self-register with email verification and require authentication to access any library functionality
 - **FR-003**: System MUST ensure each user can only access their own personal book collection
-- **FR-004**: System MUST display the user's personal library with all book information (title, author, genre, physical location, etc.)
+- **FR-004**: System MUST display the user's personal library in a card-based grid format with switchable list view option, showing book information (title, author, genre, physical location, etc.)
 - **FR-005**: System MUST allow users to search their personal library by any book field (title, author, genre, physical location)
 - **FR-006**: System MUST allow users to sort their personal library by any book field in ascending or descending order
 - **FR-007**: System MUST allow users to edit physical location tags for books in their library
@@ -90,7 +92,7 @@ A library owner wants to search for new books in the database and add selected b
 - **FR-009**: System MUST provide a separate search interface to browse the complete book database and allow users to create new book entries for books not in the database
 - **FR-010**: System MUST allow users to add books from the database search to their personal library or add custom books they create
 - **FR-011**: System MUST prevent users from adding duplicate books to their personal library
-- **FR-012**: System MUST maintain session security and handle authentication state appropriately
+- **FR-012**: System MUST provide users with session options at login (temporary session or "remember me") and maintain appropriate session security for each type
 - **FR-013**: System MUST provide clear visual feedback for all user actions (loading states, success/error messages)
 - **FR-014**: System MUST be responsive and work well on both desktop and mobile devices
 - **FR-015**: System MUST handle graceful degradation when database connections are temporarily unavailable
