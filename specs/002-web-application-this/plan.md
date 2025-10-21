@@ -18,8 +18,8 @@ A dark academia-themed library web application providing book search, user authe
 -->
 
 **Language/Version**: Java 21+ LTS (backend), JavaScript ES6+ (frontend), HTML5, CSS3  
-**Primary Dependencies**: Spring Boot 3.2+, Spring Data JPA, Spring Web, Spring Security 6.x, PostgreSQL 15+  
-**Storage**: PostgreSQL 15+ (production), H2 Database (development/testing)  
+**Primary Dependencies**: Spring Boot 3.2+, Spring Data JPA, Spring Web, Spring Security 6.x, MySQL 8.0+  
+**Storage**: Amazon RDS MySQL 8.0+ (production), H2 Database (development/testing)  
 **Testing**: JUnit 5, Spring Boot Test, Jest + Testing Library (frontend)  
 **Target Platform**: Web browsers (modern), JVM-compatible server environment  
 **Project Type**: Web application (backend + frontend)  

@@ -10,9 +10,9 @@ This quickstart guide provides step-by-step instructions for setting up the dark
 
 **Required Software**:
 - Java 21+ LTS (OpenJDK recommended)
-- Maven 3.8+ or wrapper included
+- Gradle 7.0+ or wrapper included
 - Node.js 18+ (for frontend tooling)
-- PostgreSQL 15+ (production) or use H2 for development
+- MySQL 8.0+ (production) or use H2 for development
 - Git for version control
 
 **Development Tools** (recommended):
@@ -44,17 +44,17 @@ tree -L 2
 # Navigate to backend
 cd backend
 
-# Install dependencies (if using Maven wrapper)
-./mvnw clean install
+# Install dependencies (if using Gradle wrapper)
+./gradlew build
 
-# Or with system Maven
-mvn clean install
+# Or with system Gradle
+gradle build
 
 # Run tests to verify setup
-./mvnw test
+./gradlew test
 
 # Start development server with H2 database
-./mvnw spring-boot:run
+./gradlew bootRun
 
 # Backend should be running at http://localhost:8080
 ```
@@ -83,16 +83,17 @@ spring:
 ### 3. Database Setup (Optional - Production)
 
 ```bash
-# Install PostgreSQL (macOS)
-brew install postgresql
-brew services start postgresql
+# Install MySQL (macOS)
+brew install mysql
+brew services start mysql
 
-# Create database
-createdb library_dev
-createuser library_user --pwprompt
-
-# Grant permissions
-psql -d library_dev -c "GRANT ALL PRIVILEGES ON DATABASE library_dev TO library_user;"
+# Create database and user
+mysql -u root -p
+CREATE DATABASE library_dev;
+CREATE USER 'library_user'@'localhost' IDENTIFIED BY 'library_password';
+GRANT ALL PRIVILEGES ON library_dev.* TO 'library_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
 ```
 
 **Production Configuration**:
@@ -102,9 +103,10 @@ spring:
   profiles:
     active: prod
   datasource:
-    url: jdbc:postgresql://localhost:5432/library_dev
+    url: jdbc:mysql://localhost:3306/library_dev
     username: library_user
     password: ${DB_PASSWORD:library_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: validate
@@ -135,7 +137,7 @@ npm test
 ```bash
 # Terminal 1: Start backend
 cd backend
-./mvnw spring-boot:run
+./gradlew bootRun
 
 # Terminal 2: Serve frontend (development)
 cd frontend
@@ -186,13 +188,13 @@ curl -X GET "http://localhost:8080/api/v1/books?q=science" \
 - Username: `sa`
 - Password: `password`
 
-**PostgreSQL** (Production):
+**MySQL** (Production):
 ```bash
 # Connect to database
-psql -d library_dev -U library_user
+mysql -u library_user -p library_dev
 
 # Check tables
-\dt
+SHOW TABLES;
 
 # Sample query
 SELECT * FROM users;
@@ -205,13 +207,13 @@ SELECT * FROM books LIMIT 10;
 
 ```bash
 # Run all tests
-./mvnw test
+./gradlew test
 
 # Run specific test class
-./mvnw test -Dtest=UserServiceTest
+./gradlew test --tests UserServiceTest
 
 # Run with coverage
-./mvnw test jacoco:report
+./gradlew test jacocoTestReport
 ```
 
 **Test Categories**:
@@ -328,7 +330,7 @@ java -version
 lsof -i :8080
 
 # Clean and rebuild
-./mvnw clean compile
+./gradlew clean build
 ```
 
 **Database connection issues**:
@@ -336,8 +338,8 @@ lsof -i :8080
 # Verify H2 console access
 curl http://localhost:8080/h2-console
 
-# Check PostgreSQL service
-brew services list | grep postgresql
+# Check MySQL service
+brew services list | grep mysql
 ```
 
 **Authentication problems**:

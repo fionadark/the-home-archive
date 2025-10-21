@@ -26,18 +26,19 @@ Based on the Technical Context unknowns identified in plan.md:
 
 ### Production Database Decision
 
-**Decision**: PostgreSQL 15+
+**Decision**: MySQL 8.0+ (Amazon RDS)
 
 **Rationale**: 
+- Mandated by project constitution for consistency
 - Excellent Spring Boot integration with Spring Data JPA
 - Robust ACID compliance for user authentication and book catalog integrity
-- Advanced full-text search capabilities for book search functionality
-- Mature ecosystem with extensive documentation
-- Cost-effective for small to medium deployments
+- Full-text search capabilities with MySQL 8.0+ improvements
+- Amazon RDS provides managed service benefits (backups, scaling, monitoring)
+- Cost-effective with RDS free tier and predictable pricing
 - JSON support for flexible book metadata storage
 
 **Alternatives Considered**:
-- **MySQL**: Good performance but less advanced search capabilities
+- **PostgreSQL**: Advanced features but not mandated by constitution
 - **MongoDB**: NoSQL flexibility but loses ACID guarantees for user data
 - **H2 (production)**: Embedded option but limited scalability and features
 
@@ -134,8 +135,8 @@ Based on the Technical Context unknowns identified in plan.md:
 ## Updated Technical Context
 
 **Language/Version**: Java 21+ LTS (backend), JavaScript ES6+ (frontend), HTML5, CSS3  
-**Primary Dependencies**: Spring Boot 3.2+, Spring Data JPA, Spring Web, Spring Security 6.x, PostgreSQL 15+  
-**Storage**: PostgreSQL 15+ (production), H2 Database (development/testing)  
+**Primary Dependencies**: Spring Boot 3.2+, Spring Data JPA, Spring Web, Spring Security 6.x, MySQL 8.0+  
+**Storage**: Amazon RDS MySQL 8.0+ (production), H2 Database (development/testing)  
 **Testing**: JUnit 5, Spring Boot Test, Jest + Testing Library (frontend)  
 **Target Platform**: Web browsers (modern), JVM-compatible server environment  
 **Project Type**: Web application (backend + frontend)  

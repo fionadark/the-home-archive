@@ -14,7 +14,7 @@
 
 ## Path Conventions
 - **Web app**: `backend/src/`, `frontend/src/`
-- Backend follows Spring Boot Maven structure: `backend/src/main/java/com/thehomearchive/library/`
+- Backend follows Spring Boot Gradle structure: `backend/src/main/java/com/thehomearchive/library/`
 - Frontend structure: `frontend/src/js/`, `frontend/src/css/`, `frontend/src/html/`
 
 ## Phase 1: Setup (Shared Infrastructure)
@@ -22,10 +22,10 @@
 **Purpose**: Project initialization and basic structure
 
 - [ ] T001 Create backend directory structure per implementation plan at backend/src/main/java/com/thehomearchive/library/
-- [ ] T002 Initialize Spring Boot 3.2+ project with Maven dependencies in backend/pom.xml
+- [ ] T002 Initialize Spring Boot 3.2+ project with Gradle dependencies in backend/build.gradle
 - [ ] T003 [P] Create frontend directory structure at frontend/src/
 - [ ] T004 [P] Configure application properties for H2 development database in backend/src/main/resources/application-dev.yml
-- [ ] T005 [P] Configure application properties for PostgreSQL production in backend/src/main/resources/application-prod.yml
+- [ ] T005 [P] Configure application properties for MySQL production in backend/src/main/resources/application-prod.yml
 - [ ] T006 [P] Setup Jest testing framework configuration in frontend/package.json
 - [ ] T007 [P] Create dark academia CSS variables and base theme in frontend/src/css/themes/dark-academia.css
 
@@ -46,6 +46,9 @@
 - [ ] T014 [P] Implement email service configuration in backend/src/main/java/com/thehomearchive/library/config/EmailConfig.java
 - [ ] T015 [P] Create API response wrapper DTOs in backend/src/main/java/com/thehomearchive/library/dto/ApiResponse.java
 - [ ] T016 [P] Setup application main class and configuration in backend/src/main/java/com/thehomearchive/library/LibraryApplication.java
+- [ ] T017 [P] Configure external book API clients (Google Books, OpenLibrary) in backend/src/main/java/com/thehomearchive/library/config/ExternalApiConfig.java
+- [ ] T018 [P] Setup Resilience4j circuit breaker for external APIs in backend/src/main/java/com/thehomearchive/library/config/ResilienceConfig.java
+- [ ] T019 [P] Configure Amazon RDS MySQL connection pooling in backend/src/main/resources/application-prod.yml
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -61,12 +64,12 @@
 
 **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T017 [P] [US1] Contract test for user registration endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
-- [ ] T018 [P] [US1] Contract test for login endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
-- [ ] T019 [P] [US1] Contract test for email verification endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
-- [ ] T020 [P] [US1] Integration test for authentication flow in backend/src/test/java/com/thehomearchive/library/integration/AuthenticationIntegrationTest.java
-- [ ] T021 [P] [US1] Security test for unauthorized access protection in backend/src/test/java/com/thehomearchive/library/security/SecurityTest.java
-- [ ] T022 [P] [US1] Frontend test for login form in frontend/tests/pages/LoginPage.test.js
+- [ ] T020 [P] [US1] Contract test for user registration endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
+- [ ] T021 [P] [US1] Contract test for login endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
+- [ ] T022 [P] [US1] Contract test for email verification endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
+- [ ] T023 [P] [US1] Integration test for authentication flow in backend/src/test/java/com/thehomearchive/library/integration/AuthenticationIntegrationTest.java
+- [ ] T024 [P] [US1] Security test for unauthorized access protection in backend/src/test/java/com/thehomearchive/library/security/SecurityTest.java
+- [ ] T025 [P] [US1] Frontend test for login form in frontend/tests/pages/LoginPage.test.js
 
 ### Implementation for User Story 1
 
@@ -180,6 +183,10 @@
 - [ ] T098 [US3] Implement book search page JavaScript in frontend/src/js/pages/bookSearchPage.js
 - [ ] T099 [US3] Implement book addition functionality in frontend/src/js/components/BookAddition.js
 - [ ] T100 [US3] Add duplicate prevention logic in frontend/src/js/utils/duplicateChecker.js
+- [ ] T101 [P] [US3] Implement Google Books API integration service in backend/src/main/java/com/thehomearchive/library/service/GoogleBooksService.java
+- [ ] T102 [P] [US3] Implement OpenLibrary API integration service in backend/src/main/java/com/thehomearchive/library/service/OpenLibraryService.java
+- [ ] T103 [US3] Create book metadata enrichment service in backend/src/main/java/com/thehomearchive/library/service/BookMetadataService.java
+- [ ] T104 [US3] Add external API fallback and error handling in book search flow
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -189,16 +196,16 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T101 [P] Create comprehensive API documentation in backend/src/main/resources/static/docs/
-- [ ] T102 [P] Add responsive design for mobile devices in frontend/src/css/responsive/mobile.css
-- [ ] T103 [P] Implement loading states and error handling in frontend/src/js/utils/uiUtils.js
-- [ ] T104 [P] Add performance monitoring and logging in backend/src/main/java/com/thehomearchive/library/config/MonitoringConfig.java
-- [ ] T105 [P] Create sample data seeding script in backend/src/main/resources/data.sql
-- [ ] T106 [P] Add security headers and CSRF protection in backend/src/main/java/com/thehomearchive/library/config/SecurityHeadersConfig.java
-- [ ] T107 [P] Implement graceful degradation for offline scenarios in frontend/src/js/utils/offlineHandler.js
-- [ ] T108 [P] Add accessibility (ARIA) labels and keyboard navigation in frontend/src/js/utils/accessibility.js
-- [ ] T109 Code cleanup and refactoring across all components
-- [ ] T110 Run quickstart.md validation and end-to-end testing
+- [ ] T105 [P] Create comprehensive API documentation in backend/src/main/resources/static/docs/
+- [ ] T106 [P] Add responsive design for mobile devices in frontend/src/css/responsive/mobile.css
+- [ ] T107 [P] Implement loading states and error handling in frontend/src/js/utils/uiUtils.js
+- [ ] T108 [P] Add performance monitoring and logging in backend/src/main/java/com/thehomearchive/library/config/MonitoringConfig.java
+- [ ] T109 [P] Create sample data seeding script in backend/src/main/resources/data.sql
+- [ ] T110 [P] Add security headers and CSRF protection in backend/src/main/java/com/thehomearchive/library/config/SecurityHeadersConfig.java
+- [ ] T111 [P] Implement graceful degradation for offline scenarios in frontend/src/js/utils/offlineHandler.js
+- [ ] T112 [P] Add accessibility (ARIA) labels and keyboard navigation in frontend/src/js/utils/accessibility.js
+- [ ] T113 Code cleanup and refactoring across all components
+- [ ] T114 Run quickstart.md validation and end-to-end testing
 
 ---
 
@@ -300,11 +307,11 @@ With multiple developers:
 
 ## Task Summary
 
-- **Total Tasks**: 110 tasks
-- **User Story 1 Tasks**: 32 tasks (T017-T048) - Authentication & Security
-- **User Story 2 Tasks**: 27 tasks (T049-T075) - Library Management  
-- **User Story 3 Tasks**: 25 tasks (T076-T100) - Book Discovery
-- **Parallel Opportunities**: 45 tasks marked [P] can run in parallel
+- **Total Tasks**: 114 tasks
+- **User Story 1 Tasks**: 32 tasks (T020-T051) - Authentication & Security
+- **User Story 2 Tasks**: 27 tasks (T052-T078) - Library Management  
+- **User Story 3 Tasks**: 29 tasks (T079-T104) - Book Discovery & External APIs
+- **Parallel Opportunities**: 49 tasks marked [P] can run in parallel
 - **Independent Test Criteria**: Each user story has comprehensive test coverage and can be validated independently
 - **Suggested MVP Scope**: User Story 1 only (secure authentication and dashboard access)
 
