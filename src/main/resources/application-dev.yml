@@ -1,78 +1,123 @@
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/homearchive?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: homearchive
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    password: password
-    hikari:
-      # Development connection pool settings
-      maximum-pool-size: 5
-      minimum-idle: 2
-      connection-timeout: 10000
-      idle-timeout: 180000
-      max-lifetime: 600000
-      leak-detection-threshold: 30000
-      # Development-specific settings
-      auto-commit: false
-      pool-name: "HomeArchive-Dev-Pool"
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
-        useLocalSessionState: true
-        rewriteBatchedStatements: true
-        cacheResultSetMetadata: true
-        cacheServerConfiguration: true
-        elideSetAutoCommits: true
-        maintainTimeStats: false
+  profiles:
+    active: dev
   
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        generate_statistics: true
-        # Development-specific Hibernate settings
-        jdbc:
-          batch_size: 20
-          order_inserts: true
-          order_updates: true
-        cache:
-          use_second_level_cache: false
-          use_query_cache: false
-
-  # H2 console for development (fallback database)
+  # H2 Database Configuration for Development
+  datasource:
+    url: jdbc:h2:mem:homearchive_dev;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      leak-detection-threshold: 60000
+  
+  # H2 Console (for development debugging)
   h2:
     console:
       enabled: true
       path: /h2-console
       settings:
         web-allow-others: false
+  
+  # JPA/Hibernate Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+      format_sql: true
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        format_sql: true
+  
+  # Flyway Configuration
+  flyway:
+    enabled: false # Disable for H2 development, use ddl-auto instead
+    
+  # Mail Configuration (using embedded mail server for development)
+  mail:
+    host: localhost
+    port: 1025
+    username: 
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+        debug: true
 
-# Development logging configuration
+# Application Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# JWT Configuration
+jwt:
+  secret: dev-secret-key-change-in-production-this-must-be-at-least-256-bits
+  expiration: 86400000 # 24 hours
+  refresh-expiration: 604800000 # 7 days
+
+# External APIs Configuration
+external:
+  api:
+    google-books:
+      base-url: https://www.googleapis.com/books/v1
+      api-key: ${GOOGLE_BOOKS_API_KEY:}
+      timeout: 5000
+    open-library:
+      base-url: https://openlibrary.org
+      timeout: 5000
+
+# Resilience4j Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      google-books:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30000
+        sliding-window-size: 10
+      open-library:
+        failure-rate-threshold: 60
+        wait-duration-in-open-state: 20000
+        sliding-window-size: 8
+  retry:
+    instances:
+      external-api:
+        max-attempts: 3
+        wait-duration: 1000
+
+# Logging Configuration
 logging:
   level:
-    com.homearchive: DEBUG
+    com.thehomearchive.library: DEBUG
+    org.springframework.security: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.jdbc.core: DEBUG
-    com.zaxxer.hikari: DEBUG
   pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
-# Development server configuration
-server:
-  port: 8080
-  error:
-    include-stacktrace: always
-    include-message: always
-
-# Development application settings
-app:
-  logging:
-    request-response:
-      enabled: true
-      include-payload: true
-      max-payload-length: 2000
+# Management/Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+  endpoint:
+    health:
+      show-details: always

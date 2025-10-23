@@ -13,8 +13,8 @@
 - Include exact file paths in descriptions
 
 ## Path Conventions
-- **Web app**: `backend/src/`, `frontend/src/`
-- Backend follows Spring Boot Gradle structure: `backend/src/main/java/com/thehomearchive/library/`
+- **Web app**: `src/`, `frontend/src/`
+- Backend follows Spring Boot Gradle structure: `src/main/java/com/thehomearchive/library/`
 - Frontend structure: `frontend/src/js/`, `frontend/src/css/`, `frontend/src/html/`
 
 ## Phase 1: Setup (Shared Infrastructure)
@@ -23,11 +23,11 @@
 
 - [x] T001 Create backend directory structure per implementation plan at backend/src/main/java/com/thehomearchive/library/
 - [x] T002 Initialize Spring Boot 3.2+ project with Gradle dependencies in backend/build.gradle
-- [ ] T003 [P] Create frontend directory structure at frontend/src/
-- [ ] T004 [P] Configure application properties for H2 development database in backend/src/main/resources/application-dev.yml
-- [ ] T005 [P] Configure application properties for MySQL production in backend/src/main/resources/application-prod.yml
-- [ ] T006 [P] Setup Jest testing framework configuration in frontend/package.json
-- [ ] T007 [P] Create dark academia CSS variables and base theme in frontend/src/css/themes/dark-academia.css
+- [x] T003 [P] Create frontend directory structure at frontend/src/
+- [x] T004 [P] Configure application properties for H2 development database in backend/src/main/resources/application-dev.yml
+- [x] T005 [P] Configure application properties for MySQL production in backend/src/main/resources/application-prod.yml
+- [x] T006 [P] Setup Jest testing framework configuration in frontend/package.json
+- [x] T007 [P] Create dark academia CSS variables and base theme in frontend/src/css/themes/dark-academia.css
 
 ---
 
