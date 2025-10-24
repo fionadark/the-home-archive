@@ -109,7 +109,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints (no authentication required)
                 .requestMatchers(
-                    "/api/v1/auth/**",        // Authentication endpoints
+                    "/api/auth/**",           // Authentication endpoints (corrected from v1)
                     "/api/public/**",         // Public API endpoints
                     "/h2-console/**",         // H2 database console (dev only)
                     "/actuator/health",       // Health check
@@ -118,7 +118,16 @@ public class SecurityConfig {
                     "/swagger-ui/**",         // Swagger UI
                     "/swagger-ui.html",       // Swagger UI HTML
                     "/favicon.ico",           // Browser favicon
-                    "/error"                  // Error pages
+                    "/error",                 // Error pages
+                    // Static resources
+                    "/css/**",                // CSS files
+                    "/js/**",                 // JavaScript files
+                    "/images/**",             // Image files
+                    "/fonts/**",              // Font files
+                    "/static/**",             // Static resources
+                    "/*.html",                // HTML pages (login, register, etc.)
+                    "/*.css",                 // Root CSS files
+                    "/*.js"                   // Root JavaScript files
                 ).permitAll()
                 
                 // Admin-only endpoints
