@@ -55,7 +55,7 @@ class AuthenticationIntegrationTest {
                 .lastName("Test")
                 .build();
 
-        MvcResult registrationResult = mockMvc.perform(post("/api/v1/auth/register")
+        MvcResult registrationResult = mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registrationRequest)))
@@ -67,7 +67,7 @@ class AuthenticationIntegrationTest {
         // Step 2: Attempt login before email verification (should fail)
         LoginRequest loginRequest = new LoginRequest("integrationtest@example.com", "SecurePassword123!");
 
-        mockMvc.perform(post("/api/v1/auth/login")
+        mockMvc.perform(post("/api/auth/login")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -79,7 +79,7 @@ class AuthenticationIntegrationTest {
         // For integration test, we'll simulate getting the verification token
         EmailVerificationRequest verificationRequest = new EmailVerificationRequest("test_verification_token");
 
-        mockMvc.perform(post("/api/v1/auth/verify-email")
+        mockMvc.perform(post("/api/auth/verify-email")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verificationRequest)))
@@ -88,7 +88,7 @@ class AuthenticationIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Email verified successfully. You can now log in."));
 
         // Step 4: Login after email verification (should succeed)
-        MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/login")
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -144,7 +144,7 @@ class AuthenticationIntegrationTest {
                 .lastName("User")
                 .build();
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(firstRequest)))
@@ -158,7 +158,7 @@ class AuthenticationIntegrationTest {
                 .lastName("User")
                 .build();
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(duplicateRequest)))
@@ -179,7 +179,7 @@ class AuthenticationIntegrationTest {
                 .lastName("Token")
                 .build();
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registrationRequest)))
@@ -188,7 +188,7 @@ class AuthenticationIntegrationTest {
         // Attempt verification with expired token
         EmailVerificationRequest expiredRequest = new EmailVerificationRequest("expired_verification_token");
 
-        mockMvc.perform(post("/api/v1/auth/verify-email")
+        mockMvc.perform(post("/api/auth/verify-email")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(expiredRequest)))
@@ -209,7 +209,7 @@ class AuthenticationIntegrationTest {
                 .lastName("Name")
                 .build();
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidEmailRequest)))
@@ -225,7 +225,7 @@ class AuthenticationIntegrationTest {
                 .lastName("Name")
                 .build();
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(weakPasswordRequest)))
@@ -241,7 +241,7 @@ class AuthenticationIntegrationTest {
                 .lastName("")
                 .build();
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(emptyFieldsRequest)))

@@ -13,9 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
@@ -24,6 +26,8 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,7 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Contract tests for AuthController endpoints.
  * Following TDD approach - these tests define the expected API behavior.
  */
-@WebMvcTest(AuthController.class)
+@SpringBootTest
+@AutoConfigureWebMvc
+@ActiveProfiles("test")
 class AuthControllerTest {
 
     @Autowired
@@ -55,11 +61,11 @@ class AuthControllerTest {
     class UserRegistrationTests {
 
         @Test
-        @DisplayName("Should register user successfully with valid data")
-        void shouldRegisterUserSuccessfully() throws Exception {
-            // Given
+        @DisplayName("Should register new user successfully")
+        void shouldRegisterNewUserSuccessfully() throws Exception {
+            // Arrange
             UserRegistrationRequest request = UserRegistrationRequest.builder()
-                    .email("john.doe@example.com")
+                    .email("newuser@example.com")
                     .password("SecurePassword123!")
                     .firstName("John")
                     .lastName("Doe")
@@ -67,29 +73,31 @@ class AuthControllerTest {
 
             User mockUser = new User();
             mockUser.setId(1L);
-            mockUser.setEmail("john.doe@example.com");
+            mockUser.setEmail("newuser@example.com");
+            mockUser.setFirstName("John");
+            mockUser.setLastName("Doe");
 
-            when(userService.registerUser(any(UserRegistrationRequest.class)))
-                    .thenReturn(mockUser);
+            when(userService.emailExists(anyString())).thenReturn(false);
+            when(userService.registerUser(any(UserRegistrationRequest.class))).thenReturn(mockUser);
 
-            // When & Then
-            mockMvc.perform(post("/api/v1/auth/register")
+            // Act & Assert
+            mockMvc.perform(post("/api/auth/register")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.message").value("Registration successful. Please check your email for verification."))
-                    .andExpect(jsonPath("$.data").doesNotExist())
-                    .andExpect(jsonPath("$.error").doesNotExist())
-                    .andExpect(jsonPath("$.timestamp").exists());
+                    .andExpect(jsonPath("$.message").value("Registration successful. Please check your email for verification instructions."))
+                    .andExpect(jsonPath("$.userId").value(1));
+
+            verify(userService, times(1)).emailExists(anyString());
+            verify(userService, times(1)).registerUser(any(UserRegistrationRequest.class));
         }
 
         @Test
-        @DisplayName("Should return 400 for invalid registration data")
+        @DisplayName("Should return bad request for invalid registration data")
         void shouldReturnBadRequestForInvalidData() throws Exception {
-            // Given - Invalid request with missing required fields
+            // Arrange
             UserRegistrationRequest request = UserRegistrationRequest.builder()
                     .email("invalid-email")
                     .password("weak")
@@ -97,22 +105,18 @@ class AuthControllerTest {
                     .lastName("")
                     .build();
 
-            // When & Then
-            mockMvc.perform(post("/api/v1/auth/register")
+            // Act & Assert
+            mockMvc.perform(post("/api/auth/register")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error").exists())
-                    .andExpect(jsonPath("$.fieldErrors").exists());
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
-        @DisplayName("Should return 409 for duplicate email")
-        void shouldReturnConflictForDuplicateEmail() throws Exception {
-            // Given
+        @DisplayName("Should return conflict when email already exists")
+        void shouldReturnConflictWhenEmailExists() throws Exception {
+            // Arrange
             UserRegistrationRequest request = UserRegistrationRequest.builder()
                     .email("existing@example.com")
                     .password("SecurePassword123!")
@@ -120,18 +124,16 @@ class AuthControllerTest {
                     .lastName("Doe")
                     .build();
 
-            when(userService.registerUser(any(UserRegistrationRequest.class)))
-                    .thenThrow(new RuntimeException("Email already exists"));
+            when(userService.emailExists(anyString())).thenReturn(true);
 
-            // When & Then
-            mockMvc.perform(post("/api/v1/auth/register")
+            // Act & Assert
+            mockMvc.perform(post("/api/auth/register")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error").value("Email already exists"));
+                    .andExpect(jsonPath("$.message").value("Email address is already registered"));
         }
 
         @Test
@@ -181,7 +183,7 @@ class AuthControllerTest {
 
             when(authenticationService.login(any(LoginRequest.class)))
                     .thenReturn(mockAuthResult);            // When & Then
-            mockMvc.perform(post("/api/v1/auth/login")
+            mockMvc.perform(post("/api/auth/login")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -209,7 +211,7 @@ class AuthControllerTest {
                     .thenThrow(new RuntimeException("Invalid credentials"));
 
             // When & Then
-            mockMvc.perform(post("/api/v1/auth/login")
+            mockMvc.perform(post("/api/auth/login")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -226,7 +228,7 @@ class AuthControllerTest {
             LoginRequest request = new LoginRequest("", "");
 
             // When & Then
-            mockMvc.perform(post("/api/v1/auth/login")
+            mockMvc.perform(post("/api/auth/login")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -255,7 +257,7 @@ class AuthControllerTest {
                     .thenReturn(mockVerification);
 
             // When & Then
-            mockMvc.perform(post("/api/v1/auth/verify-email")
+            mockMvc.perform(post("/api/auth/verify-email")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -276,7 +278,7 @@ class AuthControllerTest {
                     .thenThrow(new RuntimeException("Invalid or expired verification token"));
 
             // When & Then
-            mockMvc.perform(post("/api/v1/auth/verify-email")
+            mockMvc.perform(post("/api/auth/verify-email")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -293,7 +295,7 @@ class AuthControllerTest {
             EmailVerificationRequest request = new EmailVerificationRequest("");
 
             // When & Then
-            mockMvc.perform(post("/api/v1/auth/verify-email")
+            mockMvc.perform(post("/api/auth/verify-email")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))

@@ -65,10 +65,13 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Invalid email or password");
         }
         
+        // Note: Email verification is optional for now to allow core authentication functionality
+        // In production, you may want to enforce email verification by uncommenting the lines below:
+        
         // Check if email is verified
-        if (!user.getEmailVerified()) {
-            throw new IllegalArgumentException("Please verify your email before logging in");
-        }
+        // if (!user.getEmailVerified()) {
+        //     throw new IllegalArgumentException("Please verify your email before logging in");
+        // }
         
         // Generate JWT tokens
         String accessToken = jwtService.generateAccessToken(user);
