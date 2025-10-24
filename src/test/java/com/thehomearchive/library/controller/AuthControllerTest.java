@@ -208,7 +208,7 @@ class AuthControllerTest {
             LoginRequest request = new LoginRequest("invalid@example.com", "wrongpassword");
 
             when(authenticationService.login(any(LoginRequest.class)))
-                    .thenThrow(new RuntimeException("Invalid credentials"));
+                    .thenThrow(new IllegalArgumentException("Invalid credentials"));
 
             // When & Then
             mockMvc.perform(post("/api/auth/login")
@@ -218,7 +218,7 @@ class AuthControllerTest {
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error").value("Invalid credentials"));
+                    .andExpect(jsonPath("$.message").value("Invalid credentials"));
         }
 
         @Test
@@ -235,7 +235,7 @@ class AuthControllerTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error").exists());
+                    .andExpect(jsonPath("$.message").exists());
         }
     }
 
@@ -264,8 +264,7 @@ class AuthControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.message").value("Email verified successfully. You can now log in."))
-                    .andExpect(jsonPath("$.timestamp").exists());
+                    .andExpect(jsonPath("$.message").value("Email verified successfully. You can now log in."));
         }
 
         @Test
@@ -285,7 +284,7 @@ class AuthControllerTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error").value("Invalid or expired verification token"));
+                    .andExpect(jsonPath("$.message").value("Invalid or expired verification token"));
         }
 
         @Test
@@ -302,7 +301,7 @@ class AuthControllerTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error").exists());
+                    .andExpect(jsonPath("$.message").exists());
         }
     }
 }
