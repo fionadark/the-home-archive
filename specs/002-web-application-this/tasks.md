@@ -104,18 +104,18 @@
 - [x] T034 [US1] Implement EmailService for verification emails in backend/src/main/java/com/thehomearchive/library/service/EmailService.java
 - [x] T035 [US1] Implement JwtService for token management in backend/src/main/java/com/thehomearchive/library/service/JwtService.java
 - [x] T036 [US1] Create AuthController with registration/login endpoints in backend/src/main/java/com/thehomearchive/library/controller/AuthController.java
-- [ ] T037 [P] [US1] Create dark academia login page HTML in frontend/src/html/login.html
-- [ ] T038 [P] [US1] Create registration page HTML in frontend/src/html/register.html
-- [ ] T039 [P] [US1] Create email verification page HTML in frontend/src/html/verify-email.html
-- [ ] T040 [P] [US1] Create personal dashboard page HTML in frontend/src/html/dashboard.html
-- [ ] T041 [P] [US1] Style login page with dark academia theme in frontend/src/css/pages/login.css
-- [ ] T042 [P] [US1] Style registration page in frontend/src/css/pages/register.css
-- [ ] T043 [P] [US1] Style dashboard page in frontend/src/css/pages/dashboard.css
-- [ ] T044 [US1] Implement authentication JavaScript service in frontend/src/js/services/authService.js
-- [ ] T045 [US1] Implement login page JavaScript in frontend/src/js/pages/loginPage.js
-- [ ] T046 [US1] Implement registration page JavaScript in frontend/src/js/pages/registerPage.js
-- [ ] T047 [US1] Implement navigation and security JavaScript in frontend/src/js/utils/security.js
-- [ ] T048 [US1] Add authentication middleware and route protection in frontend/src/js/utils/router.js
+- [x] T037 [P] [US1] Create dark academia login page HTML in frontend/src/html/login.html
+- [x] T038 [P] [US1] Create registration page HTML in frontend/src/html/register.html
+- [x] T039 [P] [US1] Create email verification page HTML in frontend/src/html/verify-email.html
+- [x] T040 [P] [US1] Create personal dashboard page HTML in frontend/src/html/dashboard.html
+- [x] T041 [P] [US1] Style login page with dark academia theme in frontend/src/css/pages/login.css
+- [x] T042 [P] [US1] Style registration page in frontend/src/css/pages/register.css
+- [x] T043 [P] [US1] Style dashboard page in frontend/src/css/pages/dashboard.css
+- [x] T044 [US1] Implement authentication JavaScript service in frontend/src/js/services/authService.js
+- [x] T045 [US1] Implement login page JavaScript in frontend/src/js/pages/loginPage.js
+- [x] T046 [US1] Implement registration page JavaScript in frontend/src/js/pages/registerPage.js
+- [x] T047 [US1] Implement navigation and security JavaScript in frontend/src/js/utils/security.js ✅ Complete authentication system validated
+- [x] T048 [US1] Add authentication middleware and route protection in frontend/src/js/utils/router.js ✅ End-to-end authentication flow working
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
