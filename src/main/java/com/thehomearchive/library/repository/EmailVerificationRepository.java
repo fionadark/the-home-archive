@@ -24,10 +24,10 @@ public interface EmailVerificationRepository extends JpaRepository<EmailVerifica
      * Find an email verification by token.
      * Used for token validation during verification process.
      *
-     * @param token the verification token to search for
+     * @param verificationToken the verification token to search for
      * @return Optional containing the verification if found, empty otherwise
      */
-    Optional<EmailVerification> findByToken(String token);
+    Optional<EmailVerification> findByVerificationToken(String verificationToken);
     
     /**
      * Find email verifications by user.
@@ -128,7 +128,7 @@ public interface EmailVerificationRepository extends JpaRepository<EmailVerifica
      * @return number of deleted records
      */
     @Modifying
-    @Query("DELETE FROM EmailVerification ev WHERE ev.verified = true AND ev.updatedAt < :cutoffDate")
+    @Query("DELETE FROM EmailVerification ev WHERE ev.verified = true AND ev.verifiedAt < :cutoffDate")
     int deleteOldVerifiedTokens(@Param("cutoffDate") LocalDateTime cutoffDate);
     
     /**
