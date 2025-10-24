@@ -81,21 +81,21 @@
 
 **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T020 [P] [US1] Contract test for user registration endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
-- [ ] T021 [P] [US1] Contract test for login endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
-- [ ] T022 [P] [US1] Contract test for email verification endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
-- [ ] T023 [P] [US1] Integration test for authentication flow in backend/src/test/java/com/thehomearchive/library/integration/AuthenticationIntegrationTest.java
-- [ ] T024 [P] [US1] Security test for unauthorized access protection in backend/src/test/java/com/thehomearchive/library/security/SecurityTest.java
+- [x] T020 [P] [US1] Contract test for user registration endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
+- [x] T021 [P] [US1] Contract test for login endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
+- [x] T022 [P] [US1] Contract test for email verification endpoint in backend/src/test/java/com/thehomearchive/library/controller/AuthControllerTest.java
+- [x] T023 [P] [US1] Integration test for authentication flow in backend/src/test/java/com/thehomearchive/library/integration/AuthenticationIntegrationTest.java
+- [x] T024 [P] [US1] Security test for unauthorized access protection in backend/src/test/java/com/thehomearchive/library/security/SecurityTest.java
 - [ ] T025 [P] [US1] Frontend test for login form in frontend/tests/pages/LoginPage.test.js
 
 ### Implementation for User Story 1
 
-- [ ] T023 [P] [US1] Create User entity in backend/src/main/java/com/thehomearchive/library/entity/User.java
-- [ ] T024 [P] [US1] Create EmailVerification entity in backend/src/main/java/com/thehomearchive/library/entity/EmailVerification.java  
-- [ ] T025 [P] [US1] Create UserSession entity in backend/src/main/java/com/thehomearchive/library/entity/UserSession.java
-- [ ] T026 [P] [US1] Create UserRole enum in backend/src/main/java/com/thehomearchive/library/entity/UserRole.java
-- [ ] T027 [P] [US1] Create VerificationType enum in backend/src/main/java/com/thehomearchive/library/entity/VerificationType.java
-- [ ] T028 [P] [US1] Create authentication DTOs in backend/src/main/java/com/thehomearchive/library/dto/auth/
+- [ ] T026 [P] [US1] Create User entity in src/main/java/com/thehomearchive/library/entity/User.java
+- [ ] T027 [P] [US1] Create EmailVerification entity in src/main/java/com/thehomearchive/library/entity/EmailVerification.java  
+- [x] T028: Create UserSession entity for JWT session management and tracking
+- [x] T029 [P] [US1] Create UserRole enum in src/main/java/com/thehomearchive/library/entity/UserRole.java
+- [x] T030 [P] [US1] Create VerificationType enum in src/main/java/com/thehomearchive/library/entity/VerificationType.java
+- [x] T031 [P] [US1] Create authentication DTOs in src/main/java/com/thehomearchive/library/dto/auth/
 - [ ] T029 [US1] Create UserRepository in backend/src/main/java/com/thehomearchive/library/repository/UserRepository.java (depends on T023)
 - [ ] T030 [US1] Create EmailVerificationRepository in backend/src/main/java/com/thehomearchive/library/repository/EmailVerificationRepository.java (depends on T024)
 - [ ] T031 [US1] Create UserSessionRepository in backend/src/main/java/com/thehomearchive/library/repository/UserSessionRepository.java (depends on T025)
