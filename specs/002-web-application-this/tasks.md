@@ -148,11 +148,11 @@
 - [x] T062 [US2] Implement BookService with CRUD operations in backend/src/main/java/com/thehomearchive/library/service/BookService.java
 - [x] T063 [US2] Create LibraryController for personal library operations in backend/src/main/java/com/thehomearchive/library/controller/LibraryController.java
 - [x] T064 [US2] Create BookController for book management in backend/src/main/java/com/thehomearchive/library/controller/BookController.java
-- [ ] T065 [P] [US2] Create library management page HTML with card grid layout in frontend/src/html/library.html
-- [ ] T066 [P] [US2] Create book card component HTML template in frontend/src/html/components/book-card.html
-- [ ] T067 [P] [US2] Style library page with dark academia theme in frontend/src/css/pages/library.css
-- [ ] T068 [P] [US2] Style book card component in frontend/src/css/components/book-card.css
-- [ ] T069 [P] [US2] Style search and filter components in frontend/src/css/components/search-filter.css
+- [x] T065 [P] [US2] Create library management page HTML with card grid layout in frontend/src/html/library.html
+- [x] T066 [P] [US2] Create book card component HTML template in frontend/src/html/components/book-card.html
+- [x] T067 [P] [US2] Style library page with dark academia theme in frontend/src/css/pages/library.css
+- [x] T068 [P] [US2] Style book card component in frontend/src/css/components/book-card.css
+- [x] T069 [P] [US2] Style search and filter components in frontend/src/css/components/search-filter.css
 - [ ] T070 [US2] Implement library API service in frontend/src/js/services/libraryService.js
 - [ ] T071 [US2] Implement book card component JavaScript in frontend/src/js/components/BookCard.js
 - [ ] T072 [US2] Implement search and filter JavaScript in frontend/src/js/components/SearchFilter.js
