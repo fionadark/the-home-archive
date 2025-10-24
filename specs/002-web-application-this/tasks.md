@@ -129,23 +129,23 @@
 
 ### Tests for User Story 2 (TDD Required)
 
-- [ ] T049 [P] [US2] Contract test for personal library endpoints in backend/src/test/java/com/thehomearchive/library/controller/LibraryControllerTest.java
-- [ ] T050 [P] [US2] Contract test for book management endpoints in backend/src/test/java/com/thehomearchive/library/controller/BookControllerTest.java
-- [ ] T051 [P] [US2] Integration test for library management flow in backend/src/test/java/com/thehomearchive/library/integration/LibraryManagementIntegrationTest.java
+- [x] T049 [P] [US2] Contract test for personal library endpoints in backend/src/test/java/com/thehomearchive/library/controller/LibraryControllerTest.java
+- [x] T050 [P] [US2] Contract test for book management endpoints in backend/src/test/java/com/thehomearchive/library/controller/BookControllerTest.java
+- [x] T051 [P] [US2] Integration test for library management flow in backend/src/test/java/com/thehomearchive/library/integration/LibraryManagementIntegrationTest.java
 - [ ] T052 [P] [US2] Frontend test for library page functionality in frontend/tests/pages/LibraryPage.test.js
 - [ ] T053 [P] [US2] Frontend test for book card component in frontend/tests/components/BookCard.test.js
 
 ### Implementation for User Story 2
 
-- [ ] T054 [P] [US2] Create Book entity in backend/src/main/java/com/thehomearchive/library/entity/Book.java
-- [ ] T055 [P] [US2] Create Category entity in backend/src/main/java/com/thehomearchive/library/entity/Category.java
-- [ ] T056 [P] [US2] Create PersonalLibrary entity (user-book relationship) in backend/src/main/java/com/thehomearchive/library/entity/PersonalLibrary.java
-- [ ] T057 [P] [US2] Create book management DTOs in backend/src/main/java/com/thehomearchive/library/dto/book/
-- [ ] T058 [US2] Create BookRepository with search capabilities in backend/src/main/java/com/thehomearchive/library/repository/BookRepository.java (depends on T054)
-- [ ] T059 [US2] Create CategoryRepository in backend/src/main/java/com/thehomearchive/library/repository/CategoryRepository.java (depends on T055)
-- [ ] T060 [US2] Create PersonalLibraryRepository in backend/src/main/java/com/thehomearchive/library/repository/PersonalLibraryRepository.java (depends on T056)
-- [ ] T061 [US2] Implement LibraryService with personal library management in backend/src/main/java/com/thehomearchive/library/service/LibraryService.java
-- [ ] T062 [US2] Implement BookService with CRUD operations in backend/src/main/java/com/thehomearchive/library/service/BookService.java
+- [x] T054 [P] [US2] Create Book entity in backend/src/main/java/com/thehomearchive/library/entity/Book.java
+- [x] T055 [P] [US2] Create Category entity in backend/src/main/java/com/thehomearchive/library/entity/Category.java
+- [x] T056 [P] [US2] Create PersonalLibrary entity (user-book relationship) in backend/src/main/java/com/thehomearchive/library/entity/PersonalLibrary.java
+- [x] T057 [P] [US2] Create book management DTOs in backend/src/main/java/com/thehomearchive/library/dto/book/
+- [x] T058 [US2] Create BookRepository with search capabilities in backend/src/main/java/com/thehomearchive/library/repository/BookRepository.java (depends on T054)
+- [x] T059 [US2] Create CategoryRepository in backend/src/main/java/com/thehomearchive/library/repository/CategoryRepository.java (depends on T055)
+- [x] T060 [US2] Create PersonalLibraryRepository in backend/src/main/java/com/thehomearchive/library/repository/PersonalLibraryRepository.java (depends on T056)
+- [x] T061 [US2] Implement LibraryService with personal library management in backend/src/main/java/com/thehomearchive/library/service/LibraryService.java
+- [x] T062 [US2] Implement BookService with CRUD operations in backend/src/main/java/com/thehomearchive/library/service/BookService.java
 - [ ] T063 [US2] Create LibraryController for personal library operations in backend/src/main/java/com/thehomearchive/library/controller/LibraryController.java
 - [ ] T064 [US2] Create BookController for book management in backend/src/main/java/com/thehomearchive/library/controller/BookController.java
 - [ ] T065 [P] [US2] Create library management page HTML with card grid layout in frontend/src/html/library.html
