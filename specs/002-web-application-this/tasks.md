@@ -90,8 +90,8 @@
 
 ### Implementation for User Story 1
 
-- [ ] T026 [P] [US1] Create User entity in src/main/java/com/thehomearchive/library/entity/User.java
-- [ ] T027 [P] [US1] Create EmailVerification entity in src/main/java/com/thehomearchive/library/entity/EmailVerification.java  
+- [x] T026 [P] [US1] Create User entity in src/main/java/com/thehomearchive/library/entity/User.java
+- [x] T027 [P] [US1] Create EmailVerification entity in src/main/java/com/thehomearchive/library/entity/EmailVerification.java  
 - [x] T028: Create UserSession entity for JWT session management and tracking
 - [x] T029 [P] [US1] Create UserRole enum in src/main/java/com/thehomearchive/library/entity/UserRole.java
 - [x] T030 [P] [US1] Create VerificationType enum in src/main/java/com/thehomearchive/library/entity/VerificationType.java
