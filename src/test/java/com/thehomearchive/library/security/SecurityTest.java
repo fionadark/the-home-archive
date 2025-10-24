@@ -265,11 +265,10 @@ class SecurityTest {
         @Test
         @DisplayName("Should reject requests from unauthorized origins")
         void shouldRejectUnauthorizedOrigins() throws Exception {
-            // This test would be more relevant in a production environment
-            // For now, we're testing that CORS is configured and functional
+            // Test that CORS properly rejects requests from unauthorized origins
             mockMvc.perform(post("/api/auth/login")
                             .header("Origin", "http://malicious-site.com"))
-                    .andExpect(status().isBadRequest()); // Should not be CORS-blocked in test, but bad request due to missing body
+                    .andExpect(status().isForbidden()); // CORS blocks unauthorized origins
         }
     }
 
