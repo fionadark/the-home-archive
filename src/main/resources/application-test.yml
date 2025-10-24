@@ -1,0 +1,65 @@
+spring:
+  # H2 Test Database Configuration
+  datasource:
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+    
+  # JPA/Hibernate Configuration for Testing
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+        
+  # Disable mail for testing
+  mail:
+    host: localhost
+    port: 1025
+    username: 
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+# JWT Configuration for Testing
+jwt:
+  secret: test-secret-key-for-testing-only-minimum-256-bits-required-for-jwt
+  expiration: 3600000 # 1 hour
+  refresh-expiration: 604800000 # 7 days
+
+# Test Application Configuration
+app:
+  name: The Home Archive (Test)
+  version: 1.0.0-TEST
+  frontend:
+    url: http://localhost:8080
+  cors:
+    allowed-origins: http://localhost:8080
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
+
+# Disable management endpoints for testing
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    health:
+      enabled: true
+
+# Minimal logging for tests
+logging:
+  level:
+    root: WARN
+    com.thehomearchive.library: INFO
+    org.springframework.test: INFO
+    org.springframework.security: WARN

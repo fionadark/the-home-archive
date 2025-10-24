@@ -1,0 +1,67 @@
+spring:
+  profiles:
+    active: dev
+    
+  # JPA Configuration
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        jdbc:
+          time_zone: UTC
+        
+  # Mail Configuration
+  mail:
+    default-encoding: UTF-8
+    properties:
+      mail:
+        mime:
+          charset: UTF-8
+
+# Server Configuration
+server:
+  port: 8080
+  error:
+    include-message: on_param
+    include-binding-errors: on_param
+
+# JWT Configuration  
+jwt:
+  secret: ${JWT_SECRET:dev-secret-key-change-in-production-this-must-be-at-least-256-bits-long}
+  expiration: ${JWT_EXPIRATION:3600000} # 1 hour in milliseconds
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 days in milliseconds
+
+# Application Configuration
+app:
+  name: The Home Archive
+  version: 1.0.0
+  frontend:
+    url: ${FRONTEND_URL:http://localhost:8080}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8080,http://localhost:3000}
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.thehomearchive.library: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web.cors: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management/Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
