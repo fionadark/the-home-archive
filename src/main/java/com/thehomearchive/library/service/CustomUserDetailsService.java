@@ -2,6 +2,7 @@ package com.thehomearchive.library.service;
 
 import com.thehomearchive.library.entity.User;
 import com.thehomearchive.library.repository.UserRepository;
+import com.thehomearchive.library.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,7 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     /**
      * Custom UserDetails implementation wrapping our User entity
      */
-    public static class CustomUserPrincipal implements UserDetails {
+    public static class CustomUserPrincipal implements UserDetails, UserPrincipal {
         private final User user;
 
         public CustomUserPrincipal(User user) {
