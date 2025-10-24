@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thehomearchive.library.dto.auth.UserRegistrationRequest;
 import com.thehomearchive.library.dto.auth.LoginRequest;
 import com.thehomearchive.library.dto.auth.EmailVerificationRequest;
-import com.thehomearchive.library.dto.response.ApiResponse;
-import com.thehomearchive.library.dto.response.AuthResponse;
+import com.thehomearchive.library.entity.EmailVerification;
+import com.thehomearchive.library.entity.User;
 import com.thehomearchive.library.service.AuthenticationService;
 import com.thehomearchive.library.service.UserService;
 import com.thehomearchive.library.service.EmailService;
@@ -17,6 +17,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -62,12 +65,12 @@ class AuthControllerTest {
                     .lastName("Doe")
                     .build();
 
-            ApiResponse<String> expectedResponse = ApiResponse.success(
-                    "Registration successful. Please check your email for verification."
-            );
+            User mockUser = new User();
+            mockUser.setId(1L);
+            mockUser.setEmail("john.doe@example.com");
 
             when(userService.registerUser(any(UserRegistrationRequest.class)))
-                    .thenReturn(expectedResponse);
+                    .thenReturn(mockUser);
 
             // When & Then
             mockMvc.perform(post("/api/v1/auth/register")
@@ -158,29 +161,26 @@ class AuthControllerTest {
         @DisplayName("Should login user successfully with valid credentials")
         void shouldLoginUserSuccessfully() throws Exception {
             // Given
-            LoginRequest request = new LoginRequest("john.doe@example.com", "SecurePassword123!");
-            
-            AuthResponse.UserInfo userInfo = AuthResponse.UserInfo.builder()
-                    .id(1L)
-                    .username("john.doe@example.com")
-                    .email("john.doe@example.com")
-                    .firstName("John")
-                    .lastName("Doe")
-                    .role("USER")
-                    .emailVerified(true)
-                    .build();
+            LoginRequest request = new LoginRequest();
+            request.setEmail("john.doe@example.com");
+            request.setPassword("SecurePassword123!");
 
-            AuthResponse expectedResponse = AuthResponse.of(
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", // Mock JWT token
-                    "refresh_token_here",
-                    3600L,
-                    userInfo
-            );
+            Map<String, Object> mockAuthResult = new HashMap<>();
+            mockAuthResult.put("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...");
+            mockAuthResult.put("refreshToken", "refresh_token_here");
+            mockAuthResult.put("tokenType", "Bearer");
+            mockAuthResult.put("expiresIn", 3600);
+            mockAuthResult.put("user", Map.of(
+                "id", 1L,
+                "email", "john.doe@example.com",
+                "firstName", "John",
+                "lastName", "Doe",
+                "role", "USER",
+                "emailVerified", true
+            ));
 
             when(authenticationService.login(any(LoginRequest.class)))
-                    .thenReturn(expectedResponse);
-
-            // When & Then
+                    .thenReturn(mockAuthResult);            // When & Then
             mockMvc.perform(post("/api/v1/auth/login")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
@@ -247,12 +247,12 @@ class AuthControllerTest {
             // Given
             EmailVerificationRequest request = new EmailVerificationRequest("valid_verification_token");
             
-            ApiResponse<String> expectedResponse = ApiResponse.success(
-                    "Email verified successfully. You can now log in."
-            );
+            EmailVerification mockVerification = new EmailVerification();
+            mockVerification.setId(1L);
+            mockVerification.setVerified(true);
 
             when(emailService.verifyEmail(anyString()))
-                    .thenReturn(expectedResponse);
+                    .thenReturn(mockVerification);
 
             // When & Then
             mockMvc.perform(post("/api/v1/auth/verify-email")

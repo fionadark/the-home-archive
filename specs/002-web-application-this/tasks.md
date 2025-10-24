@@ -96,14 +96,14 @@
 - [x] T029 [P] [US1] Create UserRole enum in src/main/java/com/thehomearchive/library/entity/UserRole.java
 - [x] T030 [P] [US1] Create VerificationType enum in src/main/java/com/thehomearchive/library/entity/VerificationType.java
 - [x] T031 [P] [US1] Create authentication DTOs in src/main/java/com/thehomearchive/library/dto/auth/
-- [ ] T029 [US1] Create UserRepository in backend/src/main/java/com/thehomearchive/library/repository/UserRepository.java (depends on T023)
-- [ ] T030 [US1] Create EmailVerificationRepository in backend/src/main/java/com/thehomearchive/library/repository/EmailVerificationRepository.java (depends on T024)
-- [ ] T031 [US1] Create UserSessionRepository in backend/src/main/java/com/thehomearchive/library/repository/UserSessionRepository.java (depends on T025)
-- [ ] T032 [US1] Implement UserService with registration logic in backend/src/main/java/com/thehomearchive/library/service/UserService.java
-- [ ] T033 [US1] Implement AuthenticationService with login/logout in backend/src/main/java/com/thehomearchive/library/service/AuthenticationService.java
-- [ ] T034 [US1] Implement EmailService for verification emails in backend/src/main/java/com/thehomearchive/library/service/EmailService.java
-- [ ] T035 [US1] Implement JwtService for token management in backend/src/main/java/com/thehomearchive/library/service/JwtService.java
-- [ ] T036 [US1] Create AuthController with registration/login endpoints in backend/src/main/java/com/thehomearchive/library/controller/AuthController.java
+- [x] T029 [US1] Create UserRepository in backend/src/main/java/com/thehomearchive/library/repository/UserRepository.java (depends on T023)
+- [x] T030 [US1] Create EmailVerificationRepository in backend/src/main/java/com/thehomearchive/library/repository/EmailVerificationRepository.java (depends on T024)
+- [x] T031 [US1] Create UserSessionRepository in backend/src/main/java/com/thehomearchive/library/repository/UserSessionRepository.java (depends on T025)
+- [x] T032 [US1] Implement UserService with registration logic in backend/src/main/java/com/thehomearchive/library/service/UserService.java
+- [x] T033 [US1] Implement AuthenticationService with login/logout in backend/src/main/java/com/thehomearchive/library/service/AuthenticationService.java
+- [x] T034 [US1] Implement EmailService for verification emails in backend/src/main/java/com/thehomearchive/library/service/EmailService.java
+- [x] T035 [US1] Implement JwtService for token management in backend/src/main/java/com/thehomearchive/library/service/JwtService.java
+- [x] T036 [US1] Create AuthController with registration/login endpoints in backend/src/main/java/com/thehomearchive/library/controller/AuthController.java
 - [ ] T037 [P] [US1] Create dark academia login page HTML in frontend/src/html/login.html
 - [ ] T038 [P] [US1] Create registration page HTML in frontend/src/html/register.html
 - [ ] T039 [P] [US1] Create email verification page HTML in frontend/src/html/verify-email.html

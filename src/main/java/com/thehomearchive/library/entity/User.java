@@ -52,6 +52,9 @@ public class User {
     @Column(nullable = false)
     private Boolean emailVerified = false;
     
+    @Column
+    private LocalDateTime emailVerifiedAt;
+    
     @Column(nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
@@ -105,6 +108,10 @@ public class User {
         return emailVerified;
     }
     
+    public LocalDateTime getEmailVerifiedAt() {
+        return emailVerifiedAt;
+    }
+    
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -144,6 +151,20 @@ public class User {
     
     public void setEmailVerified(Boolean emailVerified) {
         this.emailVerified = emailVerified;
+    }
+    
+    public void setEmailVerifiedAt(LocalDateTime emailVerifiedAt) {
+        this.emailVerifiedAt = emailVerifiedAt;
+    }
+    
+    /**
+     * Convenience method to set password hash.
+     * This method is for use with password encoders.
+     *
+     * @param password the encoded password to set
+     */
+    public void setPassword(String password) {
+        this.passwordHash = password;
     }
     
     public void setCreatedAt(LocalDateTime createdAt) {
