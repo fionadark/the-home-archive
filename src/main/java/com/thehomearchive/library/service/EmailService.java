@@ -73,7 +73,7 @@ public class EmailService {
     @Transactional
     public EmailVerification verifyEmail(String token) {
         // Find verification by token
-        Optional<EmailVerification> verificationOpt = emailVerificationRepository.findByToken(token);
+        Optional<EmailVerification> verificationOpt = emailVerificationRepository.findByVerificationToken(token);
         
         if (verificationOpt.isEmpty()) {
             throw new IllegalArgumentException("Invalid verification token");
