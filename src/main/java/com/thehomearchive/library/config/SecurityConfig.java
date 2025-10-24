@@ -123,7 +123,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints (no authentication required)
                 .requestMatchers(
-                    "/api/auth/**",           // Authentication endpoints (corrected from v1)
+                    "/api/auth/**",           // Authentication endpoints
+                    "/api/v1/auth/**",        // Authentication endpoints (v1)
                     "/api/public/**",         // Public API endpoints
                     "/h2-console/**",         // H2 database console (dev only)
                     "/actuator/health",       // Health check

@@ -101,19 +101,19 @@ class AuthenticationIntegrationTest {
     @Order(2)
     @DisplayName("Should prevent unauthorized access to protected resources")
     void shouldPreventUnauthorizedAccess() throws Exception {
-        // Attempt to access dashboard without token (current behavior: 403 Forbidden)
+        // Attempt to access dashboard without token (current behavior: 401 Unauthorized)
         mockMvc.perform(get("/api/v1/dashboard"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 
-        // Attempt to access dashboard with invalid token (current behavior: 403 Forbidden)  
+        // Attempt to access dashboard with invalid token (current behavior: 401 Unauthorized)  
         mockMvc.perform(get("/api/v1/dashboard")
                         .header("Authorization", "Bearer invalid_token"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 
-        // Attempt to access dashboard with malformed token (current behavior: 403 Forbidden)
+        // Attempt to access dashboard with malformed token (current behavior: 401 Unauthorized)
         mockMvc.perform(get("/api/v1/dashboard")
                         .header("Authorization", "invalid_format"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
