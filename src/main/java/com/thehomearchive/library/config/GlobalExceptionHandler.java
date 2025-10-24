@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -53,6 +54,25 @@ public class GlobalExceptionHandler {
                 .build();
 
         logger.warn("Validation error on {}: {}", request.getRequestURI(), fieldErrors);
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    /**
+     * Handle missing or malformed request body errors
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException ex, HttpServletRequest request) {
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad Request")
+                .message("Required request body is missing or malformed")
+                .path(request.getRequestURI())
+                .build();
+
+        logger.warn("Missing or malformed request body on {}: {}", request.getRequestURI(), ex.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
