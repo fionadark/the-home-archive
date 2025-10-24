@@ -234,8 +234,9 @@ class AuthControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.message").exists());
+                    .andExpect(jsonPath("$.error").value("Validation Failed"))
+                    .andExpect(jsonPath("$.message").value("Invalid input provided"))
+                    .andExpect(jsonPath("$.details.email").value("Email is required"));
         }
     }
 
@@ -274,7 +275,7 @@ class AuthControllerTest {
             EmailVerificationRequest request = new EmailVerificationRequest("invalid_token");
 
             when(emailService.verifyEmail(anyString()))
-                    .thenThrow(new RuntimeException("Invalid or expired verification token"));
+                    .thenThrow(new IllegalArgumentException("Invalid or expired verification token"));
 
             // When & Then
             mockMvc.perform(post("/api/auth/verify-email")
@@ -300,8 +301,9 @@ class AuthControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.message").exists());
+                    .andExpect(jsonPath("$.error").value("Validation Failed"))
+                    .andExpect(jsonPath("$.message").value("Invalid input provided"))
+                    .andExpect(jsonPath("$.details.token").value("Verification token is required"));
         }
     }
 }
