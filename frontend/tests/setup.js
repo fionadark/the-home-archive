@@ -1,5 +1,5 @@
-import '@testing-library/jest-dom'
-import fetchMock from 'jest-fetch-mock'
+require('@testing-library/jest-dom')
+const fetchMock = require('jest-fetch-mock')
 
 // Enable fetch mock globally
 fetchMock.enableMocks()
