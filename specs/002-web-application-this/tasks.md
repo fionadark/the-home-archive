@@ -153,7 +153,7 @@
 - [x] T067 [P] [US2] Style library page with dark academia theme in frontend/src/css/pages/library.css
 - [x] T068 [P] [US2] Style book card component in frontend/src/css/components/book-card.css
 - [x] T069 [P] [US2] Style search and filter components in frontend/src/css/components/search-filter.css
-- [ ] T070 [US2] Implement library API service in frontend/src/js/services/libraryService.js
+- [x] T070 [US2] Implement library API service in frontend/src/js/services/libraryService.js
 - [ ] T071 [US2] Implement book card component JavaScript in frontend/src/js/components/BookCard.js
 - [ ] T072 [US2] Implement search and filter JavaScript in frontend/src/js/components/SearchFilter.js
 - [ ] T073 [US2] Implement library page JavaScript in frontend/src/js/pages/libraryPage.js
