@@ -172,17 +172,17 @@
 
 ### Tests for User Story 3 (TDD Required)
 
-- [ ] T076 [P] [US3] Contract test for book search endpoints in backend/src/test/java/com/thehomearchive/library/controller/BookSearchControllerTest.java
-- [ ] T077 [P] [US3] Contract test for book addition endpoints in backend/src/test/java/com/thehomearchive/library/controller/BookAdditionControllerTest.java  
-- [ ] T078 [P] [US3] Integration test for book discovery flow in backend/src/test/java/com/thehomearchive/library/integration/BookDiscoveryIntegrationTest.java
-- [ ] T079 [P] [US3] Frontend test for book search functionality in frontend/tests/pages/BookSearchPage.test.js
-- [ ] T080 [P] [US3] Frontend test for book addition flow in frontend/tests/components/BookAddition.test.js
+- [x] T076 [P] [US3] Contract test for book search endpoints in backend/src/test/java/com/thehomearchive/library/controller/BookSearchControllerTest.java
+- [x] T077 [P] [US3] Contract test for book addition endpoints in backend/src/test/java/com/thehomearchive/library/controller/BookAdditionControllerTest.java  
+- [x] T078 [P] [US3] Integration test for book discovery flow in backend/src/test/java/com/thehomearchive/library/integration/BookDiscoveryIntegrationTest.java
+- [x] T079 [P] [US3] Frontend test for book search functionality in frontend/tests/pages/BookSearchPage.test.js
+- [x] T080 [P] [US3] Frontend test for book addition flow in frontend/tests/components/BookAddition.test.js
 
 ### Implementation for User Story 3
 
-- [ ] T081 [P] [US3] Create BookRating entity in backend/src/main/java/com/thehomearchive/library/entity/BookRating.java
-- [ ] T082 [P] [US3] Create SearchHistory entity in backend/src/main/java/com/thehomearchive/library/entity/SearchHistory.java
-- [ ] T083 [P] [US3] Create book search DTOs in backend/src/main/java/com/thehomearchive/library/dto/search/
+- [x] T081 [P] [US3] Create BookRating entity in backend/src/main/java/com/thehomearchive/library/entity/BookRating.java
+- [x] T082 [P] [US3] Create SearchHistory entity in backend/src/main/java/com/thehomearchive/library/entity/SearchHistory.java
+- [x] T083 [P] [US3] Create book search DTOs in backend/src/main/java/com/thehomearchive/library/dto/search/
 - [ ] T084 [US3] Create BookRatingRepository in backend/src/main/java/com/thehomearchive/library/repository/BookRatingRepository.java (depends on T081)
 - [ ] T085 [US3] Create SearchHistoryRepository in backend/src/main/java/com/thehomearchive/library/repository/SearchHistoryRepository.java (depends on T082)
 - [ ] T086 [US3] Implement BookSearchService with full database search in backend/src/main/java/com/thehomearchive/library/service/BookSearchService.java
