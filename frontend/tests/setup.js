@@ -66,7 +66,9 @@ beforeEach(() => {
   jest.clearAllMocks()
   
   // Reset fetch mock
-  fetch.resetMocks()
+  if (fetch && fetch.resetMocks) {
+    fetch.resetMocks()
+  }
   
   // Clear localStorage and sessionStorage
   localStorage.clear()
