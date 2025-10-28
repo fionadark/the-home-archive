@@ -196,7 +196,7 @@
 - [x] T094 [P] [US3] Style search results layout in frontend/src/css/components/search-results.css
 - [x] T095 [US3] Implement book search API service in frontend/src/js/services/bookSearchService.js
 - [x] T096 [US3] Implement book detail modal JavaScript in frontend/src/js/components/BookDetailModal.js
-- [ ] T097 [US3] Implement search results component in frontend/src/js/components/SearchResults.js
+- [x] T097 [US3] Implement search results component in frontend/src/js/components/SearchResults.js
 - [ ] T098 [US3] Implement book search page JavaScript in frontend/src/js/pages/bookSearchPage.js
 - [ ] T099 [US3] Implement book addition functionality in frontend/src/js/components/BookAddition.js
 - [ ] T100 [US3] Add duplicate prevention logic in frontend/src/js/utils/duplicateChecker.js
