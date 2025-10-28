@@ -6,9 +6,7 @@
  * Builds upon the dark academia theme variables.
  */
 
-/* ========================================
-   LAYOUT STRUCTURE
-   ======================================== */
+/* Layout Structure */
 
 .library-main {
     min-height: 100vh;
@@ -18,9 +16,7 @@
     padding-bottom: var(--da-space-4xl);
 }
 
-/* ========================================
-   HEADER & NAVIGATION
-   ======================================== */
+/* Header & Navigation */
 
 .library-header {
     background: var(--da-bg-dark);
@@ -111,9 +107,7 @@
     box-shadow: var(--da-shadow-medium);
 }
 
-/* ========================================
-   PAGE HEADER
-   ======================================== */
+/* Page Header */
 
 .library-page-header {
     padding: var(--da-space-3xl) 0 var(--da-space-2xl);
@@ -146,9 +140,7 @@
     font-style: italic;
 }
 
-/* ========================================
-   STATISTICS SECTION
-   ======================================== */
+/* Statistics Section */
 
 .library-stats {
     display: grid;
@@ -205,9 +197,7 @@
     letter-spacing: var(--da-letter-spacing-wide);
 }
 
-/* ========================================
-   CONTROLS SECTION
-   ======================================== */
+/* Controls Section */
 
 .library-controls {
     background: var(--da-bg-card);
@@ -288,9 +278,7 @@
     background: var(--da-primary-dark);
 }
 
-/* ========================================
-   CONTENT AREA
-   ======================================== */
+/* Content Area */
 
 .library-content {
     position: relative;
@@ -376,9 +364,7 @@
     border-color: var(--da-accent-gold);
 }
 
-/* ========================================
-   BOOKS GRID
-   ======================================== */
+/* Books Grid */
 
 .books-grid {
     display: grid;
@@ -387,9 +373,7 @@
     margin-bottom: var(--da-space-3xl);
 }
 
-/* ========================================
-   BOOKS LIST
-   ======================================== */
+/* Books List */
 
 .books-list {
     display: grid;
@@ -397,9 +381,7 @@
     margin-bottom: var(--da-space-3xl);
 }
 
-/* ========================================
-   PAGINATION
-   ======================================== */
+/* Pagination */
 
 .pagination-container {
     background: var(--da-bg-card);
@@ -485,9 +467,7 @@
     font-weight: var(--da-font-weight-medium);
 }
 
-/* ========================================
-   FOOTER
-   ======================================== */
+/* Footer */
 
 .library-footer {
     background: var(--da-primary-dark);
@@ -528,9 +508,7 @@
     color: var(--da-accent-gold);
 }
 
-/* ========================================
-   MODAL STYLES
-   ======================================== */
+/* Modal Styles */
 
 .modal-overlay {
     position: fixed;
@@ -569,9 +547,7 @@
     transform: scale(1);
 }
 
-/* ========================================
-   RESPONSIVE DESIGN
-   ======================================== */
+/* Responsive Design */
 
 @media (max-width: 1024px) {
     .library-stats {
@@ -663,9 +639,7 @@
     }
 }
 
-/* ========================================
-   PRINT STYLES
-   ======================================== */
+/* Print Styles */
 
 @media print {
     .library-header,

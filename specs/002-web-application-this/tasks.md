@@ -189,11 +189,11 @@
 - [x] T087 [US3] Implement RatingService for book ratings in backend/src/main/java/com/thehomearchive/library/service/RatingService.java
 - [x] T088 [US3] Create BookSearchController for database search in backend/src/main/java/com/thehomearchive/library/controller/BookSearchController.java
 - [x] T089 [US3] Create RatingController for book ratings in backend/src/main/java/com/thehomearchive/library/controller/RatingController.java
-- [ ] T090 [P] [US3] Create book search page HTML in frontend/src/html/book-search.html
-- [ ] T091 [P] [US3] Create book detail modal HTML in frontend/src/html/components/book-detail-modal.html
-- [ ] T092 [P] [US3] Style book search page with dark academia theme in frontend/src/css/pages/book-search.css
-- [ ] T093 [P] [US3] Style book detail modal in frontend/src/css/components/book-detail-modal.css
-- [ ] T094 [P] [US3] Style search results layout in frontend/src/css/components/search-results.css
+- [x] T090 [P] [US3] Create book search page HTML in frontend/src/html/book-search.html
+- [x] T091 [P] [US3] Create book detail modal HTML in frontend/src/html/components/book-detail-modal.html
+- [x] T092 [P] [US3] Style book search page with dark academia theme in frontend/src/css/pages/book-search.css
+- [x] T093 [P] [US3] Style book detail modal in frontend/src/css/components/book-detail-modal.css
+- [x] T094 [P] [US3] Style search results layout in frontend/src/css/components/search-results.css
 - [ ] T095 [US3] Implement book search API service in frontend/src/js/services/bookSearchService.js
 - [ ] T096 [US3] Implement book detail modal JavaScript in frontend/src/js/components/BookDetailModal.js
 - [ ] T097 [US3] Implement search results component in frontend/src/js/components/SearchResults.js

@@ -1,0 +1,230 @@
+<!-- Book Detail Modal Component -->
+<div class="book-modal-overlay" id="book-modal-overlay" role="dialog" aria-labelledby="book-modal-title" aria-hidden="true">
+    <div class="book-modal" id="book-modal">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h2 class="modal-title" id="book-modal-title">
+                Book Details
+            </h2>
+            <button class="modal-close" id="modal-close" aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="modal-content" id="modal-content">
+            <!-- Loading State -->
+            <div class="modal-loading" id="modal-loading">
+                <div class="loading-spinner">
+                    <i class="fas fa-book-reader fa-spin"></i>
+                </div>
+                <p>Loading book details...</p>
+            </div>
+
+            <!-- Book Details Content -->
+            <div class="book-details" id="book-details" style="display: none;">
+                <!-- Book Header Section -->
+                <div class="book-header">
+                    <div class="book-cover-section">
+                        <div class="book-cover-container">
+                            <img 
+                                id="book-cover" 
+                                class="book-cover" 
+                                src="" 
+                                alt="Book cover"
+                                loading="lazy"
+                            >
+                            <div class="cover-placeholder" id="cover-placeholder">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Book Actions -->
+                        <div class="book-actions">
+                            <button class="btn-primary btn-add-library" id="add-to-library">
+                                <i class="fas fa-plus"></i>
+                                Add to Library
+                            </button>
+                            <button class="btn-secondary btn-remove-library" id="remove-from-library" style="display: none;">
+                                <i class="fas fa-check"></i>
+                                In Library
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="book-info-section">
+                        <!-- Title and Author -->
+                        <div class="book-title-group">
+                            <h1 class="book-title" id="book-title">
+                                <!-- Dynamic title -->
+                            </h1>
+                            <p class="book-author" id="book-author">
+                                <!-- Dynamic author -->
+                            </p>
+                        </div>
+
+                        <!-- Book Metadata -->
+                        <div class="book-metadata">
+                            <div class="metadata-row">
+                                <span class="metadata-label">Category:</span>
+                                <span class="metadata-value" id="book-category">
+                                    <!-- Dynamic category -->
+                                </span>
+                            </div>
+                            <div class="metadata-row">
+                                <span class="metadata-label">Published:</span>
+                                <span class="metadata-value" id="book-publication">
+                                    <!-- Dynamic publication info -->
+                                </span>
+                            </div>
+                            <div class="metadata-row">
+                                <span class="metadata-label">ISBN:</span>
+                                <span class="metadata-value" id="book-isbn">
+                                    <!-- Dynamic ISBN -->
+                                </span>
+                            </div>
+                            <div class="metadata-row">
+                                <span class="metadata-label">Pages:</span>
+                                <span class="metadata-value" id="book-pages">
+                                    <!-- Dynamic page count -->
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Rating Section -->
+                        <div class="rating-section">
+                            <!-- Average Rating Display -->
+                            <div class="average-rating">
+                                <div class="rating-stars" id="average-rating-stars">
+                                    <!-- Dynamic star rating -->
+                                </div>
+                                <span class="rating-text">
+                                    <span id="average-rating-value">0.0</span>
+                                    (<span id="rating-count">0</span> ratings)
+                                </span>
+                            </div>
+
+                            <!-- User Rating Input -->
+                            <div class="user-rating" id="user-rating-section">
+                                <label class="rating-label">Your Rating:</label>
+                                <div class="rating-input" id="user-rating-input">
+                                    <button class="star-btn" data-rating="1" aria-label="Rate 1 star">
+                                        <i class="far fa-star"></i>
+                                    </button>
+                                    <button class="star-btn" data-rating="2" aria-label="Rate 2 stars">
+                                        <i class="far fa-star"></i>
+                                    </button>
+                                    <button class="star-btn" data-rating="3" aria-label="Rate 3 stars">
+                                        <i class="far fa-star"></i>
+                                    </button>
+                                    <button class="star-btn" data-rating="4" aria-label="Rate 4 stars">
+                                        <i class="far fa-star"></i>
+                                    </button>
+                                    <button class="star-btn" data-rating="5" aria-label="Rate 5 stars">
+                                        <i class="far fa-star"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Description -->
+                <div class="book-description" id="book-description-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-align-left"></i>
+                        Description
+                    </h3>
+                    <div class="description-content">
+                        <p class="book-description-text" id="book-description">
+                            <!-- Dynamic description -->
+                        </p>
+                        <button class="description-toggle" id="description-toggle" style="display: none;">
+                            Show more
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Review Section -->
+                <div class="review-section" id="review-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-comments"></i>
+                        Your Review
+                    </h3>
+                    
+                    <!-- Review Form -->
+                    <form class="review-form" id="review-form">
+                        <div class="review-input-group">
+                            <textarea 
+                                id="review-text" 
+                                class="review-textarea" 
+                                placeholder="Write your review here..."
+                                maxlength="2000"
+                                rows="4"
+                            ></textarea>
+                            <div class="review-actions">
+                                <span class="character-count">
+                                    <span id="review-char-count">0</span>/2000
+                                </span>
+                                <div class="review-buttons">
+                                    <button type="button" class="btn-secondary" id="clear-review">
+                                        Clear
+                                    </button>
+                                    <button type="submit" class="btn-primary" id="save-review">
+                                        Save Review
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Similar Books Section -->
+                <div class="similar-books-section" id="similar-books-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-book-open"></i>
+                        Similar Books
+                    </h3>
+                    <div class="similar-books-grid" id="similar-books-grid">
+                        <!-- Similar books will be populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Recent Reviews Section -->
+                <div class="recent-reviews-section" id="recent-reviews-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-star"></i>
+                        Recent Reviews
+                    </h3>
+                    <div class="reviews-list" id="reviews-list">
+                        <!-- Recent reviews will be populated dynamically -->
+                    </div>
+                    <button class="btn-load-more" id="load-more-reviews" style="display: none;">
+                        Load More Reviews
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div class="modal-error" id="modal-error" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Book</h3>
+                    <p id="error-message">
+                        Unable to load book details. Please try again.
+                    </p>
+                    <button class="btn-primary" id="retry-load">
+                        Retry
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <button class="btn-secondary" id="modal-cancel">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
