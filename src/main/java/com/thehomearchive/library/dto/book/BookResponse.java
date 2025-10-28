@@ -19,6 +19,8 @@ public class BookResponse {
     private Long categoryId;
     private String categoryName;
     private String coverImageUrl;
+    private Double averageRating; // Average rating for this book
+    private Integer ratingCount; // Total number of ratings
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -135,6 +137,22 @@ public class BookResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Integer getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
     }
 
     @Override
