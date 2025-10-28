@@ -188,7 +188,7 @@
 - [x] T086 [US3] Implement BookSearchService with full database search in backend/src/main/java/com/thehomearchive/library/service/BookSearchService.java
 - [x] T087 [US3] Implement RatingService for book ratings in backend/src/main/java/com/thehomearchive/library/service/RatingService.java
 - [x] T088 [US3] Create BookSearchController for database search in backend/src/main/java/com/thehomearchive/library/controller/BookSearchController.java
-- [ ] T089 [US3] Create RatingController for book ratings in backend/src/main/java/com/thehomearchive/library/controller/RatingController.java
+- [x] T089 [US3] Create RatingController for book ratings in backend/src/main/java/com/thehomearchive/library/controller/RatingController.java
 - [ ] T090 [P] [US3] Create book search page HTML in frontend/src/html/book-search.html
 - [ ] T091 [P] [US3] Create book detail modal HTML in frontend/src/html/components/book-detail-modal.html
 - [ ] T092 [P] [US3] Style book search page with dark academia theme in frontend/src/css/pages/book-search.css
