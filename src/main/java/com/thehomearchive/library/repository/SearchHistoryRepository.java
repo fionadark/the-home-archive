@@ -368,4 +368,28 @@ public interface SearchHistoryRepository extends BaseRepository<SearchHistory, L
      * @return Number of deleted entries
      */
     Long deleteBySessionId(String sessionId);
+
+    /**
+     * Find popular queries with pagination.
+     *
+     * @param pageable pagination parameters
+     * @return Page of popular queries as strings
+     */
+    @Query("SELECT sh.query " +
+           "FROM SearchHistory sh " +
+           "GROUP BY sh.query " +
+           "ORDER BY COUNT(sh) DESC")
+    Page<String> findPopularQueries(Pageable pageable);
+
+    /**
+     * Find queries by partial match with pagination.
+     *
+     * @param partialQuery the partial query to match
+     * @param pageable pagination parameters
+     * @return Page of matching queries as strings
+     */
+    @Query("SELECT DISTINCT sh.query " +
+           "FROM SearchHistory sh " +
+           "WHERE LOWER(sh.query) LIKE LOWER(CONCAT('%', :partialQuery, '%'))")
+    Page<String> findQueriesByPartialMatch(@Param("partialQuery") String partialQuery, Pageable pageable);
 }

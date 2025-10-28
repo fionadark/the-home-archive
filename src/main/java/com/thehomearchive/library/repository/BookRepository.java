@@ -45,6 +45,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByCategoryId(Long categoryId);
 
     /**
+     * Find books by category ID with pagination.
+     */
+    Page<Book> findByCategoryId(Long categoryId, Pageable pageable);
+
+    /**
      * Find books by publication year.
      */
     List<Book> findByPublicationYear(Integer publicationYear);

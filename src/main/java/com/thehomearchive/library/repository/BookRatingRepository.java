@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Repository for BookRating entity with comprehensive rating and review operations.
@@ -295,6 +297,91 @@ public interface BookRatingRepository extends BaseRepository<BookRating, Long> {
     List<Long> findUsersWithSimilarRating(@Param("userId") Long userId, 
                                          @Param("bookId") Long bookId, 
                                          @Param("tolerance") Integer tolerance);
+
+    /**
+     * Batch method to find average ratings for multiple books.
+     * Returns a map of book ID to average rating.
+     *
+     * @param bookIds list of book IDs
+     * @return map of book ID to average rating
+     */
+    @Query("SELECT br.book.id, AVG(br.rating) " +
+           "FROM BookRating br " +
+           "WHERE br.book.id IN :bookIds " +
+           "GROUP BY br.book.id")
+    List<Object[]> findAverageRatingsByBookIdsRaw(@Param("bookIds") List<Long> bookIds);
+
+    /**
+     * Batch method to find rating counts for multiple books.
+     * Returns a map of book ID to rating count.
+     *
+     * @param bookIds list of book IDs
+     * @return list of arrays containing [bookId, count]
+     */
+    @Query("SELECT br.book.id, COUNT(br) " +
+           "FROM BookRating br " +
+           "WHERE br.book.id IN :bookIds " +
+           "GROUP BY br.book.id")
+    List<Object[]> findRatingCountsByBookIdsRaw(@Param("bookIds") List<Long> bookIds);
+
+    /**
+     * Batch method to find user's ratings for multiple books.
+     * Returns a map of book ID to user's rating.
+     *
+     * @param userId ID of the user
+     * @param bookIds list of book IDs
+     * @return list of arrays containing [bookId, rating]
+     */
+    @Query("SELECT br.book.id, br.rating " +
+           "FROM BookRating br " +
+           "WHERE br.user.id = :userId " +
+           "AND br.book.id IN :bookIds")
+    List<Object[]> findUserRatingsByBookIdsRaw(@Param("userId") Long userId, @Param("bookIds") List<Long> bookIds);
+
+    /**
+     * Helper method to convert raw results to map for average ratings.
+     */
+    default Map<Long, Double> findAverageRatingsByBookIds(List<Long> bookIds) {
+        if (bookIds == null || bookIds.isEmpty()) {
+            return Map.of();
+        }
+        
+        return findAverageRatingsByBookIdsRaw(bookIds).stream()
+            .collect(Collectors.toMap(
+                arr -> (Long) arr[0],
+                arr -> (Double) arr[1]
+            ));
+    }
+
+    /**
+     * Helper method to convert raw results to map for rating counts.
+     */
+    default Map<Long, Long> findRatingCountsByBookIds(List<Long> bookIds) {
+        if (bookIds == null || bookIds.isEmpty()) {
+            return Map.of();
+        }
+        
+        return findRatingCountsByBookIdsRaw(bookIds).stream()
+            .collect(Collectors.toMap(
+                arr -> (Long) arr[0],
+                arr -> (Long) arr[1]
+            ));
+    }
+
+    /**
+     * Helper method to convert raw results to map for user ratings.
+     */
+    default Map<Long, Integer> findUserRatingsByBookIds(Long userId, List<Long> bookIds) {
+        if (userId == null || bookIds == null || bookIds.isEmpty()) {
+            return Map.of();
+        }
+        
+        return findUserRatingsByBookIdsRaw(userId, bookIds).stream()
+            .collect(Collectors.toMap(
+                arr -> (Long) arr[0],
+                arr -> (Integer) arr[1]
+            ));
+    }
 
     /**
      * Delete all ratings for a specific book.
