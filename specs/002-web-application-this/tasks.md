@@ -186,7 +186,7 @@
 - [x] T084 [US3] Create BookRatingRepository in backend/src/main/java/com/thehomearchive/library/repository/BookRatingRepository.java (depends on T081)
 - [x] T085 [US3] Create SearchHistoryRepository in backend/src/main/java/com/thehomearchive/library/repository/SearchHistoryRepository.java (depends on T082)
 - [x] T086 [US3] Implement BookSearchService with full database search in backend/src/main/java/com/thehomearchive/library/service/BookSearchService.java
-- [ ] T087 [US3] Implement RatingService for book ratings in backend/src/main/java/com/thehomearchive/library/service/RatingService.java
+- [x] T087 [US3] Implement RatingService for book ratings in backend/src/main/java/com/thehomearchive/library/service/RatingService.java
 - [ ] T088 [US3] Create BookSearchController for database search in backend/src/main/java/com/thehomearchive/library/controller/BookSearchController.java
 - [ ] T089 [US3] Create RatingController for book ratings in backend/src/main/java/com/thehomearchive/library/controller/RatingController.java
 - [ ] T090 [P] [US3] Create book search page HTML in frontend/src/html/book-search.html
