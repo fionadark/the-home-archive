@@ -1,23 +1,18 @@
 package com.thehomearchive.library.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thehomearchive.library.config.TestSecurityConfig;
 import com.thehomearchive.library.dto.book.BookCreateRequest;
 import com.thehomearchive.library.dto.book.BookResponse;
 import com.thehomearchive.library.dto.book.BookUpdateRequest;
-import com.thehomearchive.library.dto.category.CategoryResponse;
 import com.thehomearchive.library.service.BookService;
 import com.thehomearchive.library.service.BookSearchService;
 import com.thehomearchive.library.service.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -30,18 +25,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = BookController.class, excludeAutoConfiguration = {
-    DataSourceAutoConfiguration.class,
-    JpaRepositoriesAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class
-})
-@Import(TestSecurityConfig.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 class BookControllerTest {
 
@@ -88,11 +80,12 @@ class BookControllerTest {
         when(bookService.getBookById(bookId)).thenReturn(testBook);
 
         // Act & Assert
-        mockMvc.perform(get("/api/books/{id}", bookId))
+        mockMvc.perform(get("/api/v1/books/{id}", bookId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("The Great Gatsby"))
-                .andExpect(jsonPath("$.author").value("F. Scott Fitzgerald"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.title").value("The Great Gatsby"))
+                .andExpect(jsonPath("$.data.author").value("F. Scott Fitzgerald"));
     }
 
     @Test
@@ -104,8 +97,10 @@ class BookControllerTest {
                 .thenThrow(new IllegalArgumentException("Book not found"));
 
         // Act & Assert
-        mockMvc.perform(get("/api/books/{id}", nonExistentId))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/v1/books/{id}", nonExistentId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.error").value("Book not found"));
     }
 
     @Test
@@ -120,13 +115,14 @@ class BookControllerTest {
                 .thenReturn(page);
 
         // Act & Assert
-        mockMvc.perform(get("/api/books/search")
+        mockMvc.perform(get("/api/v1/books/search")
                 .param("q", searchTerm)
                 .param("page", "0")
                 .param("size", "20"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].title").value("The Great Gatsby"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content[0].title").value("The Great Gatsby"));
     }
 
     @Test
@@ -139,12 +135,13 @@ class BookControllerTest {
         when(bookService.getAllBooks(any(Pageable.class))).thenReturn(page);
 
         // Act & Assert
-        mockMvc.perform(get("/api/books")
+        mockMvc.perform(get("/api/v1/books")
                 .param("page", "0")
                 .param("size", "20"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].title").value("The Great Gatsby"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content[0].title").value("The Great Gatsby"));
     }
 
     @Test
@@ -157,10 +154,14 @@ class BookControllerTest {
         when(bookService.getBooksByCategory(categoryId)).thenReturn(categoryBooks);
 
         // Act & Assert
-        mockMvc.perform(get("/api/books/category/{categoryId}", categoryId))
+        mockMvc.perform(get("/api/v1/books")
+                .param("categoryId", categoryId.toString())
+                .param("page", "0")
+                .param("size", "20"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].title").value("The Great Gatsby"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content[0].title").value("The Great Gatsby"));
     }
 
     @Test
@@ -181,11 +182,12 @@ class BookControllerTest {
         when(bookService.createBook(any(BookCreateRequest.class))).thenReturn(createdBook);
 
         // Act & Assert
-        mockMvc.perform(post("/api/books")
+        mockMvc.perform(post("/api/v1/books")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.title").value("New Book"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.title").value("New Book"));
     }
 
     @Test
@@ -205,11 +207,12 @@ class BookControllerTest {
         when(bookService.updateBook(eq(bookId), any(BookUpdateRequest.class))).thenReturn(updatedBook);
 
         // Act & Assert
-        mockMvc.perform(put("/api/books/{id}", bookId)
+        mockMvc.perform(put("/api/v1/books/{id}", bookId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Updated Book"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.title").value("Updated Book"));
     }
 
     @Test
@@ -219,8 +222,10 @@ class BookControllerTest {
         Long bookId = 1L;
 
         // Act & Assert
-        mockMvc.perform(delete("/api/books/{id}", bookId))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/v1/books/{id}", bookId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Book deleted successfully"));
     }
 
     @Test
@@ -229,35 +234,34 @@ class BookControllerTest {
         // Arrange
         BookCreateRequest request = new BookCreateRequest();
         request.setTitle("New Book");
+        request.setAuthor("New Author");
+        request.setIsbn("9781234567890");
+        request.setCategoryId(1L);
 
         // Act & Assert
-        mockMvc.perform(post("/api/books")
+        mockMvc.perform(post("/api/v1/books")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden());
     }
 
-    @Test
+            @Test
     @WithMockUser
     void getBookCategories_shouldReturnAllCategories() throws Exception {
         // Arrange
-        CategoryResponse category1 = new CategoryResponse();
-        category1.setId(1L);
-        category1.setName("Fiction");
+        List<Map<String, Object>> categories = Arrays.asList(
+                Map.of("id", 1L, "name", "Fiction"),
+                Map.of("id", 2L, "name", "Non-Fiction")
+        );
         
-        CategoryResponse category2 = new CategoryResponse();
-        category2.setId(2L);
-        category2.setName("Non-Fiction");
-        
-        List<CategoryResponse> categories = Arrays.asList(category1, category2);
-        
-        when(categoryService.getAllCategories()).thenReturn(categories);
+        when(categoryService.getAllCategoriesAsMap()).thenReturn(categories);
 
         // Act & Assert
-        mockMvc.perform(get("/api/books/categories"))
+        mockMvc.perform(get("/api/v1/books/categories"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].name").value("Fiction"))
-                .andExpect(jsonPath("$[1].name").value("Non-Fiction"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data[0].name").value("Fiction"))
+                .andExpect(jsonPath("$.data[1].name").value("Non-Fiction"));
     }
 }
