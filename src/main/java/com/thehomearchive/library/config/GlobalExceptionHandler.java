@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -54,6 +55,31 @@ public class GlobalExceptionHandler {
                 .build();
 
         logger.warn("Validation error on {}: {}", request.getRequestURI(), fieldErrors);
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    /**
+     * Handle validation errors from method parameter validation (e.g. @Min, @Max on request parameters)
+     */
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleMethodValidationExceptions(
+            HandlerMethodValidationException ex, HttpServletRequest request) {
+        
+        Map<String, Object> parameterErrors = new HashMap<>();
+        ex.getAllErrors().forEach(error -> {
+            parameterErrors.put("parameter", error.getDefaultMessage());
+        });
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Validation Failed")
+                .message("Invalid parameter values provided")
+                .path(request.getRequestURI())
+                .details(parameterErrors)
+                .build();
+
+        logger.warn("Parameter validation error on {}: {}", request.getRequestURI(), parameterErrors);
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
