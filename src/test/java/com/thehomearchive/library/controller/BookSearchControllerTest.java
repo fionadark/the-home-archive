@@ -176,7 +176,7 @@ class BookSearchControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("An error occurred while searching books"));
+                .andExpect(jsonPath("$.error").value("An error occurred while searching books"));
     }
 
     // ========== GET BOOK BY ID TESTS ==========
@@ -234,7 +234,7 @@ class BookSearchControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Book not found"));
+                .andExpect(jsonPath("$.error").value("Book not found"));
 
         verify(bookService).getBookById(1L);
     }
@@ -250,7 +250,7 @@ class BookSearchControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("An error occurred while retrieving book details"));
+                .andExpect(jsonPath("$.error").value("An error occurred while retrieving book details"));
 
         verify(bookService).getBookById(1L);
     }
@@ -265,7 +265,7 @@ class BookSearchControllerTest {
         when(bookSearchService.getSearchSuggestions("test", 10)).thenReturn(suggestions);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/search/books/search-suggestions")
+        mockMvc.perform(get("/api/v1/search/books/suggestions")
                 .param("q", "test")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -281,7 +281,7 @@ class BookSearchControllerTest {
     @Test
     void getSearchSuggestions_InvalidLimit_BadRequest() throws Exception {
         // When & Then
-        mockMvc.perform(get("/api/v1/search/books/search-suggestions")
+        mockMvc.perform(get("/api/v1/search/books/suggestions")
                 .param("q", "test")
                 .param("limit", "100") // Exceeds max of 50
                 .contentType(MediaType.APPLICATION_JSON))
@@ -296,12 +296,13 @@ class BookSearchControllerTest {
                 .thenThrow(new RuntimeException("Service error"));
 
         // When & Then
-        mockMvc.perform(get("/api/v1/search/books/search-suggestions")
+        mockMvc.perform(get("/api/v1/search/books/suggestions")
                 .param("q", "test")
+                .param("limit", "10")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("An error occurred while getting search suggestions"));
+                .andExpect(jsonPath("$.error").value("An error occurred while getting search suggestions"));
     }
 
     // ========== POPULAR SEARCHES TESTS ==========
@@ -314,7 +315,7 @@ class BookSearchControllerTest {
         when(bookSearchService.getPopularSearchQueries(10)).thenReturn(popularQueries);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/search/books/popular-searches")
+        mockMvc.perform(get("/api/v1/search/books/popular")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -333,7 +334,7 @@ class BookSearchControllerTest {
         when(bookSearchService.getPopularSearchQueries(2)).thenReturn(popularQueries);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/search/books/popular-searches")
+        mockMvc.perform(get("/api/v1/search/books/popular")
                 .param("limit", "2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -376,33 +377,31 @@ class BookSearchControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Book not found"));
+                .andExpect(jsonPath("$.error").value("Book not found"));
 
         verify(bookSearchService).findSimilarBooks(1L, 10);
     }
 
     // ========== SEARCH HISTORY TESTS ==========
 
-    @WithMockUser
     @Test
     void getUserSearchHistory_WithoutAuth_Unauthorized() throws Exception {
         // When & Then
-        mockMvc.perform(get("/api/v1/search/books/search-history")
+        mockMvc.perform(get("/api/v1/search/history")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Authentication required"));
+                .andExpect(jsonPath("$.error").value("Unauthorized"))
+                .andExpect(jsonPath("$.message").value("Authentication required to access this resource"));
     }
 
-    @WithMockUser
     @Test
     void clearUserSearchHistory_WithoutAuth_Unauthorized() throws Exception {
         // When & Then
-        mockMvc.perform(delete("/api/v1/search/books/search-history")
+        mockMvc.perform(delete("/api/v1/search/history")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Authentication required"));
+                .andExpect(jsonPath("$.error").value("Unauthorized"))
+                .andExpect(jsonPath("$.message").value("Authentication required to access this resource"));
     }
 
     // ========== PARAMETER CONVERSION TESTS ==========
