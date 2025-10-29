@@ -421,7 +421,7 @@ class LibraryService {
                 throw new Error('Book ID is required');
             }
 
-            const response = await this.makeRequest(`${this.apiBaseURL}/contains/${bookId}`);
+            const response = await this.makeRequest(`${this.apiBaseURL}/books/${bookId}/exists`);
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));

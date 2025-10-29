@@ -5,6 +5,7 @@
 
 import { BookService } from '../services/BookService.js';
 import { NotificationService } from '../services/NotificationService.js';
+import { duplicateChecker } from '../utils/duplicateChecker.js';
 
 export default class BookAddition {
     constructor() {
@@ -530,17 +531,42 @@ export default class BookAddition {
     }
 
     /**
-     * Confirm and add book
+     * Confirm and add book to catalog and library
      */
     async confirmAddBook() {
         try {
+            // For manual entries, check for potential duplicates based on ISBN
+            if (this.selectedBook.isbn) {
+                const isDuplicate = await duplicateChecker.isBookInLibrary(this.selectedBook.isbn, {
+                    useCache: false, // Don't use cache for ISBN lookups
+                    showUI: false // Handle UI ourselves
+                });
+
+                if (isDuplicate) {
+                    const shouldProceed = await duplicateChecker.showDuplicateConfirmation();
+                    if (!shouldProceed) {
+                        return;
+                    }
+                }
+            }
+
             const createdBook = await this.bookService.createBook(this.selectedBook);
+            
+            // Update cache if book was successfully created and added
+            if (createdBook && createdBook.id) {
+                duplicateChecker.markBookAsAdded(createdBook.id);
+            }
+            
             this.notificationService.showSuccess('Book added to your library successfully!');
             this.resetForm();
             
         } catch (error) {
-            // Enhanced error handling
-            if (error.status === 503) {
+            // Enhanced error handling including duplicate errors
+            if (error.message && error.message.includes('already exists')) {
+                this.notificationService.showWarning('A book with this ISBN or title+author combination already exists in the catalog.');
+            } else if (error.message && error.message.includes('already in your library')) {
+                this.notificationService.showWarning('This book is already in your library!');
+            } else if (error.status === 503) {
                 this.notificationService.showError('Service is temporarily unavailable. Please try again later.');
             } else if (error.name === 'NetworkError' || error.message.includes('Network')) {
                 this.notificationService.showError('Network error. Please check your connection and try again.');
@@ -555,12 +581,32 @@ export default class BookAddition {
      */
     async addExistingBookToLibrary(bookId) {
         try {
+            // Check for duplicates before attempting to add
+            const shouldProceed = await duplicateChecker.validateBookAddition(bookId, {
+                force: false,
+                interactive: true
+            });
+
+            if (!shouldProceed) {
+                return; // User cancelled or book is already in library
+            }
+
             await this.bookService.addBookToLibrary(bookId);
+            
+            // Update duplicate checker cache to reflect the addition
+            duplicateChecker.markBookAsAdded(bookId);
+            
             this.notificationService.showSuccess('Book added to your library!');
             this.resetForm();
             
         } catch (error) {
-            this.notificationService.showError(error.message);
+            // Handle backend duplicate error response
+            if (error.message && error.message.includes('already in your library')) {
+                duplicateChecker.markBookAsAdded(bookId); // Update cache
+                this.notificationService.showWarning('This book is already in your library!');
+            } else {
+                this.notificationService.showError(error.message);
+            }
         }
     }
 
