@@ -210,11 +210,22 @@ export default class BookAddition {
         try {
             this.showIsbnLoading();
             const results = await this.bookService.validateBookByIsbn(isbn);
+            
+            if (!results) {
+                this.notificationService.showError('Unable to validate ISBN. Please try manual entry.');
+                return;
+            }
+            
             this.isbnValidationResults = results;
             this.displayValidationResults();
             
         } catch (error) {
-            this.notificationService.showError('Failed to validate ISBN. Please try again.');
+            // Enhanced error handling
+            if (error.name === 'NetworkError' || error.message.includes('Network')) {
+                this.notificationService.showError('Network error. Please check your connection and try again.');
+            } else {
+                this.notificationService.showError('Failed to validate ISBN. Please try again.');
+            }
         } finally {
             this.hideIsbnLoading();
         }
@@ -528,7 +539,14 @@ export default class BookAddition {
             this.resetForm();
             
         } catch (error) {
-            this.notificationService.showError(error.message);
+            // Enhanced error handling
+            if (error.status === 503) {
+                this.notificationService.showError('Service is temporarily unavailable. Please try again later.');
+            } else if (error.name === 'NetworkError' || error.message.includes('Network')) {
+                this.notificationService.showError('Network error. Please check your connection and try again.');
+            } else {
+                this.notificationService.showError(error.message);
+            }
         }
     }
 

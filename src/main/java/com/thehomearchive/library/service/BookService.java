@@ -3,6 +3,7 @@ package com.thehomearchive.library.service;
 import com.thehomearchive.library.dto.book.BookCreateRequest;
 import com.thehomearchive.library.dto.book.BookResponse;
 import com.thehomearchive.library.dto.book.BookUpdateRequest;
+import com.thehomearchive.library.dto.book.BookValidationResponse;
 import com.thehomearchive.library.entity.Book;
 import com.thehomearchive.library.entity.Category;
 import com.thehomearchive.library.repository.BookRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -277,5 +279,109 @@ public class BookService {
         }
 
         return response;
+    }
+
+    /**
+     * Validate a book by ISBN and check if it exists in database.
+     * Also enriches book data from external sources if available.
+     */
+    @Transactional(readOnly = true)
+    public BookValidationResponse validateBookByIsbn(String isbn) {
+        if (isbn == null || isbn.trim().isEmpty()) {
+            BookValidationResponse response = new BookValidationResponse(false, isbn);
+            response.setErrorMessage("ISBN cannot be empty");
+            return response;
+        }
+
+        // Clean and validate ISBN format
+        String cleanIsbn = isbn.replaceAll("[^0-9X]", "").toUpperCase();
+        if (!isValidIsbnFormat(cleanIsbn)) {
+            BookValidationResponse response = new BookValidationResponse(false, isbn);
+            response.setErrorMessage("Invalid ISBN format");
+            return response;
+        }
+
+        BookValidationResponse response = new BookValidationResponse(true, isbn);
+
+        // Check if book exists in database
+        Optional<Book> existingBook = bookRepository.findByIsbn(cleanIsbn);
+        if (existingBook.isPresent()) {
+            Book book = existingBook.get();
+            response.setExistsInDatabase(true);
+            response.setBookId(book.getId());
+            response.setTitle(book.getTitle());
+            response.setAuthor(book.getAuthor());
+            response.setPublisher(book.getPublisher());
+            response.setPublicationYear(book.getPublicationYear());
+            response.setPageCount(book.getPageCount());
+            response.setDescription(book.getDescription());
+            response.setCoverImageUrl(book.getCoverImageUrl());
+        } else {
+            // Try to enrich from external sources (e.g., Open Library API)
+            enrichBookDataFromExternalSources(response, cleanIsbn);
+        }
+
+        return response;
+    }
+
+    /**
+     * Validate ISBN format (both ISBN-10 and ISBN-13).
+     */
+    private boolean isValidIsbnFormat(String isbn) {
+        if (isbn == null) return false;
+        
+        // Remove any remaining hyphens or spaces
+        String cleanIsbn = isbn.replaceAll("[^0-9X]", "");
+        
+        // Check length
+        if (cleanIsbn.length() != 10 && cleanIsbn.length() != 13) {
+            return false;
+        }
+        
+        // Basic format validation
+        if (cleanIsbn.length() == 10) {
+            // ISBN-10: Can have X as last character
+            return cleanIsbn.matches("\\d{9}[\\dX]");
+        } else {
+            // ISBN-13: All digits
+            return cleanIsbn.matches("\\d{13}");
+        }
+    }
+
+    /**
+     * Enrich book data from external sources like Open Library.
+     * This is a simplified version - in production you'd integrate with actual APIs.
+     */
+    private void enrichBookDataFromExternalSources(BookValidationResponse response, String isbn) {
+        // This is a mock implementation
+        // In a real application, you would call external APIs like Open Library, Google Books, etc.
+        
+        response.setExistsInDatabase(false);
+        response.setEnrichedFromExternalSource(true);
+        response.setExternalSource("Open Library (Mock)");
+        
+        // Mock data based on well-known ISBNs for demo purposes
+        if ("9780743273565".equals(isbn) || "0743273567".equals(isbn)) {
+            response.setTitle("The Great Gatsby");
+            response.setAuthor("F. Scott Fitzgerald");
+            response.setPublisher("Scribner");
+            response.setPublicationYear(1925);
+            response.setPageCount(180);
+            response.setDescription("A classic American novel about the Jazz Age");
+            response.setCoverImageUrl("https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg");
+        } else if ("9780451524935".equals(isbn) || "0451524934".equals(isbn)) {
+            response.setTitle("1984");
+            response.setAuthor("George Orwell");
+            response.setPublisher("Signet Classics");
+            response.setPublicationYear(1949);
+            response.setPageCount(328);
+            response.setDescription("A dystopian social science fiction novel");
+            response.setCoverImageUrl("https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg");
+        } else {
+            // For unknown ISBNs, set minimal data
+            response.setTitle("Unknown Title");
+            response.setAuthor("Unknown Author");
+            response.setDescription("Book data not available from external sources");
+        }
     }
 }

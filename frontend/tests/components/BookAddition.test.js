@@ -174,7 +174,7 @@ describe('BookAddition', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
 
             expect(container.querySelector('.book-exists-warning')).toBeTruthy();
-            expect(container.querySelector('.add-existing-btn')).toBeTruthy();
+            expect(container.querySelector('#add-existing-btn')).toBeTruthy();
             expect(container.querySelector('.book-exists-warning').textContent).toContain('already exists');
         });
 
@@ -330,8 +330,8 @@ describe('BookAddition', () => {
 
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            const useDataButton = container.querySelector('#use-isbn-data-btn');
-            useDataButton.click();
+            const editDataButton = container.querySelector('#edit-data-btn');
+            editDataButton.click();
 
             expect(container.querySelector('#manual-entry-section').classList.contains('active')).toBe(true);
             expect(container.querySelector('#manual-title').value).toBe('The Great Gatsby');
@@ -341,22 +341,34 @@ describe('BookAddition', () => {
             expect(container.querySelector('#manual-page-count').value).toBe('180');
         });
 
-        test('should proceed to confirmation with valid manual data', () => {
+        test('should proceed to confirmation with valid manual data', async () => {
+            // Mock categories first
+            const mockCategories = [
+                { id: 1, name: 'Fiction' },
+                { id: 2, name: 'Non-Fiction' }
+            ];
+            mockBookService.getCategories.mockResolvedValue(mockCategories);
+            
+            // Load categories
+            await bookAddition.loadCategories();
+            
             container.querySelector('#switch-to-manual-btn').click();
 
             const titleInput = container.querySelector('#manual-title');
             const authorInput = container.querySelector('#manual-author');
+            const categorySelect = container.querySelector('#manual-category');
             const submitButton = container.querySelector('#submit-manual-book-btn');
 
             titleInput.value = 'New Test Book';
             authorInput.value = 'New Test Author';
+            categorySelect.value = '1'; // Select a category
 
             submitButton.click();
 
             expect(container.querySelector('#book-confirmation-section').classList.contains('active')).toBe(true);
             expect(bookAddition.currentStep).toBe('confirmation');
             expect(container.querySelector('.confirmation-title').textContent).toBe('New Test Book');
-            expect(container.querySelector('.confirmation-author').textContent).toBe('New Test Author');
+            expect(container.querySelector('.confirmation-author').textContent).toBe('by New Test Author');
         });
     });
 
@@ -379,12 +391,13 @@ describe('BookAddition', () => {
                 coverImageUrl: 'https://example.com/gatsby.jpg'
             };
             bookAddition.currentStep = 'confirmation';
+            bookAddition.updateStepDisplay();
             bookAddition.displayConfirmationStep();
 
             expect(container.querySelector('#book-confirmation-section').classList.contains('active')).toBe(true);
             expect(container.querySelector('.confirmation-title').textContent).toBe('The Great Gatsby');
-            expect(container.querySelector('.confirmation-author').textContent).toBe('F. Scott Fitzgerald');
-            expect(container.querySelector('.confirmation-isbn').textContent).toBe('978-0-7432-7356-5');
+            expect(container.querySelector('.confirmation-author').textContent).toBe('by F. Scott Fitzgerald');
+            expect(container.querySelector('.confirmation-isbn').textContent).toBe('ISBN: 978-0-7432-7356-5');
         });
 
         test('should add book to library successfully', async () => {
@@ -404,6 +417,7 @@ describe('BookAddition', () => {
                 categoryId: 1
             };
             bookAddition.currentStep = 'confirmation';
+            bookAddition.updateStepDisplay();
             bookAddition.displayConfirmationStep();
 
             const confirmButton = container.querySelector('#confirm-add-book-btn');
@@ -411,7 +425,12 @@ describe('BookAddition', () => {
 
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            expect(mockBookService.createBook).toHaveBeenCalledWith(bookAddition.selectedBook);
+            expect(mockBookService.createBook).toHaveBeenCalledWith({
+                title: 'The Great Gatsby',
+                author: 'F. Scott Fitzgerald',
+                isbn: '978-0-7432-7356-5',
+                categoryId: 1
+            });
             expect(mockNotificationService.showSuccess).toHaveBeenCalledWith('Book added to your library successfully!');
         });
 

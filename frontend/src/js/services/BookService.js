@@ -43,7 +43,7 @@ export class BookService {
      * @returns {Promise} Validation results
      */
     async validateBookByIsbn(isbn) {
-        const response = await fetch(`${this.baseUrl}/validate?isbn=${encodeURIComponent(isbn)}`, {
+        const response = await fetch(`/api/v1/books/validate?isbn=${encodeURIComponent(isbn)}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export class BookService {
      * @returns {Promise} Created book
      */
     async createBook(bookData) {
-        const response = await fetch(this.baseUrl, {
+        const response = await fetch('/api/v1/books', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -87,12 +87,17 @@ export class BookService {
      * @returns {Promise} Result
      */
     async addBookToLibrary(bookId) {
-        const response = await fetch(`${this.baseUrl}/${bookId}/add-to-library`, {
+        const response = await fetch(`/api/library/books/${bookId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${this.getAuthToken()}`
-            }
+            },
+            body: JSON.stringify({
+                readingStatus: 'WANT_TO_READ',
+                physicalLocation: '',
+                personalNotes: ''
+            })
         });
 
         if (!response.ok) {
@@ -130,7 +135,7 @@ export class BookService {
      * @returns {Promise} Categories list
      */
     async getCategories() {
-        const response = await fetch('/api/categories', {
+        const response = await fetch('/api/v1/books/categories', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ package com.thehomearchive.library.controller;
 
 import com.thehomearchive.library.dto.book.BookDetailResponse;
 import com.thehomearchive.library.dto.book.BookResponse;
+import com.thehomearchive.library.dto.book.BookValidationResponse;
 import com.thehomearchive.library.dto.response.ApiResponse;
 import com.thehomearchive.library.dto.search.BookSearchPageResponse;
 import com.thehomearchive.library.dto.search.BookSearchRequest;
@@ -291,6 +292,40 @@ public class BookSearchController {
             logger.error("Error clearing user search history", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("An error occurred while clearing search history"));
+        }
+    }
+
+    /**
+     * Validate a book by ISBN and check if it exists in database.
+     * Also enriches book data from external sources if available.
+     * 
+     * @param isbn ISBN to validate
+     * @return Book validation response with enriched data
+     */
+    @GetMapping("/validate")
+    public ResponseEntity<BookValidationResponse> validateBookByIsbn(@RequestParam String isbn) {
+        try {
+            logger.info("Validating book with ISBN: {}", isbn);
+
+            BookValidationResponse validationResponse = bookService.validateBookByIsbn(isbn);
+
+            logger.info("Book validation completed for ISBN: {}, valid: {}", isbn, validationResponse.isValid());
+            return ResponseEntity.ok(validationResponse);
+
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid ISBN format: {}", isbn);
+            BookValidationResponse errorResponse = new BookValidationResponse();
+            errorResponse.setValid(false);
+            errorResponse.setIsbn(isbn);
+            errorResponse.setErrorMessage(e.getMessage());
+            return ResponseEntity.ok(errorResponse);
+        } catch (Exception e) {
+            logger.error("Error validating ISBN: " + isbn, e);
+            BookValidationResponse errorResponse = new BookValidationResponse();
+            errorResponse.setValid(false);
+            errorResponse.setIsbn(isbn);
+            errorResponse.setErrorMessage("Unable to validate ISBN at this time");
+            return ResponseEntity.ok(errorResponse);
         }
     }
 
