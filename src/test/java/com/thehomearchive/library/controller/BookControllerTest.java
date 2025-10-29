@@ -14,16 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -42,8 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     DataSourceAutoConfiguration.class,
     JpaRepositoriesAutoConfiguration.class,
     HibernateJpaAutoConfiguration.class
-}, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, 
-    classes = {BookSearchService.class}))
+})
 @Import(TestSecurityConfig.class)
 @ActiveProfiles("test")
 class BookControllerTest {

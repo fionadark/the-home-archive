@@ -35,7 +35,7 @@ import java.util.List;
  * - Search history management
  */
 @RestController
-@RequestMapping("/api/v1/books")
+@RequestMapping("/api/v1/search")
 public class BookSearchController {
 
     private static final Logger logger = LoggerFactory.getLogger(BookSearchController.class);
@@ -60,7 +60,7 @@ public class BookSearchController {
      * @param direction Sort direction (asc, desc)
      * @return Paginated book search results
      */
-    @GetMapping
+    @GetMapping("/books")
     public ResponseEntity<ApiResponse<BookSearchPageResponse>> searchBooks(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) Long category,
@@ -115,7 +115,7 @@ public class BookSearchController {
      * @param id Book ID
      * @return Detailed book information
      */
-    @GetMapping("/{id}")
+    @GetMapping("/books/{id}")
     public ResponseEntity<ApiResponse<BookDetailResponse>> getBookById(@PathVariable Long id) {
         try {
             logger.info("Retrieving book details for ID: {}", id);
@@ -160,7 +160,7 @@ public class BookSearchController {
      * @param limit Maximum number of suggestions (default 10)
      * @return List of search suggestions
      */
-    @GetMapping("/search-suggestions")
+    @GetMapping("/books/suggestions")
     public ResponseEntity<ApiResponse<List<String>>> getSearchSuggestions(
             @RequestParam String q,
             @RequestParam(defaultValue = "10") @Min(1) @Max(50) Integer limit) {
@@ -186,7 +186,7 @@ public class BookSearchController {
      * @param limit Maximum number of popular queries (default 10)
      * @return List of popular search queries
      */
-    @GetMapping("/popular-searches")
+    @GetMapping("/books/popular")
     public ResponseEntity<ApiResponse<List<String>>> getPopularSearches(
             @RequestParam(defaultValue = "10") @Min(1) @Max(50) Integer limit) {
         
@@ -212,7 +212,7 @@ public class BookSearchController {
      * @param limit Maximum number of similar books (default 10)
      * @return List of similar books
      */
-    @GetMapping("/{id}/similar")
+    @GetMapping("/books/{id}/similar")
     public ResponseEntity<ApiResponse<List<BookSearchResponse>>> getSimilarBooks(
             @PathVariable Long id,
             @RequestParam(defaultValue = "10") @Min(1) @Max(50) Integer limit) {
@@ -242,7 +242,7 @@ public class BookSearchController {
      * @param limit Maximum number of search history entries (default 20)
      * @return List of user's recent search queries
      */
-    @GetMapping("/search-history")
+    @GetMapping("/history")
     public ResponseEntity<ApiResponse<List<String>>> getUserSearchHistory(
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer limit) {
         
@@ -272,7 +272,7 @@ public class BookSearchController {
      * 
      * @return Success message with count of cleared entries
      */
-    @DeleteMapping("/search-history")
+    @DeleteMapping("/history")
     public ResponseEntity<ApiResponse<String>> clearUserSearchHistory() {
         try {
             User currentUser = getCurrentUser();
@@ -302,7 +302,7 @@ public class BookSearchController {
      * @param isbn ISBN to validate
      * @return Book validation response with enriched data
      */
-    @GetMapping("/validate")
+    @GetMapping("/books/validate")
     public ResponseEntity<BookValidationResponse> validateBookByIsbn(@RequestParam String isbn) {
         try {
             logger.info("Validating book with ISBN: {}", isbn);
