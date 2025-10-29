@@ -12,12 +12,13 @@ import com.thehomearchive.library.service.BookService;
 import com.thehomearchive.library.service.RatingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -29,8 +30,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
-@WebMvcTest(BookSearchController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class BookSearchControllerTest {
 
     @Autowired
@@ -98,6 +100,7 @@ class BookSearchControllerTest {
 
     // ========== SEARCH BOOKS TESTS ==========
 
+    @WithMockUser
     @Test
     void searchBooks_BasicQuery_Success() throws Exception {
         // Given
@@ -105,7 +108,7 @@ class BookSearchControllerTest {
                 .thenReturn(testPageResponse);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books")
+        mockMvc.perform(get("/api/v1/search/books")
                 .param("q", "test")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -117,6 +120,7 @@ class BookSearchControllerTest {
         verify(bookSearchService).searchBooks(any(BookSearchRequest.class), any());
     }
 
+    @WithMockUser
     @Test
     void searchBooks_WithAllParameters_Success() throws Exception {
         // Given
@@ -124,7 +128,7 @@ class BookSearchControllerTest {
                 .thenReturn(testPageResponse);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books")
+        mockMvc.perform(get("/api/v1/search/books")
                 .param("q", "test")
                 .param("category", "1")
                 .param("page", "0")
@@ -139,24 +143,27 @@ class BookSearchControllerTest {
         verify(bookSearchService).searchBooks(any(BookSearchRequest.class), any());
     }
 
+    @WithMockUser
     @Test
     void searchBooks_InvalidPageSize_BadRequest() throws Exception {
         // When & Then
-        mockMvc.perform(get("/api/v1/books")
+        mockMvc.perform(get("/api/v1/search/books")
                 .param("size", "150") // Exceeds max of 100
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
     void searchBooks_NegativePage_BadRequest() throws Exception {
         // When & Then
-        mockMvc.perform(get("/api/v1/books")
+        mockMvc.perform(get("/api/v1/search/books")
                 .param("page", "-1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
     void searchBooks_ServiceException_InternalError() throws Exception {
         // Given
@@ -164,7 +171,7 @@ class BookSearchControllerTest {
                 .thenThrow(new RuntimeException("Service error"));
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books")
+        mockMvc.perform(get("/api/v1/search/books")
                 .param("q", "test")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
@@ -174,13 +181,14 @@ class BookSearchControllerTest {
 
     // ========== GET BOOK BY ID TESTS ==========
 
+    @WithMockUser
     @Test
     void getBookById_Success() throws Exception {
         // Given
         when(bookService.getBookById(1L)).thenReturn(testBook);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/1")
+        mockMvc.perform(get("/api/v1/search/books/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -194,6 +202,7 @@ class BookSearchControllerTest {
         verify(ratingService, never()).getUserRatingForBook(any(), any()); // No user context
     }
 
+    @WithMockUser
     @Test
     void getBookById_WithUserRating_Success() throws Exception {
         // Given
@@ -204,7 +213,7 @@ class BookSearchControllerTest {
         when(ratingService.getUserRatingForBook(1L, 1L)).thenReturn(userRating);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/1")
+        mockMvc.perform(get("/api/v1/search/books/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -214,13 +223,14 @@ class BookSearchControllerTest {
         verify(bookService).getBookById(1L);
     }
 
+    @WithMockUser
     @Test
     void getBookById_NotFound() throws Exception {
         // Given
         when(bookService.getBookById(1L)).thenThrow(new IllegalArgumentException("Book not found"));
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/1")
+        mockMvc.perform(get("/api/v1/search/books/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -229,13 +239,14 @@ class BookSearchControllerTest {
         verify(bookService).getBookById(1L);
     }
 
+    @WithMockUser
     @Test
     void getBookById_ServiceException_InternalError() throws Exception {
         // Given
         when(bookService.getBookById(1L)).thenThrow(new RuntimeException("Service error"));
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/1")
+        mockMvc.perform(get("/api/v1/search/books/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
@@ -246,6 +257,7 @@ class BookSearchControllerTest {
 
     // ========== SEARCH SUGGESTIONS TESTS ==========
 
+    @WithMockUser
     @Test
     void getSearchSuggestions_Success() throws Exception {
         // Given
@@ -253,7 +265,7 @@ class BookSearchControllerTest {
         when(bookSearchService.getSearchSuggestions("test", 10)).thenReturn(suggestions);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/search-suggestions")
+        mockMvc.perform(get("/api/v1/search/books/search-suggestions")
                 .param("q", "test")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -265,16 +277,18 @@ class BookSearchControllerTest {
         verify(bookSearchService).getSearchSuggestions("test", 10);
     }
 
+    @WithMockUser
     @Test
     void getSearchSuggestions_InvalidLimit_BadRequest() throws Exception {
         // When & Then
-        mockMvc.perform(get("/api/v1/books/search-suggestions")
+        mockMvc.perform(get("/api/v1/search/books/search-suggestions")
                 .param("q", "test")
                 .param("limit", "100") // Exceeds max of 50
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
     void getSearchSuggestions_ServiceException_InternalError() throws Exception {
         // Given
@@ -282,7 +296,7 @@ class BookSearchControllerTest {
                 .thenThrow(new RuntimeException("Service error"));
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/search-suggestions")
+        mockMvc.perform(get("/api/v1/search/books/search-suggestions")
                 .param("q", "test")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
@@ -292,6 +306,7 @@ class BookSearchControllerTest {
 
     // ========== POPULAR SEARCHES TESTS ==========
 
+    @WithMockUser
     @Test
     void getPopularSearches_Success() throws Exception {
         // Given
@@ -299,7 +314,7 @@ class BookSearchControllerTest {
         when(bookSearchService.getPopularSearchQueries(10)).thenReturn(popularQueries);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/popular-searches")
+        mockMvc.perform(get("/api/v1/search/books/popular-searches")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -310,6 +325,7 @@ class BookSearchControllerTest {
         verify(bookSearchService).getPopularSearchQueries(10);
     }
 
+    @WithMockUser
     @Test
     void getPopularSearches_WithLimit_Success() throws Exception {
         // Given
@@ -317,7 +333,7 @@ class BookSearchControllerTest {
         when(bookSearchService.getPopularSearchQueries(2)).thenReturn(popularQueries);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/popular-searches")
+        mockMvc.perform(get("/api/v1/search/books/popular-searches")
                 .param("limit", "2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -329,6 +345,7 @@ class BookSearchControllerTest {
 
     // ========== SIMILAR BOOKS TESTS ==========
 
+    @WithMockUser
     @Test
     void getSimilarBooks_Success() throws Exception {
         // Given
@@ -336,7 +353,7 @@ class BookSearchControllerTest {
         when(bookSearchService.findSimilarBooks(1L, 10)).thenReturn(similarBooks);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/1/similar")
+        mockMvc.perform(get("/api/v1/search/books/1/similar")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -347,6 +364,7 @@ class BookSearchControllerTest {
         verify(bookSearchService).findSimilarBooks(1L, 10);
     }
 
+    @WithMockUser
     @Test
     void getSimilarBooks_BookNotFound() throws Exception {
         // Given
@@ -354,7 +372,7 @@ class BookSearchControllerTest {
                 .thenThrow(new IllegalArgumentException("Book not found"));
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books/1/similar")
+        mockMvc.perform(get("/api/v1/search/books/1/similar")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -365,20 +383,22 @@ class BookSearchControllerTest {
 
     // ========== SEARCH HISTORY TESTS ==========
 
+    @WithMockUser
     @Test
     void getUserSearchHistory_WithoutAuth_Unauthorized() throws Exception {
         // When & Then
-        mockMvc.perform(get("/api/v1/books/search-history")
+        mockMvc.perform(get("/api/v1/search/books/search-history")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Authentication required"));
     }
 
+    @WithMockUser
     @Test
     void clearUserSearchHistory_WithoutAuth_Unauthorized() throws Exception {
         // When & Then
-        mockMvc.perform(delete("/api/v1/books/search-history")
+        mockMvc.perform(delete("/api/v1/search/books/search-history")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
@@ -387,6 +407,7 @@ class BookSearchControllerTest {
 
     // ========== PARAMETER CONVERSION TESTS ==========
 
+    @WithMockUser
     @Test
     void searchBooks_DifferentSortCriteria_Success() throws Exception {
         // Given
@@ -397,7 +418,7 @@ class BookSearchControllerTest {
         String[] sortOptions = {"title", "author", "publicationYear", "rating"};
         
         for (String sortOption : sortOptions) {
-            mockMvc.perform(get("/api/v1/books")
+            mockMvc.perform(get("/api/v1/search/books")
                     .param("sort", sortOption)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -407,6 +428,7 @@ class BookSearchControllerTest {
                 .searchBooks(any(BookSearchRequest.class), any());
     }
 
+    @WithMockUser
     @Test
     void searchBooks_DifferentSortDirections_Success() throws Exception {
         // Given
@@ -417,7 +439,7 @@ class BookSearchControllerTest {
         String[] directions = {"asc", "desc"};
         
         for (String direction : directions) {
-            mockMvc.perform(get("/api/v1/books")
+            mockMvc.perform(get("/api/v1/search/books")
                     .param("direction", direction)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -427,6 +449,7 @@ class BookSearchControllerTest {
                 .searchBooks(any(BookSearchRequest.class), any());
     }
 
+    @WithMockUser
     @Test
     void searchBooks_InvalidSortCriteria_DefaultsToTitle() throws Exception {
         // Given
@@ -434,7 +457,7 @@ class BookSearchControllerTest {
                 .thenReturn(testPageResponse);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/books")
+        mockMvc.perform(get("/api/v1/search/books")
                 .param("sort", "invalid")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());        verify(bookSearchService).searchBooks(any(BookSearchRequest.class), any());

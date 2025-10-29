@@ -1,7 +1,6 @@
 package com.thehomearchive.library.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thehomearchive.library.config.TestSecurityConfig;
 import com.thehomearchive.library.dto.book.AddToLibraryRequest;
 import com.thehomearchive.library.dto.book.PersonalLibraryResponse;
 import com.thehomearchive.library.dto.book.UpdateLibraryRequest;
@@ -10,15 +9,16 @@ import com.thehomearchive.library.service.LibraryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -32,8 +32,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(LibraryController.class)
-@Import(TestSecurityConfig.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class LibraryControllerTest {
 
     @Autowired
@@ -91,7 +92,7 @@ class LibraryControllerTest {
                 .thenReturn(page);
 
         // Act & Assert
-        mockMvc.perform(get("/api/library/search")
+        mockMvc.perform(get("/api/library/books/search")
                 .param("q", searchTerm)
                 .param("page", "0")
                 .param("size", "20"))
