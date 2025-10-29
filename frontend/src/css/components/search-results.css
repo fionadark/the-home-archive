@@ -101,6 +101,7 @@
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -166,6 +167,7 @@
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -200,6 +202,7 @@
 .book-card.list-view .book-card-title {
     font-size: 1.4rem;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     margin-bottom: 0.5rem;
 }
 
@@ -218,6 +221,7 @@
 .book-card.list-view .book-description-preview {
     font-size: 1rem;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     margin-bottom: 1rem;
 }
 
@@ -505,6 +509,7 @@
     .book-description-preview {
         font-size: 0.85rem;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
     }
 }
 
@@ -525,6 +530,7 @@
     .book-card-title {
         font-size: 0.9rem;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
     }
     
     .book-card-author {
