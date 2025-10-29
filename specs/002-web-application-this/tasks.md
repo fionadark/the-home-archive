@@ -197,7 +197,7 @@
 - [x] T095 [US3] Implement book search API service in frontend/src/js/services/bookSearchService.js
 - [x] T096 [US3] Implement book detail modal JavaScript in frontend/src/js/components/BookDetailModal.js
 - [x] T097 [US3] Implement search results component in frontend/src/js/components/SearchResults.js
-- [ ] T098 [US3] Implement book search page JavaScript in frontend/src/js/pages/bookSearchPage.js
+- [x] T098 [US3] Implement book search page JavaScript in frontend/src/js/pages/bookSearchPage.js
 - [ ] T099 [US3] Implement book addition functionality in frontend/src/js/components/BookAddition.js
 - [ ] T100 [US3] Add duplicate prevention logic in frontend/src/js/utils/duplicateChecker.js
 - [ ] T101 [P] [US3] Implement Google Books API integration service in backend/src/main/java/com/thehomearchive/library/service/GoogleBooksService.java

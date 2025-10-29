@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Book Search Page - The Home Archive</title>
+    
+    <!-- Dark Academia Theme CSS -->
+    <link rel="stylesheet" href="src/css/themes/dark-academia.css">
+    <link rel="stylesheet" href="src/css/pages/book-search.css">
+    <link rel="stylesheet" href="src/css/components/search-results.css">
+    <link rel="stylesheet" href="src/css/components/book-detail-modal.css">
+    <link rel="stylesheet" href="src/css/components/book-card.css">
+    
+    <!-- Google Fonts for Enhanced Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Sans+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        /* Basic test styling */
+        body { font-family: 'Source Sans Pro', sans-serif; margin: 20px; background: #1a1a1a; color: #f5f5f5; }
+        .test-container { max-width: 800px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 5px; }
+        .test-status { padding: 10px; margin: 10px 0; border-radius: 3px; }
+        .success { background: #2d5a27; color: #90ee90; }
+        .error { background: #5a2727; color: #ff6b6b; }
+        .info { background: #27475a; color: #87ceeb; }
+        
+        /* Basic search form styling */
+        .search-form { margin: 20px 0; }
+        .search-input { padding: 10px; margin: 5px; min-width: 300px; }
+        .search-btn { padding: 10px 20px; margin: 5px; background: #4a4a4a; color: white; border: none; cursor: pointer; }
+        .search-btn:hover { background: #6a6a6a; }
+        
+        #search-results { margin: 20px 0; min-height: 200px; }
+        #loading-state { display: none; text-align: center; padding: 20px; }
+        #empty-state { display: none; text-align: center; padding: 20px; }
+        
+        .book-card { border: 1px solid #444; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .book-title { font-weight: bold; color: #87ceeb; }
+        .book-author { color: #ccc; }
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .toast { background: #333; color: white; padding: 10px; margin: 5px 0; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Book Search Page Test</h1>
+        
+        <div class="test-section">
+            <h2>Test Status</h2>
+            <div id="test-results">
+                <div class="test-status info">Starting tests...</div>
+            </div>
+        </div>
+        
+        <!-- Simplified search interface for testing -->
+        <div class="test-section">
+            <h2>Search Interface</h2>
+            
+            <form class="search-form" id="book-search-form">
+                <input 
+                    type="text" 
+                    id="search-query" 
+                    name="query"
+                    class="search-input" 
+                    placeholder="Search by title, author, ISBN..."
+                    value="test search"
+                >
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+            
+            <!-- Search suggestions dropdown -->
+            <div id="search-suggestions" style="display: none;">
+                <ul id="suggestions-list"></ul>
+            </div>
+            
+            <!-- Advanced filters (hidden by default) -->
+            <div id="advanced-filters" style="display: none;">
+                <input type="text" id="author-filter" placeholder="Author">
+                <select id="category-filter">
+                    <option value="">All Categories</option>
+                    <option value="fiction">Fiction</option>
+                </select>
+                <input type="number" id="year-from" placeholder="Year From">
+                <input type="number" id="year-to" placeholder="Year To">
+                <input type="number" id="rating-filter" placeholder="Min Rating">
+                <button id="clear-filters">Clear Filters</button>
+            </div>
+            
+            <button id="advanced-search-toggle" class="search-btn">Toggle Advanced</button>
+            <button id="clear-search" class="search-btn">Clear Search</button>
+        </div>
+        
+        <!-- Results area -->
+        <div class="test-section">
+            <h2>Search Results</h2>
+            
+            <div id="loading-state">
+                <div class="loading-spinner">Searching...</div>
+            </div>
+            
+            <div id="empty-state">
+                <h3>No Books Found</h3>
+                <p>Try adjusting your search terms.</p>
+            </div>
+            
+            <div id="search-results">
+                <!-- Results will be populated here -->
+            </div>
+            
+            <div id="search-results-section">
+                <!-- SearchResults component container -->
+            </div>
+        </div>
+        
+        <!-- Popular searches section -->
+        <div class="test-section">
+            <div id="popular-searches">
+                <h3>Popular Searches</h3>
+                <div class="popular-tags">
+                    <!-- Popular search tags will be populated here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation elements -->
+        <div style="display: none;">
+            <button id="logout-btn">Logout</button>
+            <button id="mobile-menu-toggle">Menu</button>
+        </div>
+    </div>
+
+    <!-- Mock Services -->
+    <script>
+        // Mock notification service
+        window.notificationService = {
+            showSuccess: function(message) {
+                console.log('SUCCESS:', message);
+                this.showToast(message, 'success');
+            },
+            showError: function(message) {
+                console.log('ERROR:', message);
+                this.showToast(message, 'error');
+            },
+            showToast: function(message, type) {
+                const container = document.querySelector('.toast-container') || this.createToastContainer();
+                const toast = document.createElement('div');
+                toast.className = 'toast ' + type;
+                toast.textContent = message;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            },
+            createToastContainer: function() {
+                const container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+                return container;
+            }
+        };
+        
+        // Mock book search service
+        window.bookSearchService = {
+            searchBooks: async function(query, filters = {}) {
+                console.log('Searching books:', { query, filters });
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                return {
+                    success: true,
+                    data: {
+                        content: [
+                            {
+                                id: 1,
+                                title: 'Test Book 1',
+                                author: 'Test Author 1',
+                                publicationYear: 2020,
+                                categoryName: 'Fiction',
+                                averageRating: 4.5,
+                                coverImageUrl: null,
+                                inUserLibrary: false
+                            },
+                            {
+                                id: 2,
+                                title: 'Test Book 2',
+                                author: 'Test Author 2',
+                                publicationYear: 2021,
+                                categoryName: 'Non-Fiction',
+                                averageRating: 4.2,
+                                coverImageUrl: null,
+                                inUserLibrary: true
+                            }
+                        ],
+                        totalElements: 2,
+                        totalPages: 1,
+                        currentPage: 0,
+                        pageSize: 20
+                    }
+                };
+            },
+            
+            getSearchSuggestions: async function(query) {
+                console.log('Getting suggestions for:', query);
+                await new Promise(resolve => setTimeout(resolve, 300));
+                return [
+                    query + ' suggestion 1',
+                    query + ' suggestion 2',
+                    query + ' book'
+                ];
+            },
+            
+            getPopularSearches: async function(limit = 8) {
+                console.log('Getting popular searches');
+                return {
+                    success: true,
+                    data: [
+                        'Fantasy',
+                        'Science Fiction',
+                        'Mystery',
+                        'Romance',
+                        'Biography'
+                    ]
+                };
+            }
+        };
+        
+        // Mock library service
+        window.libraryService = {
+            addBookToLibrary: async function(bookId) {
+                console.log('Adding book to library:', bookId);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                return { success: true };
+            }
+        };
+        
+        // Mock SearchResults component
+        window.SearchResults = class {
+            constructor(containerId) {
+                this.containerId = containerId;
+                this.container = document.getElementById(containerId);
+                console.log('SearchResults initialized with container:', containerId);
+            }
+            
+            async searchBooks(query, filters) {
+                console.log('SearchResults.searchBooks called:', { query, filters });
+                
+                if (!this.container) {
+                    this.container = document.getElementById('search-results');
+                }
+                
+                if (this.container) {
+                    this.container.innerHTML = `
+                        <div class="book-card">
+                            <div class="book-title">Found via SearchResults: ${query}</div>
+                            <div class="book-author">Mock search results</div>
+                            <div>Filters: ${JSON.stringify(filters)}</div>
+                        </div>
+                    `;
+                }
+                
+                return true;
+            }
+            
+            destroy() {
+                console.log('SearchResults destroyed');
+            }
+        };
+        
+        // Mock BookDetailModal component
+        window.BookDetailModal = class {
+            constructor() {
+                console.log('BookDetailModal initialized');
+            }
+            
+            destroy() {
+                console.log('BookDetailModal destroyed');
+            }
+        };
+        
+        // Test runner
+        function runTests() {
+            const results = document.getElementById('test-results');
+            
+            function addResult(message, type) {
+                const div = document.createElement('div');
+                div.className = 'test-status ' + type;
+                div.textContent = message;
+                results.appendChild(div);
+            }
+            
+            // Test 1: Check if services are available
+            addResult('✓ Mock services created successfully', 'success');
+            
+            // Test 2: Check if BookSearchPage can be imported
+            try {
+                if (typeof BookSearchPage !== 'undefined') {
+                    addResult('✓ BookSearchPage class available', 'success');
+                } else {
+                    addResult('⚠ BookSearchPage class not yet loaded', 'info');
+                }
+            } catch (error) {
+                addResult('✗ Error checking BookSearchPage: ' + error.message, 'error');
+            }
+        }
+        
+        // Run initial tests
+        setTimeout(runTests, 100);
+        
+        // Test BookSearchPage after it loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const results = document.getElementById('test-results');
+                
+                function addResult(message, type) {
+                    const div = document.createElement('div');
+                    div.className = 'test-status ' + type;
+                    div.textContent = message;
+                    results.appendChild(div);
+                }
+                
+                try {
+                    if (window.bookSearchPage) {
+                        addResult('✓ BookSearchPage instance created successfully', 'success');
+                        
+                        // Test search functionality
+                        const searchState = window.bookSearchPage.getSearchState();
+                        addResult('✓ BookSearchPage.getSearchState() works: ' + JSON.stringify(searchState), 'success');
+                        
+                        // Test components
+                        if (window.searchResults) {
+                            addResult('✓ SearchResults component initialized', 'success');
+                        } else {
+                            addResult('⚠ SearchResults component not found', 'info');
+                        }
+                        
+                        if (window.bookDetailModal) {
+                            addResult('✓ BookDetailModal component initialized', 'success');
+                        } else {
+                            addResult('⚠ BookDetailModal component not found', 'info');
+                        }
+                        
+                    } else {
+                        addResult('✗ BookSearchPage instance not found', 'error');
+                    }
+                } catch (error) {
+                    addResult('✗ Error testing BookSearchPage: ' + error.message, 'error');
+                }
+                
+                // Test form submission
+                try {
+                    const form = document.getElementById('book-search-form');
+                    const searchInput = document.getElementById('search-query');
+                    
+                    if (form && searchInput) {
+                        addResult('✓ Search form elements found', 'success');
+                        
+                        // Test search input
+                        searchInput.addEventListener('input', function() {
+                            addResult('✓ Search input event working', 'success');
+                        });
+                        
+                        // Test form submission
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            addResult('✓ Form submission intercepted successfully', 'success');
+                        });
+                        
+                    } else {
+                        addResult('✗ Search form elements not found', 'error');
+                    }
+                } catch (error) {
+                    addResult('✗ Error testing form: ' + error.message, 'error');
+                }
+            }, 1000);
+        });
+    </script>
+
+    <!-- Load the actual BookSearchPage -->
+    <script src="src/js/pages/bookSearchPage.js"></script>
+
+    <!-- Toast container for notifications -->
+    <div class="toast-container"></div>
+</body>
+</html>
