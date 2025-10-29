@@ -8,7 +8,6 @@ import com.thehomearchive.library.entity.SearchHistory;
 import com.thehomearchive.library.entity.User;
 import com.thehomearchive.library.repository.BookRatingRepository;
 import com.thehomearchive.library.repository.BookRepository;
-import com.thehomearchive.library.repository.CategoryRepository;
 import com.thehomearchive.library.repository.SearchHistoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
  * - BookRepository for book data and search queries
  * - BookRatingRepository for rating information and user preferences
  * - SearchHistoryRepository for tracking and analytics
- * - Category data for filtering and enrichment
  */
 @Service
 @Transactional
@@ -50,9 +48,6 @@ public class BookSearchService {
 
     @Autowired
     private SearchHistoryRepository searchHistoryRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     /**
      * Perform a comprehensive book search with all features.
