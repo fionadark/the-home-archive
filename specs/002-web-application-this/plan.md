@@ -58,8 +58,8 @@ specs/[###-feature]/
 ### Source Code (repository root)
 
 ```
-backend/
-├── src/main/java/com/thehomearchive/library/
+src/
+├── main/java/com/thehomearchive/library/
 │   ├── controller/          # REST API endpoints
 │   ├── service/            # Business logic layer
 │   ├── repository/         # Data access layer
@@ -67,11 +67,11 @@ backend/
 │   ├── dto/                # Data transfer objects
 │   ├── config/             # Configuration classes
 │   └── security/           # Authentication & authorization
-├── src/main/resources/
+├── main/resources/
 │   ├── application.yml     # Configuration
 │   ├── data.sql           # Sample data
 │   └── static/            # Static resources
-└── src/test/java/         # Unit & integration tests
+└── test/java/             # Unit & integration tests
 
 frontend/
 ├── src/
