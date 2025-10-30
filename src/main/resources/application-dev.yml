@@ -69,10 +69,6 @@ jwt:
 # External APIs Configuration
 external:
   api:
-    google-books:
-      base-url: https://www.googleapis.com/books/v1
-      api-key: ${GOOGLE_BOOKS_API_KEY:}
-      timeout: 5000
     open-library:
       base-url: https://openlibrary.org
       timeout: 5000
@@ -81,10 +77,6 @@ external:
 resilience4j:
   circuitbreaker:
     instances:
-      google-books:
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 30000
-        sliding-window-size: 10
       open-library:
         failure-rate-threshold: 60
         wait-duration-in-open-state: 20000
