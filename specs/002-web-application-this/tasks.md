@@ -203,7 +203,7 @@
 - ~~[ ] T101 [P] [US3] Implement Google Books API integration service~~ **REMOVED** - OpenLibrary API (T102) provides sufficient coverage
 - [x] T102 [P] [US3] Implement OpenLibrary API integration service in backend/src/main/java/com/thehomearchive/library/service/OpenLibraryService.java
 - [x] T103 [US3] Create book metadata enrichment service using OpenLibrary API in backend/src/main/java/com/thehomearchive/library/service/BookMetadataService.java
-- [ ] T104 [US3] Add external API fallback and error handling in book search flow
+- [x] T104 [US3] Add external API fallback and error handling in book search flow
 
 **Checkpoint**: All user stories should now be independently functional
 

@@ -3,6 +3,8 @@ package com.thehomearchive.library.service;
 import com.thehomearchive.library.dto.search.BookSearchPageResponse;
 import com.thehomearchive.library.dto.search.BookSearchRequest;
 import com.thehomearchive.library.dto.search.BookSearchResponse;
+import com.thehomearchive.library.dto.search.EnhancedBookSearchResponse;
+import com.thehomearchive.library.dto.book.BookResponse;
 import com.thehomearchive.library.entity.Book;
 import com.thehomearchive.library.entity.SearchHistory;
 import com.thehomearchive.library.entity.User;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,6 +51,9 @@ public class BookSearchService {
 
     @Autowired
     private SearchHistoryRepository searchHistoryRepository;
+
+    @Autowired
+    private ExternalBookSearchService externalBookSearchService;
 
     /**
      * Perform a comprehensive book search with all features.
@@ -88,6 +94,83 @@ public class BookSearchService {
         } catch (Exception e) {
             logger.error("Error performing book search: {}", e.getMessage(), e);
             throw new RuntimeException("Search failed: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Perform enhanced book search with external API fallback.
+     * When local search returns insufficient results, this method automatically 
+     * searches external APIs and provides a unified result set.
+     * 
+     * @param request the search request parameters
+     * @param currentUser the authenticated user (optional for anonymous search)
+     * @param includeExternalApis whether to include external API search
+     * @param minLocalResults minimum local results before triggering external search
+     * @return enhanced search results with external API fallback
+     */
+    @Transactional(readOnly = true)
+    public EnhancedBookSearchResponse searchBooksWithExternalFallback(
+            BookSearchRequest request, 
+            User currentUser, 
+            boolean includeExternalApis,
+            int minLocalResults) {
+        
+        logger.info("Performing enhanced book search with external fallback: query='{}', includeExternal={}", 
+                   request.getQ(), includeExternalApis);
+        
+        long startTime = System.currentTimeMillis();
+        
+        try {
+            // First, perform local search
+            BookSearchPageResponse localResults = searchBooks(request, currentUser);
+            
+            // Determine if we need external API search
+            boolean shouldSearchExternal = includeExternalApis && 
+                                          request.hasQuery() && 
+                                          localResults.getTotalElements() < minLocalResults;
+            
+            List<BookResponse> externalResults = Collections.emptyList();
+            ExternalBookSearchService.ExternalApiHealthStatus healthStatus = null;
+            
+            if (shouldSearchExternal) {
+                logger.info("Local search returned {} results (below threshold {}), triggering external API search", 
+                           localResults.getTotalElements(), minLocalResults);
+                
+                try {
+                    // Get health status first
+                    healthStatus = externalBookSearchService.getHealthStatus();
+                    
+                    if (healthStatus.isAnyServiceHealthy()) {
+                        // Search external APIs
+                        externalResults = externalBookSearchService.searchBooks(
+                            request.getQ(), 
+                            request.getSize() != null ? request.getSize() : 20
+                        );
+                        
+                        logger.info("External API search completed: {} additional results found", 
+                                   externalResults.size());
+                    } else {
+                        logger.warn("All external APIs are unhealthy, skipping external search");
+                    }
+                } catch (Exception e) {
+                    logger.error("External API search failed: {}", e.getMessage(), e);
+                    // Continue with local results only
+                }
+            }
+            
+            // Create enhanced response
+            EnhancedBookSearchResponse enhancedResponse = new EnhancedBookSearchResponse();
+            enhancedResponse.setLocalResults(localResults);
+            enhancedResponse.setExternalResults(externalResults);
+            enhancedResponse.setExternalSearchPerformed(shouldSearchExternal);
+            enhancedResponse.setExternalApiHealthStatus(healthStatus);
+            enhancedResponse.setTotalSearchTimeMs(System.currentTimeMillis() - startTime);
+            
+            return enhancedResponse;
+            
+        } catch (Exception e) {
+            logger.error("Error performing enhanced book search: {}", e.getMessage(), e);
+            throw new RuntimeException("Enhanced search failed: " + e.getMessage(), e);
         }
     }
 

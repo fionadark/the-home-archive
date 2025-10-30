@@ -7,10 +7,12 @@ import com.thehomearchive.library.dto.response.ApiResponse;
 import com.thehomearchive.library.dto.search.BookSearchPageResponse;
 import com.thehomearchive.library.dto.search.BookSearchRequest;
 import com.thehomearchive.library.dto.search.BookSearchResponse;
+import com.thehomearchive.library.dto.search.EnhancedBookSearchResponse;
 import com.thehomearchive.library.entity.User;
 import com.thehomearchive.library.service.BookSearchService;
 import com.thehomearchive.library.service.BookService;
 import com.thehomearchive.library.service.RatingService;
+import com.thehomearchive.library.service.ExternalBookSearchService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
@@ -48,6 +50,9 @@ public class BookSearchController {
 
     @Autowired
     private RatingService ratingService;
+
+    @Autowired
+    private ExternalBookSearchService externalBookSearchService;
 
     /**
      * Search and list books with advanced filtering and pagination.
@@ -105,6 +110,76 @@ public class BookSearchController {
             logger.error("Error performing book search", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("An error occurred while searching books"));
+        }
+    }
+
+    /**
+     * Enhanced search with external API fallback.
+     * When local search returns insufficient results, this endpoint automatically 
+     * searches external APIs (OpenLibrary, Google Books) and provides unified results.
+     * 
+     * @param q Search query (title, author, ISBN)
+     * @param category Filter by category ID  
+     * @param page Page number (0-based)
+     * @param size Page size (1-100)
+     * @param sort Sort criteria (title, author, publicationYear, rating)
+     * @param direction Sort direction (asc, desc)
+     * @param includeExternal Whether to include external API search (default: true)
+     * @param minLocalResults Minimum local results before triggering external search (default: 5)
+     * @return Enhanced search results with external API fallback
+     */
+    @GetMapping("/books/enhanced")
+    public ResponseEntity<ApiResponse<EnhancedBookSearchResponse>> searchBooksEnhanced(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Long category,
+            @RequestParam(defaultValue = "0") @Min(0) Integer page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size,
+            @RequestParam(defaultValue = "title") String sort,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "true") Boolean includeExternal,
+            @RequestParam(defaultValue = "5") @Min(0) @Max(50) Integer minLocalResults) {
+        
+        try {
+            logger.info("Enhanced book search request: q='{}', category={}, page={}, size={}, includeExternal={}, minLocalResults={}",
+                    q, category, page, size, includeExternal, minLocalResults);
+
+            // Create search request
+            BookSearchRequest request = new BookSearchRequest();
+            request.setQ(q);
+            request.setCategory(category);
+            request.setPage(page);
+            request.setSize(size);
+            
+            // Convert sort string to enum
+            BookSearchRequest.SortCriteria sortCriteria = convertToSortCriteria(sort);
+            request.setSort(sortCriteria);
+            
+            // Convert direction string to enum
+            BookSearchRequest.SortDirection sortDirection = convertToSortDirection(direction);
+            request.setDirection(sortDirection);
+
+            // Get current user for personalized results (if authenticated)
+            User currentUser = getCurrentUser();
+
+            // Perform enhanced search with external API fallback
+            EnhancedBookSearchResponse enhancedResults = bookSearchService.searchBooksWithExternalFallback(
+                request, currentUser, includeExternal, minLocalResults);
+
+            logger.info("Enhanced book search completed: {} local results, {} external results, external search performed: {}", 
+                       enhancedResults.getTotalLocalResults(), 
+                       enhancedResults.getTotalExternalResults(),
+                       enhancedResults.isExternalSearchPerformed());
+
+            return ResponseEntity.ok(ApiResponse.success(enhancedResults));
+
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid enhanced search parameters: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error("Invalid search parameters: " + e.getMessage()));
+        } catch (Exception e) {
+            logger.error("Error performing enhanced book search", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("An error occurred while performing enhanced search"));
         }
     }
 
@@ -292,6 +367,32 @@ public class BookSearchController {
             logger.error("Error clearing user search history", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("An error occurred while clearing search history"));
+        }
+    }
+
+    /**
+     * Get health status of external APIs.
+     * Provides information about availability of OpenLibrary and Google Books APIs.
+     * 
+     * @return Health status of external APIs
+     */
+    @GetMapping("/external-apis/health")
+    public ResponseEntity<ApiResponse<ExternalBookSearchService.ExternalApiHealthStatus>> getExternalApiHealth() {
+        try {
+            logger.info("Checking external API health status");
+
+            ExternalBookSearchService.ExternalApiHealthStatus healthStatus = 
+                externalBookSearchService.getHealthStatus();
+
+            logger.info("External API health check completed - OpenLibrary: {}, Google Books: {}", 
+                       healthStatus.isOpenLibraryHealthy(), healthStatus.isGoogleBooksHealthy());
+
+            return ResponseEntity.ok(ApiResponse.success(healthStatus));
+
+        } catch (Exception e) {
+            logger.error("Error checking external API health", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("An error occurred while checking external API health"));
         }
     }
 
