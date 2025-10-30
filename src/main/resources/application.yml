@@ -45,6 +45,19 @@ app:
     allow-credentials: true
     max-age: 3600
 
+# External API Configuration
+external:
+  api:
+    google-books:
+      base-url: ${GOOGLE_BOOKS_API_URL:https://www.googleapis.com/books/v1}
+      api-key: ${GOOGLE_BOOKS_API_KEY:}
+      timeout: ${GOOGLE_BOOKS_TIMEOUT:10000}
+      max-results: ${GOOGLE_BOOKS_MAX_RESULTS:20}
+    open-library:
+      base-url: ${OPENLIBRARY_API_URL:https://openlibrary.org}
+      timeout: ${OPENLIBRARY_TIMEOUT:10000}
+      max-results: ${OPENLIBRARY_MAX_RESULTS:20}
+
 # Logging Configuration
 logging:
   level:
