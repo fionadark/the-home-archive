@@ -106,6 +106,12 @@ logging:
   pattern:
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 3
+      total-size-cap: 50MB
+      clean-history-on-start: true
 
 # Management/Actuator Configuration
 management:
