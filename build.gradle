@@ -40,6 +40,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     
+    // Monitoring and Metrics
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    
     // OpenAPI/Swagger documentation (required by constitution)
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     
@@ -72,6 +76,12 @@ dependencies {
     // Development Tools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 dependencyManagement {

@@ -160,21 +160,50 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,prometheus
       base-path: /actuator
   endpoint:
     health:
       show-details: when_authorized
       roles: ADMIN
+      show-components: always
+    metrics:
+      enabled: true
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
   metrics:
     export:
       prometheus:
         enabled: true
+        step: 60s
+      simple:
+        enabled: false
+    web:
+      server:
+        request:
+          autotime:
+            enabled: true
+            percentiles: 0.5,0.95,0.99
+    tags:
+      application: ${spring.application.name:the-home-archive}
+      environment: production
+      instance: ${HOSTNAME:unknown}
   info:
     env:
       enabled: true
     git:
       mode: full
+    java:
+      enabled: true
+    os:
+      enabled: true
+
+# Monitoring Configuration
+monitoring:
+  enable-request-logging: true
+  slow-request-threshold: 1000
 
 # Amazon RDS Configuration
 amazon:
