@@ -213,8 +213,8 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T105 [P] Create comprehensive API documentation in the docs folder
-- [ ] T106 [P] Add responsive design for mobile devices in frontend/src/css/responsive/mobile.css
+- [x] T105 [P] Create comprehensive API documentation in the docs folder
+- [x] T106 [P] Add responsive design for mobile devices in frontend/src/css/responsive/mobile.css
 - [ ] T107 [P] Implement loading states and error handling in frontend/src/js/utils/uiUtils.js
 - [ ] T108 [P] Add performance monitoring and logging in backend/src/main/java/com/thehomearchive/library/config/MonitoringConfig.java
 - [ ] T109 [P] Create sample data seeding script in backend/src/main/resources/data.sql
