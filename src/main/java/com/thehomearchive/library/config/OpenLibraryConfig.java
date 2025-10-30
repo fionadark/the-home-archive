@@ -13,17 +13,32 @@ import java.time.Duration;
  * Provides RestTemplate and configuration properties for OpenLibrary service.
  */
 @Configuration
-@ConfigurationProperties(prefix = "api.openlibrary")
+@ConfigurationProperties(prefix = "external.api.open-library")
 public class OpenLibraryConfig {
     
     private String baseUrl = "https://openlibrary.org";
-    private String searchUrl = "https://openlibrary.org/search.json";
-    private String worksUrl = "https://openlibrary.org/works";
-    private String coversUrl = "https://covers.openlibrary.org/b";
-    private int connectTimeout = 5000;
-    private int readTimeout = 15000;
-    private int limit = 20;
-    private String defaultFields = "key,title,author_name,first_publish_year,isbn,publisher,language,subject,cover_i,cover_edition_key";
+    private int timeout = 5000;
+    
+    // Derived URLs based on baseUrl
+    public String getSearchUrl() {
+        return baseUrl + "/search.json";
+    }
+    
+    public String getWorksUrl() {
+        return baseUrl + "/works";
+    }
+    
+    public String getCoversUrl() {
+        return "https://covers.openlibrary.org/b";
+    }
+    
+    public int getLimit() {
+        return 20; // Default limit for search results
+    }
+    
+    public String getDefaultFields() {
+        return "key,title,author_name,first_publish_year,isbn,publisher,language,subject,cover_i,cover_edition_key,number_of_pages_median";
+    }
     
     // Getters and Setters
     public String getBaseUrl() {
@@ -34,60 +49,12 @@ public class OpenLibraryConfig {
         this.baseUrl = baseUrl;
     }
     
-    public String getSearchUrl() {
-        return searchUrl;
+    public int getTimeout() {
+        return timeout;
     }
     
-    public void setSearchUrl(String searchUrl) {
-        this.searchUrl = searchUrl;
-    }
-    
-    public String getWorksUrl() {
-        return worksUrl;
-    }
-    
-    public void setWorksUrl(String worksUrl) {
-        this.worksUrl = worksUrl;
-    }
-    
-    public String getCoversUrl() {
-        return coversUrl;
-    }
-    
-    public void setCoversUrl(String coversUrl) {
-        this.coversUrl = coversUrl;
-    }
-    
-    public int getConnectTimeout() {
-        return connectTimeout;
-    }
-    
-    public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
-    }
-    
-    public int getReadTimeout() {
-        return readTimeout;
-    }
-    
-    public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
-    }
-    
-    public int getLimit() {
-        return limit;
-    }
-    
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-    
-    public String getDefaultFields() {
-        return defaultFields;
-    }
-    
-    public void setDefaultFields(String defaultFields) {
-        this.defaultFields = defaultFields;
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
     
     /**
@@ -100,8 +67,8 @@ public class OpenLibraryConfig {
     public RestTemplate openLibraryRestTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
                 .rootUri(baseUrl)
-                .connectTimeout(Duration.ofMillis(connectTimeout))
-                .readTimeout(Duration.ofMillis(readTimeout))
+                .connectTimeout(Duration.ofMillis(timeout))
+                .readTimeout(Duration.ofMillis(timeout * 2)) // Read timeout longer than connect
                 .build();
     }
 }

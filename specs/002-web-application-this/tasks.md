@@ -201,7 +201,7 @@
 - [x] T099 [US3] Implement book addition functionality in frontend/src/js/components/BookAddition.js
 - [x] T100 [US3] Add duplicate prevention logic in frontend/src/js/utils/duplicateChecker.js
 - [ ] T101 [P] [US3] Implement Google Books API integration service in backend/src/main/java/com/thehomearchive/library/service/GoogleBooksService.java
-- [ ] T102 [P] [US3] Implement OpenLibrary API integration service in backend/src/main/java/com/thehomearchive/library/service/OpenLibraryService.java
+- [x] T102 [P] [US3] Implement OpenLibrary API integration service in backend/src/main/java/com/thehomearchive/library/service/OpenLibraryService.java
 - [ ] T103 [US3] Create book metadata enrichment service in backend/src/main/java/com/thehomearchive/library/service/BookMetadataService.java
 - [ ] T104 [US3] Add external API fallback and error handling in book search flow
 
