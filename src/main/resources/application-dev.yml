@@ -34,6 +34,14 @@ spring:
         order_inserts: true
         order_updates: true
         format_sql: true
+    defer-datasource-initialization: true
+  
+  # SQL Initialization
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      encoding: utf-8
   
   # Flyway Configuration
   flyway:
