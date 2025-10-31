@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +37,9 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    private SecurityHeadersConfig securityHeadersConfig;
 
     /**
      * Password encoder bean using BCrypt
@@ -154,6 +158,9 @@ public class SecurityConfig {
 
         // Add JWT filter before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        
+        // Add security headers filter as the first filter in the chain
+        http.addFilterBefore(securityHeadersConfig.securityHeadersFilter(), JwtAuthenticationFilter.class);
 
         // Special handling for H2 console in development
         http.headers(headers -> 
