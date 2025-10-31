@@ -3,14 +3,14 @@
  * Part of Phase 5 User Story 3 implementation
  */
 
-import { BookService } from '../services/BookService.js';
-import { NotificationService } from '../services/NotificationService.js';
+import { bookService } from '../services/bookService.js';
+import { notificationService } from '../services/notificationService.js';
 import { duplicateChecker } from '../utils/duplicateChecker.js';
 
 export default class BookAddition {
     constructor() {
-        this.bookService = new BookService();
-        this.notificationService = new NotificationService();
+        this.bookService = bookService;
+        this.notificationService = notificationService;
         
         this.isbnValidationResults = {};
         this.currentStep = 'search'; // search, manual, confirmation

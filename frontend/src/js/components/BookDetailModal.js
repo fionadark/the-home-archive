@@ -10,9 +10,9 @@
  * - Handle modal show/hide with animations
  */
 
-import { LibraryService } from '../services/libraryService.js';
-import { BookService } from '../services/BookService.js';
-import { NotificationService } from '../services/NotificationService.js';
+import { libraryService } from '../services/libraryService.js';
+import { bookService } from '../services/bookService.js';
+import { notificationService } from '../services/notificationService.js';
 
 export class BookDetailModal {
     constructor() {

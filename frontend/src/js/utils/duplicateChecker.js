@@ -7,11 +7,11 @@
  * improving user experience with immediate feedback.
  */
 
-import { LibraryService } from '../services/libraryService.js';
+import { libraryService } from '../services/libraryService.js';
 
 export default class DuplicateChecker {
     constructor() {
-        this.libraryService = new LibraryService();
+        this.libraryService = libraryService;
         
         // Cache for user's library books to avoid repeated API calls
         this.userLibraryCache = new Map();

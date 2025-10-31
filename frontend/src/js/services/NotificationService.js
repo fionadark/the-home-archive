@@ -233,3 +233,7 @@ export class NotificationService {
         return overlay;
     }
 }
+
+// Export as singleton instance
+export const notificationService = new NotificationService();
+export default notificationService;

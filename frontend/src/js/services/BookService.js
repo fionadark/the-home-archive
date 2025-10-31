@@ -1,10 +1,12 @@
+import { BaseService } from '../utils/baseService.js';
+
 /**
  * BookService - Handles all book-related API operations
  * Part of Phase 5 User Story 3 implementation
  */
-
-export class BookService {
+export class BookService extends BaseService {
     constructor() {
+        super('');
         this.baseUrl = '/api/books';
     }
 
@@ -14,27 +16,22 @@ export class BookService {
      * @returns {Promise} Search results
      */
     async searchBooks(searchParams) {
-        const params = new URLSearchParams();
-        
-        Object.keys(searchParams).forEach(key => {
-            if (searchParams[key] !== null && searchParams[key] !== undefined && searchParams[key] !== '') {
-                params.append(key, searchParams[key]);
-            }
-        });
+        try {
+            const params = new URLSearchParams();
+            
+            Object.keys(searchParams).forEach(key => {
+                if (searchParams[key] !== null && searchParams[key] !== undefined && searchParams[key] !== '') {
+                    params.append(key, searchParams[key]);
+                }
+            });
 
-        const response = await fetch(`${this.baseUrl}/search?${params.toString()}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.getAuthToken()}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Search failed: ${response.statusText}`);
+            const url = `${this.baseUrl}/search?${params.toString()}`;
+            const response = await this.makeRequest(url);
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Failed to search books:', error);
+            throw error;
         }
-
-        return response.json();
     }
 
     /**
@@ -43,19 +40,14 @@ export class BookService {
      * @returns {Promise} Validation results
      */
     async validateBookByIsbn(isbn) {
-        const response = await fetch(`/api/v1/books/validate?isbn=${encodeURIComponent(isbn)}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.getAuthToken()}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`ISBN validation failed: ${response.statusText}`);
+        try {
+            const url = `/api/v1/books/validate?isbn=${encodeURIComponent(isbn)}`;
+            const response = await this.makeRequest(url);
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Failed to validate ISBN:', error);
+            throw error;
         }
-
-        return response.json();
     }
 
     /**
@@ -64,21 +56,16 @@ export class BookService {
      * @returns {Promise} Created book
      */
     async createBook(bookData) {
-        const response = await fetch('/api/v1/books', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.getAuthToken()}`
-            },
-            body: JSON.stringify(bookData)
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Failed to create book');
+        try {
+            const response = await this.makeRequest('/api/v1/books', {
+                method: 'POST',
+                body: bookData
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Failed to create book:', error);
+            throw error;
         }
-
-        return response.json();
     }
 
     /**
@@ -87,25 +74,22 @@ export class BookService {
      * @returns {Promise} Result
      */
     async addBookToLibrary(bookId) {
-        const response = await fetch(`/api/library/books/${bookId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.getAuthToken()}`
-            },
-            body: JSON.stringify({
+        try {
+            const bookData = {
                 readingStatus: 'WANT_TO_READ',
                 physicalLocation: '',
                 personalNotes: ''
-            })
-        });
+            };
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Failed to add book to library');
+            const response = await this.makeRequest(`/api/library/books/${bookId}`, {
+                method: 'POST',
+                body: bookData
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Failed to add book to library:', error);
+            throw error;
         }
-
-        return response.json();
     }
 
     /**
@@ -115,19 +99,14 @@ export class BookService {
      * @returns {Promise} Suggestions
      */
     async getSearchSuggestions(query, limit = 5) {
-        const response = await fetch(`${this.baseUrl}/search/suggestions?q=${encodeURIComponent(query)}&limit=${limit}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.getAuthToken()}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to get suggestions: ${response.statusText}`);
+        try {
+            const url = `${this.baseUrl}/search/suggestions?q=${encodeURIComponent(query)}&limit=${limit}`;
+            const response = await this.makeRequest(url);
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Failed to get suggestions:', error);
+            return []; // Return empty array on error
         }
-
-        return response.json();
     }
 
     /**
@@ -135,26 +114,15 @@ export class BookService {
      * @returns {Promise} Categories list
      */
     async getCategories() {
-        const response = await fetch('/api/v1/books/categories', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.getAuthToken()}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to get categories: ${response.statusText}`);
+        try {
+            const response = await this.makeRequest('/api/v1/books/categories');
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Failed to get categories:', error);
+            return [];
         }
-
-        return response.json();
-    }
-
-    /**
-     * Get authentication token
-     * @returns {string} Auth token
-     */
-    getAuthToken() {
-        return localStorage.getItem('authToken') || '';
     }
 }
+
+export const bookService = new BookService();
+export default bookService;

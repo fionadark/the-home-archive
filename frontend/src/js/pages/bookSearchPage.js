@@ -13,14 +13,14 @@
  */
 
 // Import services for test compatibility
-import { BookService } from '../services/BookService.js';
-import { NotificationService } from '../services/NotificationService.js';
+import { bookService } from '../services/bookService.js';
+import { notificationService } from '../services/notificationService.js';
 
 class BookSearchPage {
     constructor() {
         // Service dependencies - support both patterns for compatibility
-        this.bookService = new BookService();
-        this.notificationService = new NotificationService();
+        this.bookService = bookService;
+        this.notificationService = notificationService;
         this.bookSearchService = window.bookSearchService || null;
         this.libraryService = window.libraryService || null;
         
