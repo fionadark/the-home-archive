@@ -220,7 +220,7 @@
 - [x] T109 [P] Create sample data seeding script in backend/src/main/resources/data.sql
 - [x] T110 [P] Add security headers and CSRF protection in backend/src/main/java/com/thehomearchive/library/config/SecurityHeadersConfig.java
 - [x] T111 [P] Implement graceful degradation for offline scenarios in frontend/src/js/utils/offlineHandler.js
-- [ ] T112 [P] Add accessibility (ARIA) labels and keyboard navigation in frontend/src/js/utils/accessibility.js
+- [x] T112 [P] Add accessibility (ARIA) labels and keyboard navigation in frontend/src/js/utils/accessibility.js
 - [ ] T113 Code cleanup and refactoring across all components
 - [ ] T114 Run quickstart.md validation and end-to-end testing
 
