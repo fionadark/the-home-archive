@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T111 Offline Handler Test - The Home Archive</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            background: #2d3436;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #d4af37;
+        }
+        
+        button {
+            background: #d4af37;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #b8941f;
+        }
+        
+        .status {
+            background: #495057;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        .online { color: #28a745; }
+        .offline { color: #dc3545; }
+        .warning { color: #ffc107; }
+        .info { color: #17a2b8; }
+        
+        pre {
+            background: #343a40;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 T111 Offline Handler Test</h1>
+        <p>Testing graceful degradation for offline scenarios in The Home Archive dark academia library.</p>
+
+        <div class="test-section">
+            <h2>📡 Network Status</h2>
+            <div id="network-status" class="status">Checking...</div>
+            <button onclick="checkConnection()">Check Connection</button>
+            <button onclick="simulateOffline()">Simulate Offline</button>
+            <button onclick="simulateOnline()">Simulate Online</button>
+        </div>
+
+        <div class="test-section">
+            <h2>⚙️ Service Worker</h2>
+            <div id="sw-status" class="status">Checking service worker...</div>
+            <button onclick="checkServiceWorker()">Check SW Status</button>
+            <button onclick="registerServiceWorker()">Register SW</button>
+            <button onclick="unregisterServiceWorker()">Unregister SW</button>
+        </div>
+
+        <div class="test-section">
+            <h2>💾 Cache Management</h2>
+            <div id="cache-status" class="status">Cache: 0 items</div>
+            <button onclick="testCaching()">Test Caching</button>
+            <button onclick="getCachedData()">Get Cached Data</button>
+            <button onclick="clearCache()">Clear Cache</button>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 Operation Queue</h2>
+            <div id="queue-status" class="status">Queue: 0 operations</div>
+            <button onclick="queueOperation()">Queue Test Operation</button>
+            <button onclick="processQueue()">Process Queue</button>
+        </div>
+
+        <div class="test-section">
+            <h2>🔄 Enhanced Fetch</h2>
+            <div id="fetch-status" class="status">Ready to test fetch</div>
+            <button onclick="testOnlineFetch()">Test Online Fetch</button>
+            <button onclick="testOfflineFetch()">Test Offline Fetch</button>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Status Information</h2>
+            <pre id="status-info">Click "Get Status" to see detailed information</pre>
+            <button onclick="getDetailedStatus()">Get Status</button>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 Console Output</h2>
+            <pre id="console-output">Console messages will appear here...</pre>
+        </div>
+    </div>
+
+    <!-- Load offline handler -->
+    <script src="../src/js/utils/offlineHandler.js"></script>
+    <script src="../src/js/utils/serviceWorkerManager.js"></script>
+
+    <script>
+        // Enhanced console logging for test display
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function appendToConsole(message, type = 'log') {
+            const consoleOutput = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : '📝';
+            consoleOutput.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            appendToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            appendToConsole(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            appendToConsole(args.join(' '), 'warn');
+        };
+
+        // Initialize offline handler
+        let offlineHandler;
+        
+        // Wait for offline handler to be available
+        setTimeout(() => {
+            if (window.OfflineUtils) {
+                offlineHandler = window.OfflineUtils.handler;
+                console.log('Offline handler initialized successfully');
+                updateStatus();
+                
+                // Subscribe to network changes
+                offlineHandler.subscribe((status) => {
+                    console.log(`Network status changed: ${status}`);
+                    updateStatus();
+                });
+            } else {
+                console.error('OfflineUtils not available');
+            }
+        }, 100);
+
+        function updateStatus() {
+            if (!offlineHandler) return;
+            
+            const status = offlineHandler.getStatus();
+            const networkStatus = document.getElementById('network-status');
+            const cacheStatus = document.getElementById('cache-status');
+            const queueStatus = document.getElementById('queue-status');
+            
+            networkStatus.innerHTML = `
+                Status: <span class="${status.isOnline ? 'online' : 'offline'}">
+                    ${status.isOnline ? '🟢 Online' : '🔴 Offline'}
+                </span><br>
+                Last Check: ${new Date(status.lastCheck).toLocaleTimeString()}
+            `;
+            
+            cacheStatus.innerHTML = `Cache: ${status.cacheSize} items`;
+            queueStatus.innerHTML = `Queue: ${status.queuedOperations} operations`;
+        }
+
+        function checkConnection() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            console.log('Forcing connection check...');
+            offlineHandler.forceConnectionCheck();
+            setTimeout(updateStatus, 1000);
+        }
+
+        function simulateOffline() {
+            console.log('Simulating offline mode...');
+            window.dispatchEvent(new Event('offline'));
+            setTimeout(updateStatus, 100);
+        }
+
+        function simulateOnline() {
+            console.log('Simulating online mode...');
+            window.dispatchEvent(new Event('online'));
+            setTimeout(updateStatus, 100);
+        }
+
+        function testCaching() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            const testData = {
+                books: [
+                    { id: 1, title: 'The Secret History', author: 'Donna Tartt' },
+                    { id: 2, title: 'If We Were Villains', author: 'M.L. Rio' }
+                ],
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log('Caching test data...');
+            offlineHandler.cacheData('test_library', testData);
+            console.log('Test data cached successfully');
+            updateStatus();
+        }
+
+        function getCachedData() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            console.log('Retrieving cached data...');
+            const cachedData = offlineHandler.getCachedData('test_library');
+            
+            if (cachedData) {
+                console.log('Cached data retrieved:', cachedData);
+                document.getElementById('fetch-status').innerHTML = `
+                    <strong>Cached Data:</strong><br>
+                    ${JSON.stringify(cachedData, null, 2)}
+                `;
+            } else {
+                console.log('No cached data found');
+                document.getElementById('fetch-status').innerHTML = 'No cached data found';
+            }
+        }
+
+        function clearCache() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            console.log('Clearing cache...');
+            offlineHandler.clearCache();
+            console.log('Cache cleared');
+            updateStatus();
+        }
+
+        function queueOperation() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            const operation = {
+                type: 'ADD_BOOK',
+                url: '/api/library/add',
+                options: {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        bookId: 123,
+                        status: 'READING',
+                        notes: 'Test book added offline'
+                    })
+                },
+                priority: 8,
+                callback: (error, result) => {
+                    if (error) {
+                        console.error('Operation failed:', error.message);
+                    } else {
+                        console.log('Operation succeeded:', result);
+                    }
+                }
+            };
+            
+            console.log('Queueing test operation...');
+            offlineHandler.queueOperation(operation);
+            console.log('Operation queued');
+            updateStatus();
+        }
+
+        function processQueue() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            console.log('Processing queued operations...');
+            // This would normally happen automatically when going online
+            // For testing, we can trigger it manually
+            setTimeout(() => {
+                console.log('Queue processing completed (simulated)');
+                updateStatus();
+            }, 1000);
+        }
+
+        async function testOnlineFetch() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            try {
+                console.log('Testing enhanced fetch (online)...');
+                
+                // Test with a real endpoint (if available) or mock
+                const testUrl = '/api/categories'; // This might not exist in test
+                
+                document.getElementById('fetch-status').innerHTML = 'Testing online fetch...';
+                
+                // Use the enhanced fetch
+                const response = await offlineHandler.fetch(testUrl);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Online fetch successful:', data);
+                    document.getElementById('fetch-status').innerHTML = `
+                        <span class="online">✅ Online fetch successful</span><br>
+                        Response cached for offline use
+                    `;
+                } else {
+                    console.log('Fetch returned non-OK status:', response.status);
+                    document.getElementById('fetch-status').innerHTML = `
+                        <span class="warning">⚠️ Fetch returned status: ${response.status}</span>
+                    `;
+                }
+            } catch (error) {
+                console.error('Online fetch failed:', error.message);
+                document.getElementById('fetch-status').innerHTML = `
+                    <span class="offline">❌ Online fetch failed: ${error.message}</span>
+                `;
+            }
+        }
+
+        async function testOfflineFetch() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            try {
+                console.log('Testing enhanced fetch (offline simulation)...');
+                
+                // Temporarily force offline for this test
+                const wasOnline = offlineHandler.isOnline;
+                offlineHandler.isOnline = false;
+                
+                document.getElementById('fetch-status').innerHTML = 'Testing offline fetch...';
+                
+                const testUrl = '/api/categories';
+                const response = await offlineHandler.fetch(testUrl);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Offline fetch successful (cached data):', data);
+                    document.getElementById('fetch-status').innerHTML = `
+                        <span class="info">📱 Offline fetch successful</span><br>
+                        Data served from cache
+                    `;
+                } else {
+                    console.log('Offline fetch failed - no cached data');
+                    document.getElementById('fetch-status').innerHTML = `
+                        <span class="warning">⚠️ No cached data available for offline use</span>
+                    `;
+                }
+                
+                // Restore online status
+                offlineHandler.isOnline = wasOnline;
+                
+            } catch (error) {
+                console.error('Offline fetch failed:', error.message);
+                document.getElementById('fetch-status').innerHTML = `
+                    <span class="offline">❌ Offline fetch failed: ${error.message}</span>
+                `;
+                
+                // Restore online status
+                if (offlineHandler) {
+                    offlineHandler.isOnline = true;
+                }
+            }
+        }
+
+        // Service Worker Testing Functions
+        function checkServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(registration => {
+                    if (registration) {
+                        const state = registration.active ? registration.active.state : 'inactive';
+                        updateStatus('sw-status', `Service Worker: Registered (${state})`);
+                    } else {
+                        updateStatus('sw-status', 'Service Worker: Not registered');
+                    }
+                });
+            } else {
+                updateStatus('sw-status', 'Service Worker: Not supported');
+            }
+        }
+
+        async function registerServiceWorker() {
+            if (!('serviceWorker' in navigator)) {
+                updateStatus('sw-status', 'Service Worker not supported');
+                return;
+            }
+
+            try {
+                updateStatus('sw-status', 'Registering service worker...');
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                updateStatus('sw-status', `Service Worker registered: ${registration.scope}`);
+            } catch (error) {
+                updateStatus('sw-status', `Service Worker registration failed: ${error.message}`);
+            }
+        }
+
+        async function unregisterServiceWorker() {
+            if (!('serviceWorker' in navigator)) {
+                updateStatus('sw-status', 'Service Worker not supported');
+                return;
+            }
+
+            try {
+                const registration = await navigator.serviceWorker.getRegistration();
+                if (registration) {
+                    await registration.unregister();
+                    updateStatus('sw-status', 'Service Worker unregistered');
+                } else {
+                    updateStatus('sw-status', 'No service worker to unregister');
+                }
+            } catch (error) {
+                updateStatus('sw-status', `Service Worker unregistration failed: ${error.message}`);
+            }
+        }
+
+        function getDetailedStatus() {
+            if (!offlineHandler) {
+                console.error('Offline handler not available');
+                return;
+            }
+            
+            const status = offlineHandler.getStatus();
+            const detailedInfo = {
+                'Network Status': status.isOnline ? 'Online' : 'Offline',
+                'Cache Size': `${status.cacheSize} items`,
+                'Queued Operations': status.queuedOperations,
+                'Last Connection Check': new Date(status.lastCheck).toLocaleString(),
+                'Browser Online': navigator.onLine,
+                'User Agent': navigator.userAgent.substring(0, 50) + '...',
+                'Local Storage Available': typeof Storage !== 'undefined',
+                'Service Worker Support': 'serviceWorker' in navigator
+            };
+            
+            document.getElementById('status-info').textContent = JSON.stringify(detailedInfo, null, 2);
+            console.log('Detailed status:', detailedInfo);
+        }
+
+        // Initialize status on page load
+        setTimeout(() => {
+            updateStatus();
+            getDetailedStatus();
+            checkServiceWorker();
+        }, 500);
+    </script>
+</body>
+</html>
