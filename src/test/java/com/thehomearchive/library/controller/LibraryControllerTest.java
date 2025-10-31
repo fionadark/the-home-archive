@@ -70,14 +70,15 @@ class LibraryControllerTest {
                 .thenReturn(page);
 
         // Act & Assert
-        mockMvc.perform(get("/api/library/books")
+        mockMvc.perform(get("/api/library")
                 .param("page", "0")
                 .param("size", "20")
                 .param("sortBy", "title")
                 .param("sortDir", "asc"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].title").value("Test Book"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content[0].title").value("Test Book"));
     }
 
     @Test
@@ -92,13 +93,14 @@ class LibraryControllerTest {
                 .thenReturn(page);
 
         // Act & Assert
-        mockMvc.perform(get("/api/library/books/search")
+        mockMvc.perform(get("/api/library/search")
                 .param("q", searchTerm)
                 .param("page", "0")
                 .param("size", "20"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].title").value("Test Book"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content[0].title").value("Test Book"));
     }
 
     @Test
@@ -118,7 +120,8 @@ class LibraryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Test Book"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.title").value("Test Book"));
     }
 
     @Test
@@ -138,7 +141,8 @@ class LibraryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Test Book"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.title").value("Test Book"));
     }
 
     @Test
@@ -149,7 +153,8 @@ class LibraryControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/api/library/books/{libraryBookId}", libraryBookId))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
     }
 
     @Test
@@ -163,10 +168,11 @@ class LibraryControllerTest {
                 .thenReturn(books);
 
         // Act & Assert
-        mockMvc.perform(get("/api/library/status/{status}", status.name()))
+        mockMvc.perform(get("/api/library/books/status/{status}", status.name()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].title").value("Test Book"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data[0].title").value("Test Book"));
     }
 
     @Test
@@ -184,8 +190,9 @@ class LibraryControllerTest {
         // Act & Assert
         mockMvc.perform(get("/api/library/statistics"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.UNREAD").value(5))
-                .andExpect(jsonPath("$.READING").value(2))
-                .andExpect(jsonPath("$.READ").value(3));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.UNREAD").value(5))
+                .andExpect(jsonPath("$.data.READING").value(2))
+                .andExpect(jsonPath("$.data.READ").value(3));
     }
 }

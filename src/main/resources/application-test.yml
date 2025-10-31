@@ -10,11 +10,19 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: false
+    defer-datasource-initialization: true
+        
+  # SQL Initialization for Testing (disabled - tests should manage their own data)
+  sql:
+    init:
+      mode: never
         
   # Disable mail for testing
   mail:
