@@ -26,7 +26,7 @@ import java.util.Map;
  * Handles user's personal book collection management.
  */
 @RestController
-@RequestMapping("/api/library")
+@RequestMapping("/api/v1/library")
 @PreAuthorize("hasRole('USER')")
 public class LibraryController {
 
@@ -40,8 +40,8 @@ public class LibraryController {
     public ResponseEntity<ApiResponse<PagedResponse<PersonalLibraryResponse>>> getUserLibrary(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "title") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+            @RequestParam(defaultValue = "dateAdded") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
 
         Long userId = SecurityUtils.getCurrentUserId();
         Pageable pageable = PageRequest.of(page, size, 

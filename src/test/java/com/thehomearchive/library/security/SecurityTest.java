@@ -78,7 +78,7 @@ class SecurityTest {
             mockMvc.perform(get("/api/v1/library"))
                     .andExpect(status().isUnauthorized());
 
-            mockMvc.perform(post("/api/v1/library/books"))
+            mockMvc.perform(post("/api/v1/library/books/1"))
                     .andExpect(status().isUnauthorized());
 
             mockMvc.perform(put("/api/v1/library/books/1"))

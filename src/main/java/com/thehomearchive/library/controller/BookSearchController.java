@@ -13,6 +13,7 @@ import com.thehomearchive.library.service.BookSearchService;
 import com.thehomearchive.library.service.BookService;
 import com.thehomearchive.library.service.RatingService;
 import com.thehomearchive.library.service.ExternalBookSearchService;
+import com.thehomearchive.library.util.SecurityUtils;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -318,23 +320,28 @@ public class BookSearchController {
      * @return List of user's recent search queries
      */
     @GetMapping("/history")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApiResponse<List<String>>> getUserSearchHistory(
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer limit) {
         
         try {
-            User currentUser = getCurrentUser();
-            if (currentUser == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(ApiResponse.error("Authentication required"));
-            }
+            Long userId = SecurityUtils.getCurrentUserId();
+            // Create a minimal User object for the service call
+            User user = new User();
+            user.setId(userId);
 
-            logger.info("Getting search history for user: {}, limit: {}", currentUser.getId(), limit);
+            logger.info("Getting search history for user: {}, limit: {}", userId, limit);
 
-            List<String> searchHistory = bookSearchService.getUserSearchHistory(currentUser, limit);
+            List<String> searchHistory = bookSearchService.getUserSearchHistory(user, limit);
 
-            logger.info("Found {} search history entries for user: {}", searchHistory.size(), currentUser.getId());
+            logger.info("Found {} search history entries for user: {}", searchHistory.size(), userId);
             return ResponseEntity.ok(ApiResponse.success(searchHistory));
 
+        } catch (IllegalStateException e) {
+            // Handle authentication/authorization errors
+            logger.warn("Authentication error getting user search history: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Authentication required"));
         } catch (Exception e) {
             logger.error("Error getting user search history", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

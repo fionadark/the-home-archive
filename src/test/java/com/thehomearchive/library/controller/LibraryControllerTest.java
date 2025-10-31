@@ -70,7 +70,7 @@ class LibraryControllerTest {
                 .thenReturn(page);
 
         // Act & Assert
-        mockMvc.perform(get("/api/library")
+        mockMvc.perform(get("/api/v1/library")
                 .param("page", "0")
                 .param("size", "20")
                 .param("sortBy", "title")
@@ -93,7 +93,7 @@ class LibraryControllerTest {
                 .thenReturn(page);
 
         // Act & Assert
-        mockMvc.perform(get("/api/library/search")
+        mockMvc.perform(get("/api/v1/library/search")
                 .param("q", searchTerm)
                 .param("page", "0")
                 .param("size", "20"))
@@ -116,7 +116,7 @@ class LibraryControllerTest {
                 .thenReturn(testBook);
 
         // Act & Assert
-        mockMvc.perform(post("/api/library/books/{bookId}", bookId)
+        mockMvc.perform(post("/api/v1/library/books/{bookId}", bookId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -137,7 +137,7 @@ class LibraryControllerTest {
                 .thenReturn(testBook);
 
         // Act & Assert
-        mockMvc.perform(put("/api/library/books/{libraryBookId}", libraryBookId)
+        mockMvc.perform(put("/api/v1/library/books/{libraryBookId}", libraryBookId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -152,7 +152,7 @@ class LibraryControllerTest {
         Long libraryBookId = 1L;
 
         // Act & Assert
-        mockMvc.perform(delete("/api/library/books/{libraryBookId}", libraryBookId))
+        mockMvc.perform(delete("/api/v1/library/books/{libraryBookId}", libraryBookId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
     }
@@ -168,7 +168,7 @@ class LibraryControllerTest {
                 .thenReturn(books);
 
         // Act & Assert
-        mockMvc.perform(get("/api/library/books/status/{status}", status.name()))
+        mockMvc.perform(get("/api/v1/library/books/status/{status}", status.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
@@ -188,7 +188,7 @@ class LibraryControllerTest {
                 .thenReturn(stats);
 
         // Act & Assert
-        mockMvc.perform(get("/api/library/statistics"))
+        mockMvc.perform(get("/api/v1/library/statistics"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.UNREAD").value(5))

@@ -213,8 +213,12 @@ public interface SearchHistoryRepository extends BaseRepository<SearchHistory, L
      * @param limit maximum number of recent queries to return
      * @return List of distinct recent search queries
      */
-    @Query("SELECT DISTINCT sh.query FROM SearchHistory sh " +
-           "WHERE sh.user.id = :userId " +
+    @Query("SELECT sh.query FROM SearchHistory sh " +
+           "WHERE sh.user.id = :userId AND sh.id IN (" +
+           "  SELECT MAX(sh2.id) FROM SearchHistory sh2 " +
+           "  WHERE sh2.user.id = :userId " +
+           "  GROUP BY sh2.query" +
+           ") " +
            "ORDER BY sh.searchedAt DESC " +
            "LIMIT :limit")
     List<String> findRecentQueriesByUser(@Param("userId") Long userId, @Param("limit") Integer limit);

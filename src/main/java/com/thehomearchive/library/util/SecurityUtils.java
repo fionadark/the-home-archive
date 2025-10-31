@@ -113,6 +113,18 @@ public final class SecurityUtils {
         if ("testuser".equals(username)) {
             return 1L; // Default test user ID
         }
+        if ("testuser@example.com".equals(username)) {
+            return 1L; // SecurityTest user ID
+        }
+        if ("user@example.com".equals(username)) {
+            return 2L; // SecurityTest regular user ID  
+        }
+        if ("admin@example.com".equals(username)) {
+            return 3L; // SecurityTest admin user ID
+        }
+        if ("test@example.com".equals(username)) {
+            return 4L; // Integration test user ID
+        }
         
         // For simplicity, assume username is either the email or contains user ID
         // In a real implementation, you would likely:
