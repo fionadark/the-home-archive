@@ -89,6 +89,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 
 - **[API Documentation](docs/API.md)** - Complete REST API reference with examples
 - **[Deployment Guide](docs/deployment.md)** - Development and production deployment instructions
+- **[Development Scripts](docs/scripts.md)** - Validation and development utility scripts
 
 ## External API Testing
 ```bash
@@ -101,6 +102,20 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 # Test specific external API functionality
 ./gradlew test -Dtest.integration.external=true --tests OpenLibraryServiceIntegrationTest
 ```
+
+## Development Scripts
+
+The project includes helpful validation and development scripts in the [`scripts/`](scripts/) directory:
+
+```bash
+# Quick application status check
+./scripts/quickstart-quick-validation.sh
+
+# Comprehensive validation (for T114 requirements)
+./scripts/quickstart-validation.sh
+```
+
+See [`docs/scripts.md`](docs/scripts.md) for detailed documentation.
 
 
 ---

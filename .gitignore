@@ -73,3 +73,8 @@ Thumbs.db
 
 # JVM crash logs
 *.hprof
+
+# Validation and script outputs
+quickstart-validation-report.md
+*-validation-report.md
+T114-validation-report.md
