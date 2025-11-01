@@ -2,8 +2,7 @@ package com.thehomearchive.library.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
-import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -38,9 +37,9 @@ public class SecurityHeadersConfig {
     public OncePerRequestFilter securityHeadersFilter() {
         return new OncePerRequestFilter() {
             @Override
-            protected void doFilterInternal(HttpServletRequest request, 
-                                          HttpServletResponse response, 
-                                          FilterChain filterChain) throws ServletException, IOException {
+            protected void doFilterInternal(@NonNull HttpServletRequest request, 
+                                          @NonNull HttpServletResponse response, 
+                                          @NonNull FilterChain filterChain) throws ServletException, IOException {
                 
                 // Content Security Policy - Prevents XSS and data injection attacks
                 // Allow scripts and styles from same origin, and specific trusted CDNs

@@ -59,6 +59,7 @@ public class OpenLibraryService {
             URI searchUri = buildSearchUri(query, limit);
             logger.debug("OpenLibrary search URI: {}", searchUri);
 
+            @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.getForObject(searchUri, Map.class);
             
             if (response == null) {
@@ -97,6 +98,7 @@ public class OpenLibraryService {
             URI searchUri = buildIsbnSearchUri(cleanIsbn);
             logger.debug("OpenLibrary ISBN search URI: {}", searchUri);
 
+            @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.getForObject(searchUri, Map.class);
             
             if (response == null) {
@@ -133,6 +135,7 @@ public class OpenLibraryService {
             URI searchUri = buildTitleSearchUri(title, limit);
             logger.debug("OpenLibrary title search URI: {}", searchUri);
 
+            @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.getForObject(searchUri, Map.class);
             
             if (response == null) {
@@ -167,8 +170,9 @@ public class OpenLibraryService {
             logger.debug("Searching OpenLibrary by author: '{}' with limit: {}", author, limit);
             
             URI searchUri = buildAuthorSearchUri(author, limit);
-            logger.debug("OpenLibrary author search URI: {}", searchUri);
+            logger.debug("OpenLibrary author URI: {}", searchUri);
 
+            @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.getForObject(searchUri, Map.class);
             
             if (response == null) {
@@ -188,7 +192,7 @@ public class OpenLibraryService {
      * Build search URI for general query.
      */
     private URI buildSearchUri(String query, int limit) {
-        return UriComponentsBuilder.fromHttpUrl(config.getSearchUrl())
+        return UriComponentsBuilder.fromUriString(config.getSearchUrl())
                 .queryParam("q", query)
                 .queryParam("fields", config.getDefaultFields())
                 .queryParam("limit", Math.min(limit, 100)) // OpenLibrary max is 100
@@ -201,7 +205,7 @@ public class OpenLibraryService {
      * Build search URI for ISBN search.
      */
     private URI buildIsbnSearchUri(String isbn) {
-        return UriComponentsBuilder.fromHttpUrl(config.getSearchUrl())
+        return UriComponentsBuilder.fromUriString(config.getSearchUrl())
                 .queryParam("isbn", isbn)
                 .queryParam("fields", config.getDefaultFields())
                 .queryParam("limit", 10)
@@ -213,7 +217,7 @@ public class OpenLibraryService {
      * Build search URI for title search.
      */
     private URI buildTitleSearchUri(String title, int limit) {
-        return UriComponentsBuilder.fromHttpUrl(config.getSearchUrl())
+        return UriComponentsBuilder.fromUriString(config.getSearchUrl())
                 .queryParam("title", title)
                 .queryParam("fields", config.getDefaultFields())
                 .queryParam("limit", Math.min(limit, 100))
@@ -226,7 +230,7 @@ public class OpenLibraryService {
      * Build search URI for author search.
      */
     private URI buildAuthorSearchUri(String author, int limit) {
-        return UriComponentsBuilder.fromHttpUrl(config.getSearchUrl())
+        return UriComponentsBuilder.fromUriString(config.getSearchUrl())
                 .queryParam("author", author)
                 .queryParam("fields", config.getDefaultFields())
                 .queryParam("limit", Math.min(limit, 100))

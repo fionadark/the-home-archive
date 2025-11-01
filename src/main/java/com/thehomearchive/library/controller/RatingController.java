@@ -115,7 +115,7 @@ public class RatingController {
      */
     @DeleteMapping("/books/{id}/ratings")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ApiResponse> deleteRating(@PathVariable("id") Long bookId) {
+    public ResponseEntity<ApiResponse<String>> deleteRating(@PathVariable("id") Long bookId) {
         
         Long userId = SecurityUtils.getCurrentUserId();
         logger.info("Deleting rating for book ID: {} by user ID: {}", bookId, userId);
@@ -286,7 +286,7 @@ public class RatingController {
      */
     @GetMapping("/books/{id}/ratings/check")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ApiResponse> hasUserRatedBook(@PathVariable("id") Long bookId) {
+    public ResponseEntity<ApiResponse<Boolean>> hasUserRatedBook(@PathVariable("id") Long bookId) {
         
         Long userId = SecurityUtils.getCurrentUserId();
         logger.info("Checking if user ID: {} has rated book ID: {}", userId, bookId);

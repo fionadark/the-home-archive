@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -32,16 +34,19 @@ class SecurityHeadersConfigTest {
         HttpHeaders responseHeaders = response.getHeaders();
         
         // Verify critical security headers are present
-        assertThat(responseHeaders.get("Content-Security-Policy"))
+        List<String> cspHeaders = responseHeaders.get("Content-Security-Policy");
+        assertThat(cspHeaders)
             .as("Content-Security-Policy header should be present")
             .isNotNull()
             .isNotEmpty();
         
-        String csp = responseHeaders.get("Content-Security-Policy").get(0);
-        assertThat(csp)
-            .as("CSP should contain frame-ancestors protection")
-            .contains("frame-ancestors 'none'")
-            .contains("default-src 'self'");
+        if (cspHeaders != null && !cspHeaders.isEmpty()) {
+            String csp = cspHeaders.get(0);
+            assertThat(csp)
+                .as("CSP should contain frame-ancestors protection")
+                .contains("frame-ancestors 'none'")
+                .contains("default-src 'self'");
+        }
         
         assertThat(responseHeaders.get("X-Frame-Options"))
             .as("X-Frame-Options header should be present")

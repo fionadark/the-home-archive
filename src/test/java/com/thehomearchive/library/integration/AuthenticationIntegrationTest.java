@@ -41,7 +41,6 @@ class AuthenticationIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static String verificationToken;
     private static String accessToken;
 
     @Test
@@ -56,14 +55,13 @@ class AuthenticationIntegrationTest {
                 .lastName("Test")
                 .build();
 
-        MvcResult registrationResult = mockMvc.perform(post("/api/auth/register")
+        mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registrationRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("Registration successful. Please check your email for verification instructions."))
-                .andReturn();
+                .andExpect(jsonPath("$.message").value("Registration successful. Please check your email for verification instructions."));
 
         // Step 2: Login with unverified email (should succeed but show emailVerified: false)
         LoginRequest loginRequest = new LoginRequest("integrationtest@example.com", "SecurePassword123!");
