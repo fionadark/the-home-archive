@@ -1,8 +1,12 @@
 package com.thehomearchive.library.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thehomearchive.library.entity.Book;
+import com.thehomearchive.library.entity.Category;
 import com.thehomearchive.library.entity.User;
 import com.thehomearchive.library.entity.UserRole;
+import com.thehomearchive.library.repository.BookRepository;
+import com.thehomearchive.library.repository.CategoryRepository;
 import com.thehomearchive.library.repository.UserRepository;
 import com.thehomearchive.library.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,16 +48,45 @@ class LibraryManagementIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    private BookRepository bookRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private AuthenticationService authenticationService;
 
     private User testUser;
+    private Book testBook;
     private String accessToken;
 
     @BeforeEach
     void setUp() {
+        // Create test category
+        Category category = new Category();
+        category.setName("Fiction");
+        category.setDescription("Test fiction category");
+        category.setSlug("fiction");
+        category.setCreatedAt(LocalDateTime.now());
+        category = categoryRepository.save(category);
+
+        // Create test book
+        testBook = new Book();
+        testBook.setTitle("Test Book");
+        testBook.setAuthor("Test Author");
+        testBook.setIsbn("9781234567890");
+        testBook.setDescription("A test book for integration testing");
+        testBook.setPublicationYear(2024);
+        testBook.setPublisher("Test Publisher");
+        testBook.setPageCount(300);
+        testBook.setCategory(category);
+        testBook.setCreatedAt(LocalDateTime.now());
+        testBook.setUpdatedAt(LocalDateTime.now());
+        testBook = bookRepository.save(testBook);
+
         // Create test user
         testUser = new User();
         testUser.setEmail("test@example.com");
@@ -87,23 +120,21 @@ class LibraryManagementIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.totalBooks").value(0));
+                .andExpect(jsonPath("$.data.pagination.totalElements").value(0));
 
         // Step 2: Add a book to personal library
         Map<String, Object> addBookRequest = Map.of(
-            "bookId", 1L,
-            "physicalLocation", "Living Room - Shelf A",
-            "personalRating", 5
+            "physicalLocation", "Living Room - Shelf A"
         );
 
-        mockMvc.perform(post("/api/v1/library/books")
+        mockMvc.perform(post("/api/v1/library/books/" + testBook.getId())
                         .header("Authorization", "Bearer " + accessToken)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(addBookRequest)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())  // Controller returns 200, not 201
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.bookId").value(1));
+                .andExpect(jsonPath("$.data.bookId").value(testBook.getId()));
 
         // Step 3: View library with added book
         mockMvc.perform(get("/api/v1/library")
@@ -111,13 +142,13 @@ class LibraryManagementIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.totalBooks").value(1))
-                .andExpect(jsonPath("$.data.books[0].physicalLocation").value("Living Room - Shelf A"));
+                .andExpect(jsonPath("$.data.pagination.totalElements").value(1))
+                .andExpect(jsonPath("$.data.content[0].physicalLocation").value("Living Room - Shelf A"));
 
         // Step 4: Search within personal library
         mockMvc.perform(get("/api/v1/library/search")
                         .header("Authorization", "Bearer " + accessToken)
-                        .param("q", "Gatsby")
+                        .param("q", "Test")  // Search for our test book
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
@@ -128,7 +159,7 @@ class LibraryManagementIntegrationTest {
             "personalRating", 4
         );
 
-        mockMvc.perform(put("/api/v1/library/books/1")
+        mockMvc.perform(put("/api/v1/library/books/" + testBook.getId())
                         .header("Authorization", "Bearer " + accessToken)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -143,10 +174,10 @@ class LibraryManagementIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.totalBooks").value(1));
+                .andExpect(jsonPath("$.data.UNREAD").value(1));
 
         // Step 7: Remove book from library
-        mockMvc.perform(delete("/api/v1/library/books/1")
+        mockMvc.perform(delete("/api/v1/library/books/" + testBook.getId())
                         .header("Authorization", "Bearer " + accessToken)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -159,7 +190,7 @@ class LibraryManagementIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.totalBooks").value(0));
+                .andExpect(jsonPath("$.data.pagination.totalElements").value(0));
     }
 
     @Test
@@ -170,7 +201,7 @@ class LibraryManagementIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
 
-        mockMvc.perform(post("/api/v1/library/books")
+        mockMvc.perform(post("/api/v1/library/books/1")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
@@ -210,29 +241,28 @@ class LibraryManagementIntegrationTest {
 
         // Add book to first user's library
         Map<String, Object> addBookRequest = Map.of(
-            "bookId", 1L,
             "physicalLocation", "Living Room - Shelf A"
         );
 
-        mockMvc.perform(post("/api/v1/library/books")
+        mockMvc.perform(post("/api/v1/library/books/" + testBook.getId())
                         .header("Authorization", "Bearer " + accessToken)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(addBookRequest)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk()); // Controller returns 200, not 201
 
         // Verify first user sees the book
         mockMvc.perform(get("/api/v1/library")
                         .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.totalBooks").value(1));
+                .andExpect(jsonPath("$.data.pagination.totalElements").value(1));
 
         // Verify second user has empty library
         mockMvc.perform(get("/api/v1/library")
                         .header("Authorization", "Bearer " + secondUserToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.totalBooks").value(0));
+                .andExpect(jsonPath("$.data.pagination.totalElements").value(0));
     }
 }

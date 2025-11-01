@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 public class EmailVerificationRequest {
     
     @NotBlank(message = "Verification token is required")
-    @Size(min = 1, max = 500, message = "Verification token must be between 1 and 500 characters")
+    @Size(max = 500, message = "Verification token must be at most 500 characters")
     private String token;
     
     // Default constructor for Jackson
