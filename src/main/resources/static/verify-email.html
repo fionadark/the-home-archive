@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Verify your email address for The Home Archive">
+    <title>Email Verification - The Home Archive</title>
+    
+    <!-- Dark Academia CSS Styling -->
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    
+    <!-- Preload fonts for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+    <main class="auth-container">
+        <!-- Header Section -->
+        <header class="auth-header">
+            <h1 class="site-title">
+                <span class="site-icon">📚</span>
+                The Home Archive
+            </h1>
+            <p class="site-subtitle">Verify your scholarly credentials</p>
+        </header>
+
+        <!-- Email Verification Section -->
+        <section class="auth-form-section" aria-labelledby="verification-heading">
+            <div id="verification-content">
+                <!-- Initial State: Processing verification -->
+                <div id="verification-processing" class="verification-state">
+                    <h2 id="verification-heading" class="form-title">Verifying Your Email</h2>
+                    <div class="verification-icon processing">
+                        <span class="icon">⏳</span>
+                    </div>
+                    <p class="verification-message">
+                        Please wait while we verify your email address...
+                    </p>
+                    <div class="loading-indicator" aria-label="Processing verification">
+                        <div class="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success State -->
+                <div id="verification-success" class="verification-state" style="display: none;">
+                    <h2 class="form-title">Email Verified Successfully</h2>
+                    <div class="verification-icon success">
+                        <span class="icon">✅</span>
+                    </div>
+                    <p class="verification-message">
+                        Congratulations! Your email has been verified successfully. 
+                        You can now access your personal library archive.
+                    </p>
+                    <div class="verification-actions">
+                        <a href="/login.html" class="btn btn-primary">
+                            Sign In to Your Library
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div id="verification-error" class="verification-state" style="display: none;">
+                    <h2 class="form-title">Verification Failed</h2>
+                    <div class="verification-icon error">
+                        <span class="icon">❌</span>
+                    </div>
+                    <div id="error-details" class="verification-message error-message">
+                        <!-- Error message will be populated by JavaScript -->
+                    </div>
+                    <div class="verification-actions">
+                        <button id="resend-verification" class="btn btn-secondary">
+                            <span class="btn-text">Send New Verification Email</span>
+                            <span class="btn-loading" style="display: none;">Sending...</span>
+                        </button>
+                        <a href="/register.html" class="btn btn-outline">
+                            Register Again
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Manual Token Entry (fallback) -->
+                <div id="manual-verification" class="verification-state" style="display: none;">
+                    <h2 class="form-title">Enter Verification Code</h2>
+                    <p class="verification-message">
+                        If the automatic verification didn't work, please enter your verification code below:
+                    </p>
+                    
+                    <form id="manual-verify-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="verification-token" class="form-label">Verification Code</label>
+                            <input 
+                                type="text" 
+                                id="verification-token" 
+                                name="token" 
+                                class="form-input" 
+                                required 
+                                aria-describedby="token-error token-help"
+                                placeholder="Enter your verification code"
+                                maxlength="500"
+                                style="font-family: monospace; letter-spacing: 1px;"
+                            >
+                            <div id="token-help" class="field-help">
+                                Copy the code from your verification email
+                            </div>
+                            <div id="token-error" class="field-error" role="alert"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="manual-verify-btn">
+                            <span class="btn-text">Verify Email</span>
+                            <span class="btn-loading" style="display: none;">Verifying...</span>
+                        </button>
+                    </form>
+
+                    <div class="auth-links">
+                        <p class="auth-link-text">
+                            Didn't receive an email? 
+                            <button id="resend-from-manual" class="auth-link auth-link-button">
+                                Send a new one
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Universal Actions -->
+            <div class="auth-links">
+                <p class="auth-link-text">
+                    Need help? <a href="/contact.html" class="auth-link">Contact Support</a>
+                </p>
+                <p class="auth-link-text">
+                    <a href="/login.html" class="auth-link">Back to Sign In</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="auth-footer">
+            <p>&copy; 2025 The Home Archive. Preserving your literary journey.</p>
+        </footer>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="/js/auth-service.js"></script>
+    <script src="/js/verify-email.js"></script>
+</body>
+</html>

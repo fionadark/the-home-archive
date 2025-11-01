@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to your personal library archive">
+    <title>Login - The Home Archive</title>
+    
+    <!-- Dark Academia CSS Styling -->
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    
+    <!-- Preload fonts for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+    <main class="auth-container">
+        <!-- Header Section -->
+        <header class="auth-header">
+            <h1 class="site-title">
+                <span class="site-icon">📚</span>
+                The Home Archive
+            </h1>
+            <p class="site-subtitle">Enter your literary sanctuary</p>
+        </header>
+
+        <!-- Login Form -->
+        <section class="auth-form-section" aria-labelledby="login-heading">
+            <h2 id="login-heading" class="form-title">Welcome Back</h2>
+            
+            <!-- Success/Error Messages -->
+            <div id="message-container" class="message-container" role="alert" aria-live="polite" style="display: none;">
+                <div id="success-message" class="message success-message" style="display: none;"></div>
+                <div id="error-message" class="message error-message" style="display: none;"></div>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form" novalidate>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        required 
+                        autocomplete="email"
+                        aria-describedby="email-error"
+                        placeholder="Enter your email"
+                    >
+                    <div id="email-error" class="field-error" role="alert"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        required 
+                        autocomplete="current-password"
+                        aria-describedby="password-error"
+                        placeholder="Enter your password"
+                    >
+                    <div id="password-error" class="field-error" role="alert"></div>
+                </div>
+
+                <div class="form-group form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="remember-me" name="rememberMe" class="checkbox-input">
+                        <span class="checkbox-checkmark"></span>
+                        <span class="checkbox-label">Remember me for 7 days</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="login-btn" aria-describedby="login-status">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-loading" style="display: none;">Signing in...</span>
+                </button>
+                
+                <div id="login-status" class="sr-only" aria-live="polite"></div>
+            </form>
+
+            <!-- Additional Options -->
+            <div class="auth-links">
+                <p class="auth-link-text">
+                    Don't have an account? 
+                    <a href="/register.html" class="auth-link">Create one here</a>
+                </p>
+                <p class="auth-link-text">
+                    <a href="/forgot-password.html" class="auth-link">Forgot your password?</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="auth-footer">
+            <p>&copy; 2025 The Home Archive. Preserving your literary journey.</p>
+        </footer>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="/js/auth-service.js"></script>
+    <script src="/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test T107 & T108 - UI Utils and Monitoring</title>
+    <link rel="stylesheet" href="../src/css/themes/dark-academia.css">
+    <link rel="stylesheet" href="../src/css/responsive/mobile.css">
+    <style>
+        body {
+            font-family: var(--da-font-body, 'Crimson Text', serif);
+            background: var(--da-bg-primary, #1a1a1a);
+            color: var(--da-text-primary, #f8f9fa);
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            background: var(--da-bg-card, #2d3748);
+            border: 1px solid var(--da-border-primary, #4a5568);
+            border-radius: var(--da-radius-lg, 0.5rem);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .test-section h2 {
+            color: var(--da-accent-gold, #d4af37);
+            font-family: var(--da-font-heading, 'Playfair Display', serif);
+            border-bottom: 1px solid var(--da-border-accent, rgba(212, 175, 55, 0.3));
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .test-button {
+            background: var(--da-accent-gold, #d4af37);
+            color: var(--da-bg-primary, #1a1a1a);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--da-radius-md, 0.375rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .test-button:hover {
+            background: var(--da-accent-gold-light, #e6c547);
+            transform: translateY(-1px);
+        }
+
+        .test-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .test-area {
+            min-height: 200px;
+            background: var(--da-bg-secondary, #374151);
+            border: 1px solid var(--da-border-secondary, #6b7280);
+            border-radius: var(--da-radius-md, 0.375rem);
+            padding: 1rem;
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--da-success-color, #10b981);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.error {
+            background: var(--da-danger-color, #ef4444);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .metrics-display {
+            background: var(--da-bg-primary, #1a1a1a);
+            border: 1px solid var(--da-border-accent, rgba(212, 175, 55, 0.3));
+            border-radius: var(--da-radius-sm, 0.25rem);
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .form-test {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 400px;
+        }
+
+        .form-input {
+            padding: 0.75rem;
+            border: 1px solid var(--da-border-secondary, #6b7280);
+            border-radius: var(--da-radius-md, 0.375rem);
+            background: var(--da-bg-primary, #1a1a1a);
+            color: var(--da-text-primary, #f8f9fa);
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--da-accent-gold, #d4af37);
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Testing T107 (UI Utils) & T108 (Monitoring)</h1>
+    <p>This page tests the implementation of loading states, error handling, and monitoring capabilities.</p>
+
+    <!-- T107 Testing: UI Utils -->
+    <div class="test-section">
+        <h2>T107: UI Utils Testing</h2>
+        
+        <h3>Loading States</h3>
+        <div class="button-group">
+            <button class="test-button" onclick="testGlobalLoading()">Test Global Loading</button>
+            <button class="test-button" onclick="testElementLoading()">Test Element Loading</button>
+            <button class="test-button" onclick="testLoadingTypes()">Test Loading Types</button>
+            <button class="test-button" onclick="testSkeletonLoading()">Test Skeleton Loading</button>
+        </div>
+
+        <h3>Error Handling</h3>
+        <div class="button-group">
+            <button class="test-button" onclick="testApiError()">Test API Error</button>
+            <button class="test-button" onclick="testValidationError()">Test Validation Error</button>
+            <button class="test-button" onclick="testInlineError()">Test Inline Error</button>
+            <button class="test-button" onclick="testNetworkError()">Test Network Error</button>
+        </div>
+
+        <h3>Form Validation Testing</h3>
+        <form class="form-test" id="testForm">
+            <input type="email" name="email" class="form-input" placeholder="Enter email">
+            <input type="password" name="password" class="form-input" placeholder="Enter password">
+            <button type="button" class="test-button" onclick="testFormValidation()">Test Form Validation</button>
+        </form>
+
+        <div id="loadingTestArea" class="test-area">
+            <p>Loading test area - click buttons above to see loading states</p>
+        </div>
+    </div>
+
+    <!-- T108 Testing: Monitoring -->
+    <div class="test-section">
+        <h2>T108: Monitoring System Testing</h2>
+        
+        <div class="api-status">
+            <div id="apiStatus" class="status-indicator"></div>
+            <span id="apiStatusText">Checking API status...</span>
+        </div>
+
+        <h3>Backend Monitoring Endpoints</h3>
+        <div class="button-group">
+            <button class="test-button" onclick="testActuatorHealth()">Test Health Endpoint</button>
+            <button class="test-button" onclick="testActuatorMetrics()">Test Metrics Endpoint</button>
+            <button class="test-button" onclick="testActuatorInfo()">Test Info Endpoint</button>
+            <button class="test-button" onclick="testBusinessMetrics()">Test Business Metrics</button>
+        </div>
+
+        <h3>Performance Testing</h3>
+        <div class="button-group">
+            <button class="test-button" onclick="testSlowRequest()">Test Slow Request Logging</button>
+            <button class="test-button" onclick="testRequestVolume()">Test Request Volume</button>
+            <button class="test-button" onclick="testMemoryUsage()">Test Memory Usage</button>
+        </div>
+
+        <div id="monitoringResults" class="metrics-display">
+            Click buttons above to test monitoring functionality...
+        </div>
+    </div>
+
+    <!-- UI Utils Script -->
+    <script src="../src/js/utils/uiUtils.js"></script>
+    
+    <!-- Notification Service for error display -->
+    <script src="../src/js/services/NotificationService.js"></script>
+
+    <script>
+        // Initialize notification service for UIUtils
+        let notificationService;
+        try {
+            notificationService = new NotificationService();
+            UIUtils.error.setNotificationService(notificationService);
+        } catch (e) {
+            console.log('NotificationService not available, using fallback error display');
+        }
+
+        // T107 Testing Functions
+        function testGlobalLoading() {
+            const loader = UIUtils.loading.show('global', {
+                text: 'Loading the entire application...',
+                type: 'spinner',
+                size: 'large'
+            });
+
+            setTimeout(() => {
+                UIUtils.loading.hide('global');
+                if (notificationService) {
+                    notificationService.showSuccess('Global loading test completed!');
+                }
+            }, 3000);
+        }
+
+        function testElementLoading() {
+            const testArea = document.getElementById('loadingTestArea');
+            const loader = UIUtils.loading.show(testArea, {
+                text: 'Loading test data...',
+                type: 'spinner',
+                size: 'medium'
+            });
+
+            setTimeout(() => {
+                loader.updateText('Almost done...');
+            }, 1500);
+
+            setTimeout(() => {
+                UIUtils.loading.hide(testArea);
+                testArea.innerHTML = '<p>✅ Element loading test completed successfully!</p>';
+            }, 3000);
+        }
+
+        function testLoadingTypes() {
+            const testArea = document.getElementById('loadingTestArea');
+            const types = ['spinner', 'dots', 'pulse'];
+            let currentType = 0;
+
+            function showNextType() {
+                if (currentType >= types.length) {
+                    testArea.innerHTML = '<p>✅ All loading types tested!</p>';
+                    return;
+                }
+
+                const type = types[currentType];
+                UIUtils.loading.show(testArea, {
+                    text: `Testing ${type} loading...`,
+                    type: type,
+                    size: 'medium'
+                });
+
+                setTimeout(() => {
+                    UIUtils.loading.hide(testArea);
+                    currentType++;
+                    setTimeout(showNextType, 500);
+                }, 2000);
+            }
+
+            showNextType();
+        }
+
+        function testSkeletonLoading() {
+            const testArea = document.getElementById('loadingTestArea');
+            UIUtils.loading.show(testArea, {
+                text: 'Loading content structure...',
+                type: 'skeleton',
+                size: 'large'
+            });
+
+            setTimeout(() => {
+                UIUtils.loading.hide(testArea);
+                testArea.innerHTML = '<p>✅ Skeleton loading test completed!</p>';
+            }, 4000);
+        }
+
+        function testApiError() {
+            // Simulate API error
+            const fakeApiError = new Response('{"error":"Not Found","message":"Book not found"}', {
+                status: 404,
+                statusText: 'Not Found'
+            });
+
+            UIUtils.error.handleApi(fakeApiError, {
+                context: 'Library',
+                target: document.getElementById('loadingTestArea')
+            });
+        }
+
+        function testValidationError() {
+            const form = document.getElementById('testForm');
+            const validationErrors = {
+                email: 'Please enter a valid email address',
+                password: 'Password must be at least 8 characters long'
+            };
+
+            UIUtils.error.handleValidation(validationErrors, form);
+        }
+
+        function testInlineError() {
+            const testArea = document.getElementById('loadingTestArea');
+            UIUtils.error.showInline(testArea, 'This is an inline error message for testing purposes.');
+        }
+
+        function testNetworkError() {
+            const networkError = new Error('Failed to fetch');
+            UIUtils.error.handle(networkError, {
+                context: 'Network',
+                target: document.getElementById('loadingTestArea')
+            });
+        }
+
+        function testFormValidation() {
+            const form = document.getElementById('testForm');
+            UIUtils.error.clearValidation(form);
+            
+            setTimeout(() => testValidationError(), 500);
+        }
+
+        // T108 Testing Functions
+        async function testActuatorHealth() {
+            const results = document.getElementById('monitoringResults');
+            results.textContent = 'Testing health endpoint...\n';
+
+            try {
+                const response = await fetch('/actuator/health');
+                const data = await response.json();
+                results.textContent += 'Health Endpoint Response:\n' + JSON.stringify(data, null, 2) + '\n\n';
+                updateApiStatus(true, 'Health endpoint working');
+            } catch (error) {
+                results.textContent += 'Health Endpoint Error: ' + error.message + '\n\n';
+                updateApiStatus(false, 'Health endpoint failed');
+            }
+        }
+
+        async function testActuatorMetrics() {
+            const results = document.getElementById('monitoringResults');
+            results.textContent += 'Testing metrics endpoint...\n';
+
+            try {
+                const response = await fetch('/actuator/metrics');
+                const data = await response.json();
+                results.textContent += 'Metrics Endpoint Response:\n' + JSON.stringify(data, null, 2) + '\n\n';
+            } catch (error) {
+                results.textContent += 'Metrics Endpoint Error: ' + error.message + '\n\n';
+            }
+        }
+
+        async function testActuatorInfo() {
+            const results = document.getElementById('monitoringResults');
+            results.textContent += 'Testing info endpoint...\n';
+
+            try {
+                const response = await fetch('/actuator/info');
+                const data = await response.json();
+                results.textContent += 'Info Endpoint Response:\n' + JSON.stringify(data, null, 2) + '\n\n';
+            } catch (error) {
+                results.textContent += 'Info Endpoint Error: ' + error.message + '\n\n';
+            }
+        }
+
+        async function testBusinessMetrics() {
+            const results = document.getElementById('monitoringResults');
+            results.textContent += 'Testing business metrics endpoint...\n';
+
+            try {
+                // First try to trigger some metrics
+                await fetch('/api/admin/monitoring/test/user-registration?email=test@example.com', {
+                    method: 'POST'
+                });
+                await fetch('/api/admin/monitoring/test/book-search?type=title&query=test', {
+                    method: 'POST'
+                });
+
+                // Then get the metrics
+                const response = await fetch('/api/admin/monitoring/metrics/business');
+                const data = await response.json();
+                results.textContent += 'Business Metrics Response:\n' + JSON.stringify(data, null, 2) + '\n\n';
+            } catch (error) {
+                results.textContent += 'Business Metrics Error: ' + error.message + '\n\n';
+            }
+        }
+
+        function testSlowRequest() {
+            const results = document.getElementById('monitoringResults');
+            results.textContent += 'Testing slow request logging (simulated)...\n';
+            
+            // Simulate a slow request using setTimeout
+            const start = performance.now();
+            UIUtils.loading.show('global', { text: 'Simulating slow request...' });
+            
+            setTimeout(() => {
+                const duration = performance.now() - start;
+                UIUtils.loading.hide('global');
+                results.textContent += `Slow request simulation completed in ${duration.toFixed(2)}ms\n`;
+                results.textContent += 'Check server logs for slow request monitoring.\n\n';
+            }, 3000);
+        }
+
+        function testRequestVolume() {
+            const results = document.getElementById('monitoringResults');
+            results.textContent += 'Testing request volume monitoring...\n';
+            
+            // Make multiple rapid requests to test volume tracking
+            const promises = [];
+            for (let i = 0; i < 5; i++) {
+                promises.push(
+                    fetch('/actuator/health').catch(e => console.log('Request failed:', e))
+                );
+            }
+            
+            Promise.allSettled(promises).then(() => {
+                results.textContent += 'Made 5 rapid requests to test volume monitoring.\n';
+                results.textContent += 'Check request statistics endpoint for metrics.\n\n';
+            });
+        }
+
+        async function testMemoryUsage() {
+            const results = document.getElementById('monitoringResults');
+            results.textContent += 'Testing memory usage monitoring...\n';
+            
+            try {
+                const response = await fetch('/actuator/metrics/jvm.memory.used');
+                const data = await response.json();
+                results.textContent += 'Memory Usage Metrics:\n' + JSON.stringify(data, null, 2) + '\n\n';
+            } catch (error) {
+                results.textContent += 'Memory Usage Error: ' + error.message + '\n\n';
+            }
+        }
+
+        function updateApiStatus(isHealthy, message) {
+            const indicator = document.getElementById('apiStatus');
+            const text = document.getElementById('apiStatusText');
+            
+            if (isHealthy) {
+                indicator.className = 'status-indicator';
+                text.textContent = message || 'API is healthy';
+            } else {
+                indicator.className = 'status-indicator error';
+                text.textContent = message || 'API has issues';
+            }
+        }
+
+        // Initial API status check
+        window.addEventListener('load', () => {
+            testActuatorHealth();
+        });
+
+        // Utility debugging
+        console.log('UIUtils loaded:', typeof UIUtils !== 'undefined');
+        console.log('Available UIUtils methods:', UIUtils ? Object.keys(UIUtils) : 'Not available');
+    </script>
+</body>
+</html>

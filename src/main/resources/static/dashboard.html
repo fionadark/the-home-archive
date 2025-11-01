@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your personal library archive dashboard">
+    <title>My Library - The Home Archive</title>
+    
+    <!-- Dark Academia CSS Styling -->
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    
+    <!-- Preload fonts for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+    <!-- Navigation Header -->
+    <header class="main-header" role="banner">
+        <nav class="main-nav" aria-label="Main navigation">
+            <div class="nav-brand">
+                <h1 class="site-title">
+                    <span class="site-icon">📚</span>
+                    The Home Archive
+                </h1>
+            </div>
+            
+            <div class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="/dashboard.html" class="nav-link active" aria-current="page">My Library</a></li>
+                    <li><a href="/search.html" class="nav-link">Search Books</a></li>
+                    <li><a href="/add-book.html" class="nav-link">Add Book</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-user">
+                <div class="user-menu">
+                    <button class="user-menu-toggle" aria-expanded="false" aria-haspopup="true" id="user-menu-button">
+                        <span id="user-name">Loading...</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                        <a href="/profile.html" class="dropdown-item">Profile Settings</a>
+                        <a href="/export.html" class="dropdown-item">Export Library</a>
+                        <hr class="dropdown-divider">
+                        <button id="logout-btn" class="dropdown-item logout-btn">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h2 class="page-title">Welcome to Your Library</h2>
+            <p class="page-subtitle">Discover and organize your personal collection</p>
+        </section>
+
+        <!-- Library Controls -->
+        <section class="library-controls" aria-label="Library management controls">
+            <!-- Search and Filter Bar -->
+            <div class="controls-row">
+                <div class="search-container">
+                    <label for="library-search" class="sr-only">Search your library</label>
+                    <input 
+                        type="search" 
+                        id="library-search" 
+                        placeholder="Search your books by title, author, or location..."
+                        class="search-input"
+                        aria-describedby="search-help"
+                    >
+                    <button type="button" class="search-btn" aria-label="Search library">
+                        🔍
+                    </button>
+                    <div id="search-help" class="sr-only">
+                        Search across title, author, genre, and physical location
+                    </div>
+                </div>
+
+                <div class="view-controls">
+                    <button id="view-grid" class="view-btn active" aria-pressed="true" title="Grid view">
+                        <span class="view-icon">⊞</span>
+                    </button>
+                    <button id="view-list" class="view-btn" aria-pressed="false" title="List view">
+                        <span class="view-icon">☰</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter and Sort Controls -->
+            <div class="controls-row">
+                <div class="filter-container">
+                    <label for="genre-filter" class="filter-label">Genre:</label>
+                    <select id="genre-filter" class="filter-select">
+                        <option value="">All Genres</option>
+                        <!-- Options populated by JavaScript -->
+                    </select>
+
+                    <label for="location-filter" class="filter-label">Location:</label>
+                    <select id="location-filter" class="filter-select">
+                        <option value="">All Locations</option>
+                        <!-- Options populated by JavaScript -->
+                    </select>
+
+                    <button id="clear-filters" class="btn btn-outline btn-small">Clear Filters</button>
+                </div>
+
+                <div class="sort-container">
+                    <label for="sort-by" class="sort-label">Sort by:</label>
+                    <select id="sort-by" class="sort-select">
+                        <option value="title">Title</option>
+                        <option value="author">Author</option>
+                        <option value="genre">Genre</option>
+                        <option value="physicalLocation">Location</option>
+                        <option value="dateAdded">Date Added</option>
+                        <option value="rating">Rating</option>
+                    </select>
+
+                    <button id="sort-order" class="sort-toggle" aria-label="Toggle sort order" title="Sort ascending">
+                        <span class="sort-icon">↑</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Library Statistics -->
+        <section class="library-stats" aria-label="Library statistics">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-books">0</div>
+                    <div class="stat-label">Total Books</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="unique-authors">0</div>
+                    <div class="stat-label">Authors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="unique-genres">0</div>
+                    <div class="stat-label">Genres</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avg-rating">0.0</div>
+                    <div class="stat-label">Avg Rating</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Book Collection -->
+        <section class="book-collection" aria-label="Your book collection">
+            <!-- Loading State -->
+            <div id="loading-state" class="loading-container">
+                <div class="loading-spinner" aria-label="Loading your library"></div>
+                <p>Loading your library...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">📚</div>
+                <h3>Your Library Awaits</h3>
+                <p>Start building your collection by searching for books to add.</p>
+                <a href="/search.html" class="btn btn-primary">Search for Books</a>
+            </div>
+
+            <!-- No Results State -->
+            <div id="no-results-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">🔍</div>
+                <h3>No Books Found</h3>
+                <p>No books match your current search and filters.</p>
+                <button id="clear-search" class="btn btn-secondary">Clear Search</button>
+            </div>
+
+            <!-- Books Grid/List Container -->
+            <div id="books-container" class="books-grid" style="display: none;">
+                <!-- Books will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <section class="pagination-section" id="pagination-section" style="display: none;">
+            <nav class="pagination" aria-label="Library pagination">
+                <button id="prev-page" class="pagination-btn" disabled>
+                    <span aria-hidden="true">‹</span>
+                    <span class="sr-only">Previous page</span>
+                </button>
+                
+                <div class="pagination-info">
+                    <span id="page-info">Page 1 of 1</span>
+                </div>
+                
+                <button id="next-page" class="pagination-btn" disabled>
+                    <span class="sr-only">Next page</span>
+                    <span aria-hidden="true">›</span>
+                </button>
+            </nav>
+        </section>
+    </main>
+
+    <!-- Book Actions Modal -->
+    <div id="book-modal" class="modal" style="display: none;" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content">
+            <header class="modal-header">
+                <h3 id="modal-title">Book Actions</h3>
+                <button class="modal-close" id="modal-close" aria-label="Close modal">×</button>
+            </header>
+            
+            <div class="modal-body" id="modal-body">
+                <!-- Content populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer" role="contentinfo">
+        <p>&copy; 2025 The Home Archive. Preserving your literary journey.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/js/auth-service.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

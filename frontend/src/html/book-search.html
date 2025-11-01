@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Search - The Home Archive</title>
+    
+    <!-- Dark Academia Theme CSS -->
+    <link rel="stylesheet" href="../css/themes/dark-academia.css">
+    <link rel="stylesheet" href="../css/pages/book-search.css">
+    <link rel="stylesheet" href="../css/components/search-results.css">
+    <link rel="stylesheet" href="../css/components/book-detail-modal.css">
+    <link rel="stylesheet" href="../css/components/book-card.css">
+    
+    <!-- Google Fonts for Enhanced Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Sans+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="search-header">
+        <div class="da-container">
+            <nav class="search-nav">
+                <div class="nav-brand">
+                    <h1 class="brand-title">
+                        <i class="fas fa-book-open"></i>
+                        The Home Archive
+                    </h1>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                    <a href="/library" class="nav-link">
+                        <i class="fas fa-books"></i>
+                        My Library
+                    </a>
+                    <a href="/search" class="nav-link active">
+                        <i class="fas fa-search"></i>
+                        Book Search
+                    </a>
+                    <a href="/profile" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+                    <button id="logout-btn" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="search-main">
+        <div class="da-container">
+            <!-- Page Header -->
+            <section class="search-hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <i class="fas fa-search-plus"></i>
+                        Discover Books
+                    </h1>
+                    <p class="hero-subtitle">
+                        Search through thousands of books to find your next literary adventure
+                    </p>
+                </div>
+            </section>
+
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <!-- Main Search Form -->
+                    <form class="search-form" id="book-search-form">
+                        <div class="search-input-group">
+                            <div class="search-field">
+                                <input 
+                                    type="text" 
+                                    id="search-query" 
+                                    name="query"
+                                    class="search-input" 
+                                    placeholder="Search by title, author, ISBN, or keywords..."
+                                    autocomplete="off"
+                                    aria-label="Book search query"
+                                >
+                                <button type="submit" class="search-btn" aria-label="Search books">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Search Suggestions -->
+                            <div class="search-suggestions" id="search-suggestions" style="display: none;">
+                                <div class="suggestions-header">
+                                    <span class="suggestions-title">Search Suggestions</span>
+                                </div>
+                                <ul class="suggestions-list" id="suggestions-list">
+                                    <!-- Dynamic suggestions will be populated here -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Search Toggle -->
+                        <button type="button" class="advanced-search-toggle" id="advanced-search-toggle">
+                            <i class="fas fa-sliders-h"></i>
+                            Advanced Search
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </button>
+                    </form>
+
+                    <!-- Advanced Search Filters -->
+                    <div class="advanced-filters" id="advanced-filters" style="display: none;">
+                        <div class="filters-grid">
+                            <div class="filter-group">
+                                <label for="category-filter" class="filter-label">Category</label>
+                                <select id="category-filter" name="category" class="filter-select">
+                                    <option value="">All Categories</option>
+                                    <option value="fiction">Fiction</option>
+                                    <option value="non-fiction">Non-Fiction</option>
+                                    <option value="mystery">Mystery</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="science-fiction">Science Fiction</option>
+                                    <option value="fantasy">Fantasy</option>
+                                    <option value="biography">Biography</option>
+                                    <option value="history">History</option>
+                                    <option value="science">Science</option>
+                                    <option value="philosophy">Philosophy</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="author-filter" class="filter-label">Author</label>
+                                <input 
+                                    type="text" 
+                                    id="author-filter" 
+                                    name="author"
+                                    class="filter-input" 
+                                    placeholder="Author name..."
+                                >
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="year-from" class="filter-label">Publication Year</label>
+                                <div class="year-range">
+                                    <input 
+                                        type="number" 
+                                        id="year-from" 
+                                        name="yearFrom"
+                                        class="filter-input year-input" 
+                                        placeholder="From"
+                                        min="1000"
+                                        max="2025"
+                                    >
+                                    <span class="year-separator">to</span>
+                                    <input 
+                                        type="number" 
+                                        id="year-to" 
+                                        name="yearTo"
+                                        class="filter-input year-input" 
+                                        placeholder="To"
+                                        min="1000"
+                                        max="2025"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="rating-filter" class="filter-label">Minimum Rating</label>
+                                <select id="rating-filter" name="minRating" class="filter-select">
+                                    <option value="">Any Rating</option>
+                                    <option value="1">1+ Stars</option>
+                                    <option value="2">2+ Stars</option>
+                                    <option value="3">3+ Stars</option>
+                                    <option value="4">4+ Stars</option>
+                                    <option value="5">5 Stars Only</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="filters-actions">
+                            <button type="button" class="btn-clear-filters" id="clear-filters">
+                                <i class="fas fa-times"></i>
+                                Clear Filters
+                            </button>
+                            <button type="submit" form="book-search-form" class="btn-apply-filters">
+                                <i class="fas fa-filter"></i>
+                                Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Searches -->
+            <section class="popular-searches" id="popular-searches">
+                <h2 class="section-title">
+                    <i class="fas fa-fire"></i>
+                    Popular Searches
+                </h2>
+                <div class="popular-tags">
+                    <!-- Popular search tags will be populated dynamically -->
+                </div>
+            </section>
+
+            <!-- Search Results Section -->
+            <section class="search-results-section" id="search-results-section" style="display: none;">
+                <!-- Results Header -->
+                <div class="results-header">
+                    <div class="results-info">
+                        <h2 class="results-title">Search Results</h2>
+                        <p class="results-count" id="results-count">
+                            <!-- Dynamic count will be populated here -->
+                        </p>
+                    </div>
+                    
+                    <div class="results-controls">
+                        <!-- View Toggle -->
+                        <div class="view-toggle" id="view-toggle">
+                            <button class="view-btn active" data-view="grid" aria-label="Grid view">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-btn" data-view="list" aria-label="List view">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+
+                        <!-- Sort Options -->
+                        <div class="sort-controls">
+                            <label for="sort-select" class="sort-label">Sort by:</label>
+                            <select id="sort-select" class="sort-select">
+                                <option value="relevance">Relevance</option>
+                                <option value="title">Title (A-Z)</option>
+                                <option value="author">Author (A-Z)</option>
+                                <option value="year-desc">Newest First</option>
+                                <option value="year-asc">Oldest First</option>
+                                <option value="rating-desc">Highest Rated</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Results Container -->
+                <div class="search-results" id="search-results">
+                    <!-- Results will be populated dynamically -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container" id="pagination-container" style="display: none;">
+                    <nav class="pagination" id="pagination">
+                        <!-- Pagination controls will be populated dynamically -->
+                    </nav>
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loading-state" style="display: none;">
+                <div class="loading-spinner">
+                    <i class="fas fa-book-reader fa-spin"></i>
+                </div>
+                <p class="loading-text">Searching for books...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state" style="display: none;">
+                <div class="empty-content">
+                    <i class="fas fa-search"></i>
+                    <h3>No Books Found</h3>
+                    <p>Try adjusting your search terms or filters to find more results.</p>
+                    <button class="btn-clear-search" id="clear-search">
+                        Clear Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Book Detail Modal Component -->
+    <div id="book-detail-modal"></div>
+
+    <!-- Success/Error Toast Notifications -->
+    <div class="toast-container" id="toast-container">
+        <!-- Toast notifications will be populated dynamically -->
+    </div>
+
+    <!-- JavaScript Dependencies -->
+    <script src="../js/services/bookSearchService.js"></script>
+    <script src="../js/components/BookDetailModal.js"></script>
+    <script src="../js/components/SearchResults.js"></script>
+    <script src="../js/pages/bookSearchPage.js"></script>
+</body>
+</html>
