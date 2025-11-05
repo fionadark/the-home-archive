@@ -1,0 +1,421 @@
+/**
+ * Dark Academia Theme Variables and Base Styles
+ * 
+ * A sophisticated, scholarly aesthetic inspired by classic academic institutions
+ * Color palette features rich browns, deep greens, warm golds, and muted burgundies
+ * Typography emphasizes readability and classical elegance
+ */
+
+:root {
+  /* Primary Color Palette */
+  --da-primary-dark: #2c1810;           /* Deep coffee brown */
+  --da-primary-medium: #3d2817;        /* Rich chocolate */
+  --da-primary-light: #5c3f2e;         /* Warm brown */
+  --da-primary-lighter: #8b6f47;       /* Light brown */
+  
+  /* Secondary Color Palette */
+  --da-secondary-dark: #1a3a2e;        /* Deep forest green */
+  --da-secondary-medium: #16423c;      /* Rich emerald */
+  --da-secondary-light: #0f3460;       /* Deep navy */
+  --da-secondary-lighter: #2e5266;     /* Slate blue */
+  
+  /* Accent Colors */
+  --da-accent-gold: #d4af37;           /* Classic gold */
+  --da-accent-bronze: #cd7f32;         /* Antique bronze */
+  --da-accent-burgundy: #722f37;       /* Deep wine */
+  --da-accent-sage: #87a96b;           /* Muted sage green */
+  
+  /* Neutral Palette */
+  --da-neutral-black: #0f0f0f;         /* Rich black */
+  --da-neutral-charcoal: #2c2c2c;      /* Charcoal */
+  --da-neutral-grey-dark: #4a4a4a;     /* Dark grey */
+  --da-neutral-grey: #757575;          /* Medium grey */
+  --da-neutral-grey-light: #a8a8a8;    /* Light grey */
+  --da-neutral-silver: #e8e8e8;        /* Silver */
+  --da-neutral-cream: #f5f2e8;         /* Warm cream */
+  --da-neutral-parchment: #faf7f0;     /* Parchment white */
+  
+  /* Background Colors */
+  --da-bg-primary: var(--da-neutral-cream);
+  --da-bg-secondary: var(--da-neutral-parchment);
+  --da-bg-dark: var(--da-primary-dark);
+  --da-bg-card: rgba(255, 255, 255, 0.9);
+  --da-bg-overlay: rgba(44, 24, 16, 0.8);
+  
+  /* Text Colors */
+  --da-text-primary: var(--da-primary-dark);
+  --da-text-secondary: var(--da-neutral-charcoal);
+  --da-text-muted: var(--da-neutral-grey);
+  --da-text-light: var(--da-neutral-cream);
+  --da-text-accent: var(--da-accent-burgundy);
+  
+  /* Border and Shadow Colors */
+  --da-border-primary: var(--da-neutral-grey-light);
+  --da-border-accent: var(--da-accent-gold);
+  --da-border-dark: var(--da-primary-medium);
+  
+  /* Shadow Definitions */
+  --da-shadow-subtle: 0 2px 4px rgba(44, 24, 16, 0.1);
+  --da-shadow-medium: 0 4px 12px rgba(44, 24, 16, 0.15);
+  --da-shadow-strong: 0 8px 24px rgba(44, 24, 16, 0.2);
+  --da-shadow-inset: inset 0 2px 4px rgba(44, 24, 16, 0.1);
+  
+  /* Interactive State Colors */
+  --da-state-hover: rgba(212, 175, 55, 0.1);
+  --da-state-active: rgba(212, 175, 55, 0.2);
+  --da-state-focus: var(--da-accent-gold);
+  --da-state-success: #6b8e23;
+  --da-state-warning: #daa520;
+  --da-state-error: #a0522d;
+  --da-state-info: var(--da-secondary-light);
+  
+  /* Typography Scale */
+  --da-font-family-primary: 'Crimson Text', 'Times New Roman', serif;
+  --da-font-family-secondary: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
+  --da-font-family-mono: 'Source Code Pro', 'Courier New', monospace;
+  
+  /* Font Sizes */
+  --da-font-size-xs: 0.75rem;    /* 12px */
+  --da-font-size-sm: 0.875rem;   /* 14px */
+  --da-font-size-base: 1rem;     /* 16px */
+  --da-font-size-md: 1.125rem;   /* 18px */
+  --da-font-size-lg: 1.25rem;    /* 20px */
+  --da-font-size-xl: 1.5rem;     /* 24px */
+  --da-font-size-2xl: 2rem;      /* 32px */
+  --da-font-size-3xl: 2.5rem;    /* 40px */
+  --da-font-size-4xl: 3rem;      /* 48px */
+  
+  /* Font Weights */
+  --da-font-weight-light: 300;
+  --da-font-weight-normal: 400;
+  --da-font-weight-medium: 500;
+  --da-font-weight-semibold: 600;
+  --da-font-weight-bold: 700;
+  
+  /* Line Heights */
+  --da-line-height-tight: 1.2;
+  --da-line-height-normal: 1.5;
+  --da-line-height-relaxed: 1.6;
+  --da-line-height-loose: 1.8;
+  
+  /* Letter Spacing */
+  --da-letter-spacing-tight: -0.025em;
+  --da-letter-spacing-normal: 0em;
+  --da-letter-spacing-wide: 0.025em;
+  --da-letter-spacing-wider: 0.05em;
+  
+  /* Spacing Scale */
+  --da-space-xs: 0.25rem;    /* 4px */
+  --da-space-sm: 0.5rem;     /* 8px */
+  --da-space-md: 0.75rem;    /* 12px */
+  --da-space-base: 1rem;     /* 16px */
+  --da-space-lg: 1.5rem;     /* 24px */
+  --da-space-xl: 2rem;       /* 32px */
+  --da-space-2xl: 3rem;      /* 48px */
+  --da-space-3xl: 4rem;      /* 64px */
+  --da-space-4xl: 6rem;      /* 96px */
+  
+  /* Border Radius */
+  --da-radius-none: 0;
+  --da-radius-sm: 0.125rem;   /* 2px */
+  --da-radius-base: 0.25rem;  /* 4px */
+  --da-radius-md: 0.375rem;   /* 6px */
+  --da-radius-lg: 0.5rem;     /* 8px */
+  --da-radius-xl: 0.75rem;    /* 12px */
+  --da-radius-full: 9999px;
+  
+  /* Transitions */
+  --da-transition-fast: 150ms ease;
+  --da-transition-base: 300ms ease;
+  --da-transition-slow: 500ms ease;
+  
+  /* Z-Index Scale */
+  --da-z-dropdown: 1000;
+  --da-z-sticky: 1020;
+  --da-z-fixed: 1030;
+  --da-z-modal-backdrop: 1040;
+  --da-z-modal: 1050;
+  --da-z-popover: 1060;
+  --da-z-tooltip: 1070;
+  --da-z-toast: 1080;
+}
+
+/* Base Reset and Typography */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  line-height: var(--da-line-height-normal);
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--da-font-family-primary);
+  font-size: var(--da-font-size-base);
+  font-weight: var(--da-font-weight-normal);
+  color: var(--da-text-primary);
+  background-color: var(--da-bg-primary);
+  letter-spacing: var(--da-letter-spacing-normal);
+}
+
+/* Typography Elements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--da-font-family-primary);
+  font-weight: var(--da-font-weight-semibold);
+  line-height: var(--da-line-height-tight);
+  color: var(--da-text-primary);
+  margin-bottom: var(--da-space-md);
+  letter-spacing: var(--da-letter-spacing-tight);
+}
+
+h1 { font-size: var(--da-font-size-3xl); }
+h2 { font-size: var(--da-font-size-2xl); }
+h3 { font-size: var(--da-font-size-xl); }
+h4 { font-size: var(--da-font-size-lg); }
+h5 { font-size: var(--da-font-size-md); }
+h6 { font-size: var(--da-font-size-base); }
+
+p {
+  margin-bottom: var(--da-space-base);
+  line-height: var(--da-line-height-relaxed);
+}
+
+/* Links */
+a {
+  color: var(--da-text-accent);
+  text-decoration: none;
+  transition: color var(--da-transition-fast);
+}
+
+a:hover {
+  color: var(--da-accent-gold);
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: 2px solid var(--da-state-focus);
+  outline-offset: 2px;
+  border-radius: var(--da-radius-sm);
+}
+
+/* Lists */
+ul, ol {
+  padding-left: var(--da-space-lg);
+  margin-bottom: var(--da-space-base);
+}
+
+li {
+  margin-bottom: var(--da-space-xs);
+}
+
+/* Code */
+code, pre {
+  font-family: var(--da-font-family-mono);
+  font-size: 0.9em;
+  background-color: var(--da-neutral-silver);
+  padding: var(--da-space-xs) var(--da-space-sm);
+  border-radius: var(--da-radius-sm);
+}
+
+pre {
+  display: block;
+  padding: var(--da-space-base);
+  margin-bottom: var(--da-space-base);
+  overflow-x: auto;
+  border: 1px solid var(--da-border-primary);
+}
+
+/* Blockquote */
+blockquote {
+  padding: var(--da-space-lg);
+  margin: var(--da-space-lg) 0;
+  border-left: 4px solid var(--da-accent-gold);
+  background-color: var(--da-bg-secondary);
+  font-style: italic;
+  color: var(--da-text-secondary);
+}
+
+/* Form Elements */
+input, textarea, select, button {
+  font-family: var(--da-font-family-secondary);
+  font-size: var(--da-font-size-base);
+  line-height: var(--da-line-height-normal);
+}
+
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="search"],
+textarea, 
+select {
+  padding: var(--da-space-md) var(--da-space-base);
+  border: 1px solid var(--da-border-primary);
+  border-radius: var(--da-radius-base);
+  background-color: var(--da-bg-secondary);
+  color: var(--da-text-primary);
+  transition: border-color var(--da-transition-fast), box-shadow var(--da-transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--da-state-focus);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* Buttons */
+button {
+  padding: var(--da-space-md) var(--da-space-lg);
+  border: none;
+  border-radius: var(--da-radius-base);
+  background-color: var(--da-primary-medium);
+  color: var(--da-text-light);
+  font-weight: var(--da-font-weight-medium);
+  cursor: pointer;
+  transition: all var(--da-transition-fast);
+  letter-spacing: var(--da-letter-spacing-wide);
+}
+
+button:hover {
+  background-color: var(--da-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--da-shadow-medium);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: var(--da-shadow-subtle);
+}
+
+button:focus {
+  outline: 2px solid var(--da-state-focus);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Utility Classes */
+.da-text-center { text-align: center; }
+.da-text-left { text-align: left; }
+.da-text-right { text-align: right; }
+
+.da-font-light { font-weight: var(--da-font-weight-light); }
+.da-font-normal { font-weight: var(--da-font-weight-normal); }
+.da-font-medium { font-weight: var(--da-font-weight-medium); }
+.da-font-semibold { font-weight: var(--da-font-weight-semibold); }
+.da-font-bold { font-weight: var(--da-font-weight-bold); }
+
+.da-text-xs { font-size: var(--da-font-size-xs); }
+.da-text-sm { font-size: var(--da-font-size-sm); }
+.da-text-base { font-size: var(--da-font-size-base); }
+.da-text-lg { font-size: var(--da-font-size-lg); }
+.da-text-xl { font-size: var(--da-font-size-xl); }
+
+.da-text-primary { color: var(--da-text-primary); }
+.da-text-secondary { color: var(--da-text-secondary); }
+.da-text-muted { color: var(--da-text-muted); }
+.da-text-accent { color: var(--da-text-accent); }
+.da-text-light { color: var(--da-text-light); }
+
+.da-bg-primary { background-color: var(--da-bg-primary); }
+.da-bg-secondary { background-color: var(--da-bg-secondary); }
+.da-bg-dark { background-color: var(--da-bg-dark); }
+.da-bg-card { background-color: var(--da-bg-card); }
+
+.da-shadow-subtle { box-shadow: var(--da-shadow-subtle); }
+.da-shadow-medium { box-shadow: var(--da-shadow-medium); }
+.da-shadow-strong { box-shadow: var(--da-shadow-strong); }
+
+.da-rounded-none { border-radius: var(--da-radius-none); }
+.da-rounded-sm { border-radius: var(--da-radius-sm); }
+.da-rounded { border-radius: var(--da-radius-base); }
+.da-rounded-md { border-radius: var(--da-radius-md); }
+.da-rounded-lg { border-radius: var(--da-radius-lg); }
+.da-rounded-xl { border-radius: var(--da-radius-xl); }
+.da-rounded-full { border-radius: var(--da-radius-full); }
+
+/* Layout Utilities */
+.da-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--da-space-base);
+}
+
+.da-grid {
+  display: grid;
+  gap: var(--da-space-base);
+}
+
+.da-flex {
+  display: flex;
+}
+
+.da-flex-col {
+  flex-direction: column;
+}
+
+.da-items-center {
+  align-items: center;
+}
+
+.da-justify-center {
+  justify-content: center;
+}
+
+.da-justify-between {
+  justify-content: space-between;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+  
+  h1 { font-size: var(--da-font-size-2xl); }
+  h2 { font-size: var(--da-font-size-xl); }
+  h3 { font-size: var(--da-font-size-lg); }
+}
+
+@media (min-width: 1200px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+  
+  body {
+    font-family: var(--da-font-family-primary);
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  
+  p, blockquote {
+    orphans: 3;
+    widows: 3;
+  }
+  
+  a {
+    text-decoration: underline;
+  }
+}
