@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book - The Home Archive</title>
+    
+    <!-- Dark Academia CSS Styling -->
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/add-book.css">
+    
+    <!-- Preload fonts for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="add-book-page">
+    <!-- Navigation Header -->
+    <header class="main-header" role="banner">
+        <nav class="main-nav" aria-label="Main navigation">
+            <div class="nav-brand">
+                <h1 class="site-title">
+                    <span class="site-icon">📚</span>
+                    The Home Archive
+                </h1>
+            </div>
+            
+            <div class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="/dashboard.html" class="nav-link">My Library</a></li>
+                    <li><a href="/search.html" class="nav-link">Search Books</a></li>
+                    <li><a href="/add-book.html" class="nav-link active" aria-current="page">Add Book</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-user">
+                <div class="user-menu">
+                    <button class="user-menu-toggle" aria-expanded="false" aria-haspopup="true" id="user-menu-button">
+                        <span id="user-name">Loading...</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                        <a href="/profile.html" class="dropdown-item">Profile Settings</a>
+                        <a href="/export.html" class="dropdown-item">Export Library</a>
+                        <hr class="dropdown-divider">
+                        <button id="logout-btn" class="dropdown-item logout-btn">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+        <!-- Page Header -->
+        <section class="page-header">
+            <h2 class="page-title">Add Book to Library</h2>
+            <p class="page-subtitle">Add a new book to your personal collection</p>
+        </section>
+
+        <!-- Add Book Methods -->
+        <section class="add-methods" aria-label="Add book methods">
+            <div class="method-tabs">
+                <button class="tab-btn active" data-tab="isbn" id="tab-isbn">
+                    📖 Add by ISBN
+                </button>
+                <button class="tab-btn" data-tab="search" id="tab-search">
+                    🔍 Search & Add
+                </button>
+                <button class="tab-btn" data-tab="manual" id="tab-manual">
+                    ✏️ Manual Entry
+                </button>
+            </div>
+
+            <!-- ISBN Tab -->
+            <div class="tab-content active" id="content-isbn">
+                <div class="method-section">
+                    <h3>Add Book by ISBN</h3>
+                    <p>Enter the ISBN to automatically fetch book details</p>
+                    
+                    <form class="isbn-form" id="isbn-form">
+                        <div class="form-group">
+                            <label for="isbn-input" class="form-label">ISBN (10 or 13 digits):</label>
+                            <input 
+                                type="text" 
+                                id="isbn-input" 
+                                class="form-input" 
+                                placeholder="e.g., 9780143127741 or 0143127748"
+                                pattern="[0-9X-]{10,17}"
+                                title="Please enter a valid ISBN"
+                            >
+                            <button type="submit" class="btn btn-primary">Fetch Book Details</button>
+                        </div>
+                    </form>
+
+                    <!-- ISBN Results -->
+                    <div id="isbn-results" class="book-preview" style="display: none;">
+                        <!-- Book details will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Tab -->
+            <div class="tab-content" id="content-search">
+                <div class="method-section">
+                    <h3>Search and Add</h3>
+                    <p>Search our database and external sources for books to add</p>
+                    
+                    <form class="search-form" id="add-search-form">
+                        <div class="form-group">
+                            <label for="add-search-input" class="form-label">Search for books:</label>
+                            <input 
+                                type="search" 
+                                id="add-search-input" 
+                                class="form-input" 
+                                placeholder="Search by title, author, or keywords..."
+                            >
+                            <button type="submit" class="btn btn-primary">Search Books</button>
+                        </div>
+                    </form>
+
+                    <!-- Search Results for Adding -->
+                    <div id="add-search-results" class="search-results" style="display: none;">
+                        <!-- Search results will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manual Tab -->
+            <div class="tab-content" id="content-manual">
+                <div class="method-section">
+                    <h3>Manual Book Entry</h3>
+                    <p>Manually enter book details</p>
+                    
+                    <form class="manual-form" id="manual-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="manual-title" class="form-label">Title *</label>
+                                <input 
+                                    type="text" 
+                                    id="manual-title" 
+                                    class="form-input" 
+                                    required
+                                    placeholder="Enter book title"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="manual-author" class="form-label">Author *</label>
+                                <input 
+                                    type="text" 
+                                    id="manual-author" 
+                                    class="form-input" 
+                                    required
+                                    placeholder="Enter author name"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="manual-isbn" class="form-label">ISBN</label>
+                                <input 
+                                    type="text" 
+                                    id="manual-isbn" 
+                                    class="form-input" 
+                                    placeholder="ISBN (optional)"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="manual-genre" class="form-label">Genre</label>
+                                <select id="manual-genre" class="form-select">
+                                    <option value="">Select a genre</option>
+                                    <option value="fiction">Fiction</option>
+                                    <option value="non-fiction">Non-Fiction</option>
+                                    <option value="mystery">Mystery</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="science-fiction">Science Fiction</option>
+                                    <option value="fantasy">Fantasy</option>
+                                    <option value="biography">Biography</option>
+                                    <option value="history">History</option>
+                                    <option value="science">Science</option>
+                                    <option value="philosophy">Philosophy</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="manual-year" class="form-label">Publication Year</label>
+                                <input 
+                                    type="number" 
+                                    id="manual-year" 
+                                    class="form-input" 
+                                    min="1000" 
+                                    max="2025"
+                                    placeholder="e.g., 2023"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="manual-publisher" class="form-label">Publisher</label>
+                                <input 
+                                    type="text" 
+                                    id="manual-publisher" 
+                                    class="form-input" 
+                                    placeholder="Publisher name"
+                                >
+                            </div>
+
+                            <div class="form-group form-group-full">
+                                <label for="manual-description" class="form-label">Description</label>
+                                <textarea 
+                                    id="manual-description" 
+                                    class="form-textarea" 
+                                    rows="3"
+                                    placeholder="Book description (optional)"
+                                ></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="manual-location" class="form-label">Physical Location</label>
+                                <input 
+                                    type="text" 
+                                    id="manual-location" 
+                                    class="form-input" 
+                                    placeholder="e.g., Living Room Shelf 2"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="manual-rating" class="form-label">My Rating</label>
+                                <select id="manual-rating" class="form-select">
+                                    <option value="">No rating</option>
+                                    <option value="1">1 Star</option>
+                                    <option value="2">2 Stars</option>
+                                    <option value="3">3 Stars</option>
+                                    <option value="4">4 Stars</option>
+                                    <option value="5">5 Stars</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" id="clear-manual-form">Clear Form</button>
+                            <button type="submit" class="btn btn-primary">Add Book to Library</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recently Added Books -->
+        <section class="recent-additions" id="recent-additions">
+            <h3>Recently Added Books</h3>
+            <div id="recent-books-container" class="books-grid">
+                <!-- Recently added books will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Success/Error Messages -->
+    <div class="toast-container" id="toast-container">
+        <!-- Toast messages will be populated here -->
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner" aria-label="Processing request"></div>
+        <p>Adding book to your library...</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer" role="contentinfo">
+        <p>&copy; 2025 The Home Archive. Preserving your literary journey.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/js/auth-service.js"></script>
+    <script src="/js/add-book.js"></script>
+</body>
+</html>

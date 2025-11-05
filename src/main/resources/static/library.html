@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Library - The Home Archive</title>
+    
+    <!-- Dark Academia Theme CSS -->
+    <link rel="stylesheet" href="/css/themes/dark-academia.css">
+    <link rel="stylesheet" href="/css/pages/library.css">
+    <link rel="stylesheet" href="/css/components/book-card.css">
+    <link rel="stylesheet" href="/css/components/search-filter.css">
+    
+    <!-- Google Fonts for Enhanced Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Sans+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="library-header">
+        <div class="da-container">
+            <nav class="library-nav">
+                <div class="nav-brand">
+                    <h1 class="brand-title">
+                        <i class="fas fa-book-open"></i>
+                        The Home Archive
+                    </h1>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                    <a href="/library" class="nav-link active">
+                        <i class="fas fa-books"></i>
+                        My Library
+                    </a>
+                    <a href="/search" class="nav-link">
+                        <i class="fas fa-search"></i>
+                        Book Search
+                    </a>
+                    <a href="/profile" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+                    <button id="logout-btn" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="library-main">
+        <div class="da-container">
+            
+            <!-- Page Header -->
+            <section class="library-page-header">
+                <div class="page-title-section">
+                    <h1 class="page-title">My Personal Library</h1>
+                    <p class="page-subtitle">Curate and organize your literary collection</p>
+                </div>
+                
+                <!-- Library Statistics -->
+                <div class="library-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-books">0</div>
+                        <div class="stat-label">Total Books</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="books-read">0</div>
+                        <div class="stat-label">Books Read</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="currently-reading">0</div>
+                        <div class="stat-label">Currently Reading</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="want-to-read">0</div>
+                        <div class="stat-label">Want to Read</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search and Filter Controls -->
+            <section class="library-controls">
+                <div class="search-filter-container">
+                    
+                    <!-- Search Bar -->
+                    <div class="search-section">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input 
+                                type="search" 
+                                id="library-search" 
+                                class="search-input" 
+                                placeholder="Search your library by title, author, or notes..."
+                                autocomplete="off"
+                            >
+                            <button id="clear-search" class="clear-search-btn" title="Clear search">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div class="filter-section">
+                        <!-- Reading Status Filter -->
+                        <div class="filter-group">
+                            <label for="status-filter" class="filter-label">Status:</label>
+                            <select id="status-filter" class="filter-select">
+                                <option value="">All Books</option>
+                                <option value="UNREAD">Unread</option>
+                                <option value="READING">Currently Reading</option>
+                                <option value="READ">Read</option>
+                                <option value="DNF">Did Not Finish</option>
+                            </select>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="filter-group">
+                            <label for="category-filter" class="filter-label">Category:</label>
+                            <select id="category-filter" class="filter-select">
+                                <option value="">All Categories</option>
+                                <!-- Categories will be populated dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- Location Filter -->
+                        <div class="filter-group">
+                            <label for="location-filter" class="filter-label">Location:</label>
+                            <select id="location-filter" class="filter-select">
+                                <option value="">All Locations</option>
+                                <!-- Locations will be populated dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- Sort Options -->
+                        <div class="filter-group">
+                            <label for="sort-select" class="filter-label">Sort by:</label>
+                            <select id="sort-select" class="filter-select">
+                                <option value="dateAdded">Date Added</option>
+                                <option value="title">Title (A-Z)</option>
+                                <option value="author">Author (A-Z)</option>
+                                <option value="dateStarted">Date Started</option>
+                                <option value="dateCompleted">Date Completed</option>
+                                <option value="rating">Rating</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort Order -->
+                        <div class="filter-group">
+                            <button id="sort-order-btn" class="sort-order-btn" title="Toggle sort order">
+                                <i class="fas fa-sort-amount-down"></i>
+                                <span class="sort-order-text">Desc</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- View Controls -->
+                    <div class="view-controls">
+                        <div class="view-toggle">
+                            <button id="grid-view-btn" class="view-btn active" title="Grid view">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button id="list-view-btn" class="view-btn" title="List view">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                        
+                        <button id="add-book-btn" class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add Book
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Filters Display -->
+                <div id="active-filters" class="active-filters" style="display: none;">
+                    <div class="active-filters-label">Active filters:</div>
+                    <div class="active-filters-list"></div>
+                    <button id="clear-all-filters" class="clear-filters-btn">
+                        <i class="fas fa-times"></i>
+                        Clear all
+                    </button>
+                </div>
+            </section>
+
+            <!-- Books Grid/List Container -->
+            <section class="library-content">
+                
+                <!-- Loading State -->
+                <div id="loading-state" class="loading-state">
+                    <div class="loading-spinner">
+                        <i class="fas fa-book-reader fa-spin"></i>
+                    </div>
+                    <p class="loading-text">Loading your library...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3 class="empty-title">Your library is empty</h3>
+                    <p class="empty-message">Start building your personal collection by adding your first book.</p>
+                    <button id="add-first-book-btn" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Add Your First Book
+                    </button>
+                </div>
+
+                <!-- No Results State -->
+                <div id="no-results-state" class="no-results-state" style="display: none;">
+                    <div class="no-results-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="no-results-title">No books found</h3>
+                    <p class="no-results-message">Try adjusting your search terms or filters.</p>
+                    <button id="clear-search-filters-btn" class="btn-secondary">
+                        <i class="fas fa-eraser"></i>
+                        Clear Search & Filters
+                    </button>
+                </div>
+
+                <!-- Books Grid -->
+                <div id="books-grid" class="books-grid" style="display: none;">
+                    <!-- Book cards will be dynamically inserted here -->
+                </div>
+
+                <!-- Books List -->
+                <div id="books-list" class="books-list" style="display: none;">
+                    <!-- Book list items will be dynamically inserted here -->
+                </div>
+
+                <!-- Pagination -->
+                <div id="pagination-container" class="pagination-container" style="display: none;">
+                    <div class="pagination-info">
+                        <span id="results-info">Showing 1-20 of 150 books</span>
+                    </div>
+                    <div class="pagination-controls">
+                        <button id="prev-page-btn" class="pagination-btn" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                            Previous
+                        </button>
+                        <div class="pagination-numbers" id="pagination-numbers">
+                            <!-- Page numbers will be dynamically generated -->
+                        </div>
+                        <button id="next-page-btn" class="pagination-btn">
+                            Next
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="library-footer">
+        <div class="da-container">
+            <div class="footer-content">
+                <p>&copy; 2025 The Home Archive. Crafted with passion for book lovers.</p>
+                <div class="footer-links">
+                    <a href="/about">About</a>
+                    <a href="/privacy">Privacy</a>
+                    <a href="/terms">Terms</a>
+                    <a href="/contact">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Containers (for future use) -->
+    <div id="modal-overlay" class="modal-overlay" style="display: none;"></div>
+    <div id="book-details-modal" class="book-modal" style="display: none;">
+        <!-- Book details modal content will be dynamically inserted -->
+    </div>
+    <div id="add-book-modal" class="book-modal" style="display: none;">
+        <!-- Add/edit book modal content will be dynamically inserted -->
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/js/utils/api.js"></script>
+    <script src="/js/utils/auth.js"></script>
+    <script src="/js/components/book-card.js"></script>
+    <script src="/js/pages/library.js"></script>
+</body>
+</html>
