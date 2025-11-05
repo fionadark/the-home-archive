@@ -37,6 +37,12 @@ spring:
           starttls:
             enable: false
 
+# Server Configuration for Testing
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
 # JWT Configuration for Testing
 jwt:
   secret: test-secret-key-for-testing-only-minimum-256-bits-required-for-jwt

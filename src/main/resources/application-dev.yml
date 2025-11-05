@@ -66,6 +66,8 @@ spring:
 # Application Configuration
 server:
   port: 8080
+  servlet:
+    context-path: /api
   error:
     include-message: always
     include-binding-errors: always

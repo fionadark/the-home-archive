@@ -25,6 +25,8 @@ spring:
 # Server Configuration
 server:
   port: 8080
+  servlet:
+    context-path: /api
   error:
     include-message: on_param
     include-binding-errors: on_param
