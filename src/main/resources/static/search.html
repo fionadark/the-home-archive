@@ -3,70 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search books in The Home Archive library">
     <title>Book Search - The Home Archive</title>
     
-    <!-- Dark Academia Theme CSS -->
-    <link rel="stylesheet" href="/api/css/themes/dark-academia.css">
+    <!-- Dark Academia CSS Styling -->
+    <link rel="stylesheet" href="/api/css/common.css">
+    <link rel="stylesheet" href="/api/css/dashboard.css">
+    <link rel="stylesheet" href="/api/css/page-consistency.css">
     <link rel="stylesheet" href="/api/css/pages/book-search.css">
     <link rel="stylesheet" href="/api/css/components/search-results.css">
     <link rel="stylesheet" href="/api/css/components/book-detail-modal.css">
-    <link rel="stylesheet" href="/api/css/components/book-card.css">&gt;
+    <link rel="stylesheet" href="/api/css/components/book-card.css">
     
-    <!-- Google Fonts for Enhanced Typography -->
+    <!-- Preload fonts for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Sans+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="search-page">
     <!-- Navigation Header -->
-    <header class="search-header">
-        <div class="da-container">
-            <nav class="search-nav">
-                <div class="nav-brand">
-                    <h1 class="brand-title">
-                        <i class="fas fa-book-open"></i>
-                        The Home Archive
-                    </h1>
-                </div>
-                
-                <div class="nav-links">
-                    <a href="/dashboard.html" class="nav-link">
-                        <i class="fas fa-home"></i>
-                        Dashboard
-                    </a>
-                    <a href="/frontend/src/html/library.html" class="nav-link">
-                        <i class="fas fa-books"></i>
-                        My Library
-                    </a>
-                    <a href="/search.html" class="nav-link active">
-                        <i class="fas fa-search"></i>
-                        Book Search
-                    </a>
-                    <a href="/add-book.html" class="nav-link">
-                        <i class="fas fa-plus"></i>
-                        Add Book
-                    </a>
-                    <button id="logout-btn" class="btn-logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Logout
-                    </button>
-                </div>
+    <header class="main-header" role="banner">
+        <nav class="main-nav" aria-label="Main navigation">
+            <div class="nav-brand">
+                <h1 class="site-title">
+                    <span class="site-icon">📚</span>
+                    The Home Archive
+                </h1>
+            </div>
+            
+            <div class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="/api/dashboard.html" class="nav-link">My Library</a></li>
+                    <li><a href="/api/search.html" class="nav-link active" aria-current="page">Search Books</a></li>
+                    <li><a href="/api/add-book.html" class="nav-link">Add Book</a></li>
+                </ul>
+            </div>
 
-                <!-- Mobile Menu Toggle -->
-                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </nav>
-        </div>
+            <div class="nav-user">
+                <div class="user-menu">
+                    <button class="user-menu-toggle" aria-expanded="false" aria-haspopup="true" id="user-menu-button">
+                        <span id="user-name">Loading...</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                        <a href="/api/profile.html" class="dropdown-item">Profile Settings</a>
+                        <a href="/api/export.html" class="dropdown-item">Export Library</a>
+                        <hr class="dropdown-divider">
+                        <button id="logout-btn" class="dropdown-item logout-btn">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="search-main">
+    <main class="main-content" role="main">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h2 class="page-title">Search Books</h2>
+            <p class="page-subtitle">Discover new books to add to your collection</p>
+        </section>
+
+        <!-- Search Interface -->
         <div class="da-container">
             <!-- Page Header -->
             <section class="search-hero">
@@ -286,6 +284,11 @@
             </div>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="main-footer" role="contentinfo">
+        <p>&copy; 2025 The Home Archive. Preserving your literary journey.</p>
+    </footer>
 
     <!-- Book Detail Modal Component -->
     <div id="book-detail-modal"></div>

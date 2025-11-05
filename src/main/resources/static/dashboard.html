@@ -7,8 +7,9 @@
     <title>My Library - The Home Archive</title>
     
     <!-- Dark Academia CSS Styling -->
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/api/css/common.css">
+    <link rel="stylesheet" href="/api/css/dashboard.css">
+    <link rel="stylesheet" href="/api/css/page-consistency.css">
     
     <!-- Preload fonts for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,9 +29,9 @@
             
             <div class="nav-menu">
                 <ul class="nav-links">
-                    <li><a href="/dashboard.html" class="nav-link active" aria-current="page">My Library</a></li>
-                    <li><a href="/search.html" class="nav-link">Search Books</a></li>
-                    <li><a href="/add-book.html" class="nav-link">Add Book</a></li>
+                    <li><a href="/api/dashboard.html" class="nav-link active" aria-current="page">My Library</a></li>
+                    <li><a href="/api/search.html" class="nav-link">Search Books</a></li>
+                    <li><a href="/api/add-book.html" class="nav-link">Add Book</a></li>
                 </ul>
             </div>
 
@@ -41,8 +42,8 @@
                         <span class="dropdown-arrow">▼</span>
                     </button>
                     <div class="user-dropdown" id="user-dropdown" style="display: none;">
-                        <a href="/profile.html" class="dropdown-item">Profile Settings</a>
-                        <a href="/export.html" class="dropdown-item">Export Library</a>
+                        <a href="/api/profile.html" class="dropdown-item">Profile Settings</a>
+                        <a href="/api/export.html" class="dropdown-item">Export Library</a>
                         <hr class="dropdown-divider">
                         <button id="logout-btn" class="dropdown-item logout-btn">Sign Out</button>
                     </div>
