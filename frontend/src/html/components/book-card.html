@@ -1,0 +1,260 @@
+<!-- 
+    Book Card Component Template
+    
+    This template represents a single book in the user's personal library.
+    It displays book information, reading status, and available actions.
+    Can be used in both grid and list view modes.
+-->
+
+<!-- Book Card (Grid View) -->
+<div class="book-card" data-book-id="{{bookId}}" data-reading-status="{{readingStatus}}" data-category="{{categoryName}}">
+    
+    <!-- Book Cover -->
+    <div class="book-cover-container">
+        <div class="book-cover">
+            <img 
+                src="{{coverImageUrl}}" 
+                alt="Cover of {{title}} by {{author}}"
+                class="book-cover-image"
+                loading="lazy"
+                onerror="this.src='/images/default-book-cover.jpg'"
+            >
+            
+            <!-- Reading Status Badge -->
+            <div class="reading-status-badge status-{{readingStatus}}">
+                <i class="status-icon fas fa-{{statusIcon}}"></i>
+                <span class="status-text">{{readingStatusDisplay}}</span>
+            </div>
+            
+            <!-- Quick Actions Overlay -->
+            <div class="book-actions-overlay">
+                <button class="action-btn view-details-btn" title="View Details" data-action="view" data-book-id="{{bookId}}">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn edit-btn" title="Edit Book" data-action="edit" data-book-id="{{bookId}}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn remove-btn" title="Remove from Library" data-action="remove" data-book-id="{{bookId}}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Progress Indicator (for currently reading books) -->
+        <div class="reading-progress" style="display: {{showProgress ? 'block' : 'none'}};">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{progressPercentage}}%"></div>
+            </div>
+            <span class="progress-text">{{progressText}}</span>
+        </div>
+    </div>
+
+    <!-- Book Information -->
+    <div class="book-info">
+        <h3 class="book-title" title="{{title}}">{{title}}</h3>
+        <p class="book-author" title="{{author}}">by {{author}}</p>
+        
+        <!-- Book Meta -->
+        <div class="book-meta">
+            <span class="book-category">{{categoryName}}</span>
+            <span class="book-year">{{publicationYear}}</span>
+        </div>
+
+        <!-- Personal Library Info -->
+        <div class="library-info">
+            <div class="library-meta">
+                <span class="date-added" title="Added to library on {{dateAddedFormatted}}">
+                    <i class="fas fa-calendar-plus"></i>
+                    {{dateAddedDisplay}}
+                </span>
+                
+                <span class="physical-location" title="Physical location: {{physicalLocation}}" style="display: {{showLocation ? 'inline' : 'none'}};">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{physicalLocation}}
+                </span>
+            </div>
+
+            <!-- Reading Dates -->
+            <div class="reading-dates">
+                <span class="date-started" style="display: {{showDateStarted ? 'inline' : 'none'}};" title="Started reading on {{dateStartedFormatted}}">
+                    <i class="fas fa-play"></i>
+                    Started: {{dateStartedDisplay}}
+                </span>
+                
+                <span class="date-completed" style="display: {{showDateCompleted ? 'inline' : 'none'}};" title="Completed on {{dateCompletedFormatted}}">
+                    <i class="fas fa-check"></i>
+                    Finished: {{dateCompletedDisplay}}
+                </span>
+            </div>
+        </div>
+
+        <!-- Personal Notes Preview -->
+        <div class="personal-notes" style="display: {{showNotes ? 'block' : 'none'}};">
+            <p class="notes-preview" title="{{personalNotes}}">
+                <i class="fas fa-sticky-note"></i>
+                {{notesPreview}}
+            </p>
+        </div>
+
+        <!-- Book Actions -->
+        <div class="book-actions">
+            <!-- Status Update -->
+            <div class="status-update">
+                <select class="status-select" data-book-id="{{bookId}}" title="Update reading status">
+                    <option value="UNREAD" {{selectedUnread}}>Unread</option>
+                    <option value="READING" {{selectedReading}}>Reading</option>
+                    <option value="READ" {{selectedRead}}>Read</option>
+                    <option value="DNF" {{selectedDNF}}>Did Not Finish</option>
+                </select>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="quick-action-btn notes-btn" title="Add/Edit Notes" data-action="notes" data-book-id="{{bookId}}">
+                    <i class="fas fa-sticky-note"></i>
+                </button>
+                
+                <button class="quick-action-btn location-btn" title="Update Location" data-action="location" data-book-id="{{bookId}}">
+                    <i class="fas fa-map-marker-alt"></i>
+                </button>
+                
+                <button class="quick-action-btn share-btn" title="Share Book" data-action="share" data-book-id="{{bookId}}">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Book List Item (List View) -->
+<div class="book-list-item" data-book-id="{{bookId}}" data-reading-status="{{readingStatus}}" data-category="{{categoryName}}">
+    
+    <!-- Compact Book Cover -->
+    <div class="book-cover-compact">
+        <img 
+            src="{{coverImageUrl}}" 
+            alt="Cover of {{title}}"
+            class="book-cover-image-compact"
+            loading="lazy"
+            onerror="this.src='/images/default-book-cover.jpg'"
+        >
+    </div>
+
+    <!-- Book Details -->
+    <div class="book-details-list">
+        <div class="book-main-info">
+            <h3 class="book-title-list">{{title}}</h3>
+            <p class="book-author-list">by {{author}}</p>
+            <div class="book-meta-list">
+                <span class="book-category-list">{{categoryName}}</span>
+                <span class="book-year-list">{{publicationYear}}</span>
+                <span class="book-pages-list" style="display: {{showPageCount ? 'inline' : 'none'}};">{{pageCount}} pages</span>
+            </div>
+        </div>
+
+        <div class="book-library-info-list">
+            <!-- Reading Status -->
+            <div class="status-section-list">
+                <div class="reading-status-badge-list status-{{readingStatus}}">
+                    <i class="status-icon fas fa-{{statusIcon}}"></i>
+                    <span class="status-text">{{readingStatusDisplay}}</span>
+                </div>
+                
+                <!-- Progress Bar for Reading Books -->
+                <div class="reading-progress-list" style="display: {{showProgress ? 'flex' : 'none'}};">
+                    <div class="progress-bar-list">
+                        <div class="progress-fill-list" style="width: {{progressPercentage}}%"></div>
+                    </div>
+                    <span class="progress-text-list">{{progressText}}</span>
+                </div>
+            </div>
+
+            <!-- Dates and Location -->
+            <div class="dates-location-list">
+                <span class="date-added-list" title="Added {{dateAddedFormatted}}">
+                    <i class="fas fa-calendar-plus"></i>
+                    Added {{dateAddedDisplay}}
+                </span>
+                
+                <span class="date-started-list" style="display: {{showDateStarted ? 'inline' : 'none'}};" title="Started {{dateStartedFormatted}}">
+                    <i class="fas fa-play"></i>
+                    Started {{dateStartedDisplay}}
+                </span>
+                
+                <span class="date-completed-list" style="display: {{showDateCompleted ? 'inline' : 'none'}};" title="Finished {{dateCompletedFormatted}}">
+                    <i class="fas fa-check"></i>
+                    Finished {{dateCompletedDisplay}}
+                </span>
+                
+                <span class="physical-location-list" style="display: {{showLocation ? 'inline' : 'none'}};" title="Location: {{physicalLocation}}">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{physicalLocation}}
+                </span>
+            </div>
+
+            <!-- Personal Notes in List View -->
+            <div class="personal-notes-list" style="display: {{showNotes ? 'block' : 'none'}};">
+                <p class="notes-preview-list">
+                    <i class="fas fa-sticky-note"></i>
+                    {{notesPreview}}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Section -->
+    <div class="book-actions-list">
+        <!-- Status Update Dropdown -->
+        <div class="status-update-list">
+            <select class="status-select-list" data-book-id="{{bookId}}" title="Update reading status">
+                <option value="UNREAD" {{selectedUnread}}>Unread</option>
+                <option value="READING" {{selectedReading}}>Reading</option>
+                <option value="READ" {{selectedRead}}>Read</option>
+                <option value="DNF" {{selectedDNF}}>Did Not Finish</option>
+            </select>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-list">
+            <button class="action-btn-list view-details-btn" title="View Details" data-action="view" data-book-id="{{bookId}}">
+                <i class="fas fa-eye"></i>
+                <span class="action-text">View</span>
+            </button>
+            
+            <button class="action-btn-list edit-btn" title="Edit Book" data-action="edit" data-book-id="{{bookId}}">
+                <i class="fas fa-edit"></i>
+                <span class="action-text">Edit</span>
+            </button>
+            
+            <button class="action-btn-list notes-btn" title="Add/Edit Notes" data-action="notes" data-book-id="{{bookId}}">
+                <i class="fas fa-sticky-note"></i>
+                <span class="action-text">Notes</span>
+            </button>
+            
+            <button class="action-btn-list remove-btn" title="Remove from Library" data-action="remove" data-book-id="{{bookId}}">
+                <i class="fas fa-trash"></i>
+                <span class="action-text">Remove</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Template Usage Example:
+     
+     // Grid view card
+     const gridTemplate = document.querySelector('.book-card').outerHTML;
+     
+     // List view item  
+     const listTemplate = document.querySelector('.book-list-item').outerHTML;
+     
+     // Replace template variables with actual data
+     function renderBookCard(book, viewMode = 'grid') {
+         const template = viewMode === 'grid' ? gridTemplate : listTemplate;
+         
+         return template
+             .replace(/\{\{bookId\}\}/g, book.id)
+             .replace(/\{\{title\}\}/g, escapeHtml(book.title))
+             .replace(/\{\{author\}\}/g, escapeHtml(book.author))
+             // ... replace all other template variables
+     }
+-->

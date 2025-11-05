@@ -1,103 +1,73 @@
 spring:
+  # H2 Test Database Configuration
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
-    password: ""
-    hikari:
-      # Test environment connection pool settings
-      maximum-pool-size: 3
-      minimum-idle: 1
-      connection-timeout: 10000
-      idle-timeout: 300000
-      max-lifetime: 600000
-      auto-commit: true
-      pool-name: "HomeArchive-Test-Pool"
-      # H2 specific settings for testing
-      data-source-properties:
-        # Fast connection validation for tests
-        validationQuery: "SELECT 1"
-        testWhileIdle: false
-        testOnBorrow: false
-        testOnReturn: false
-  
+    password: 
+    driver-class-name: org.h2.Driver
+    
+  # JPA/Hibernate Configuration for Testing
   jpa:
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
-        generate_statistics: false
-        # Test-specific settings for faster execution
-        jdbc:
-          batch_size: 10
-          order_inserts: false
-          order_updates: false
-        cache:
-          use_second_level_cache: false
-          use_query_cache: false
-        # Test environment optimizations
-        connection:
-          provider_disables_autocommit: false
-    database-platform: org.hibernate.dialect.H2Dialect
-  
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: false
-        trace: false
-  
-  # Disable Flyway in tests - use DDL auto
-  flyway:
-    enabled: false
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+    defer-datasource-initialization: true
+        
+  # SQL Initialization for Testing (disabled - tests should manage their own data)
+  sql:
+    init:
+      mode: never
+        
+  # Disable mail for testing
+  mail:
+    host: localhost
+    port: 1025
+    username: 
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 
-# Test environment logging
-logging:
-  level:
-    com.homearchive: DEBUG
-    org.springframework.security: DEBUG
-    org.hibernate: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.jdbc.core: DEBUG
-    com.zaxxer.hikari: DEBUG
-  
-  pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}] - %msg%n"
+# JWT Configuration for Testing
+jwt:
+  secret: test-secret-key-for-testing-only-minimum-256-bits-required-for-jwt
+  expiration: 3600000 # 1 hour
+  refresh-expiration: 604800000 # 7 days
 
-# Test server configuration
-server:
-  port: 0  # Random available port for tests
-  error:
-    include-stacktrace: always
-    include-message: always
-    include-binding-errors: always
-
-# Test application settings
+# Test Application Configuration
 app:
+  name: The Home Archive (Test)
+  version: 1.0.0-TEST
+  frontend:
+    url: http://localhost:8080
   cors:
-    allowed-origins: "http://localhost:*"
-  security:
-    headers:
-      enabled: false  # Disable for easier testing
-  logging:
-    request-response:
-      enabled: true
-      include-payload: true
-      max-payload-length: 10000  # Full payload for test debugging
+    allowed-origins: http://localhost:8080
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
 
-# Test actuator configuration
+# Disable management endpoints for testing
 management:
   endpoints:
-    web:
-      exposure:
-        include: "*"  # All endpoints available in tests
+    enabled-by-default: false
   endpoint:
     health:
-      show-details: always
-      show-components: always
-  security:
-    enabled: false  # Disable security for test endpoints
+      enabled: true
+
+# Minimal logging for tests
+logging:
+  level:
+    root: WARN
+    com.thehomearchive.library: INFO
+    org.springframework.test: INFO
+    org.springframework.security: WARN

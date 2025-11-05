@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Service Test</title>
+    <!-- CSRF tokens for testing -->
+    <meta name="_csrf" content="test-csrf-token">
+    <meta name="_csrf_header" content="X-CSRF-TOKEN">
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #2c2416;
+            color: #d4c5a0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background-color: #3a312a;
+            border: 1px solid #6b5b47;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-title {
+            color: #ffd700;
+            border-bottom: 2px solid #6b5b47;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .test-result {
+            background-color: #1a1610;
+            border-left: 4px solid #6b5b47;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .success {
+            border-left-color: #22c55e;
+            background-color: #0f2419;
+        }
+        .error {
+            border-left-color: #ef4444;
+            background-color: #2a1010;
+        }
+        button {
+            background-color: #8b4513;
+            color: #ffd700;
+            border: 1px solid #6b5b47;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-family: inherit;
+        }
+        button:hover {
+            background-color: #a0522d;
+        }
+        .controls {
+            background-color: #3a312a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏛️ Library Service Manual Test Suite</h1>
+    <p>Testing the LibraryService implementation for The Home Archive</p>
+
+    <div class="controls">
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="testBasicFunctionality()">Test Basic Functionality</button>
+        <button onclick="testValidation()">Test Validation</button>
+        <button onclick="testUtilities()">Test Utilities</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div id="results"></div>
+
+    <!-- Mock authService for testing -->
+    <script>
+        // Mock global authService
+        window.authService = {
+            getAccessToken: () => 'mock-jwt-token-12345',
+            refreshAccessToken: () => Promise.resolve(true),
+            logout: () => console.log('Mock logout called')
+        };
+
+        // Mock localStorage
+        const mockStorage = {
+            data: {},
+            getItem: function(key) {
+                return this.data[key] || null;
+            },
+            setItem: function(key, value) {
+                this.data[key] = value;
+            },
+            removeItem: function(key) {
+                delete this.data[key];
+            }
+        };
+
+        // Mock fetch for testing
+        let mockFetchResponse = null;
+        const originalFetch = window.fetch;
+        
+        function mockFetch(response) {
+            mockFetchResponse = response;
+            window.fetch = async (url, options) => {
+                console.log('Mock fetch called:', url, options);
+                
+                if (mockFetchResponse) {
+                    if (typeof mockFetchResponse === 'function') {
+                        return mockFetchResponse(url, options);
+                    }
+                    return {
+                        ok: mockFetchResponse.ok !== false,
+                        status: mockFetchResponse.status || 200,
+                        json: () => Promise.resolve(mockFetchResponse.data || mockFetchResponse)
+                    };
+                }
+                
+                // Default successful response
+                return {
+                    ok: true,
+                    status: 200,
+                    json: () => Promise.resolve({
+                        success: true,
+                        content: [],
+                        page: { number: 0, size: 20, totalElements: 0 }
+                    })
+                };
+            };
+        }
+
+        function resetFetch() {
+            window.fetch = originalFetch;
+            mockFetchResponse = null;
+        }
+    </script>
+
+    <!-- Load the library service -->
+    <script src="../src/js/services/libraryService.js"></script>
+
+    <script>
+        let testResults = [];
+
+        function addResult(testName, success, message, details = null) {
+            const result = { testName, success, message, details, timestamp: new Date() };
+            testResults.push(result);
+            displayResult(result);
+        }
+
+        function displayResult(result) {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-section';
+            
+            resultDiv.innerHTML = `
+                <h3 class="test-title">${result.testName}</h3>
+                <div class="test-result ${result.success ? 'success' : 'error'}">
+                    <strong>${result.success ? '✅ PASS' : '❌ FAIL'}:</strong> ${result.message}
+                    ${result.details ? `<br><br><strong>Details:</strong><br>${JSON.stringify(result.details, null, 2)}` : ''}
+                    <br><br><small>Time: ${result.timestamp.toLocaleTimeString()}</small>
+                </div>
+            `;
+            
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            testResults = [];
+        }
+
+        async function testBasicFunctionality() {
+            addResult('Basic Functionality Tests', true, 'Starting basic functionality tests...');
+
+            try {
+                // Test 1: Service instantiation
+                const service = new LibraryService();
+                if (service.apiBaseURL === '/api/library') {
+                    addResult('Service Instantiation', true, 'LibraryService created successfully with correct API base URL');
+                } else {
+                    addResult('Service Instantiation', false, `Expected API base URL '/api/library', got '${service.apiBaseURL}'`);
+                }
+
+                // Test 2: CSRF token detection
+                if (service.csrfToken && service.csrfToken.token === 'test-csrf-token') {
+                    addResult('CSRF Token Detection', true, 'CSRF token detected correctly from meta tags');
+                } else {
+                    addResult('CSRF Token Detection', false, 'Failed to detect CSRF token from meta tags');
+                }
+
+                // Test 3: Auth service detection
+                if (service.authService === window.authService) {
+                    addResult('Auth Service Detection', true, 'Auth service reference established correctly');
+                } else {
+                    addResult('Auth Service Detection', false, 'Failed to establish auth service reference');
+                }
+
+                // Test 4: Mock a successful library fetch
+                mockFetch({
+                    ok: true,
+                    data: {
+                        content: [
+                            { id: 1, book: { title: 'Test Book 1', author: 'Test Author 1' }, status: 'READING' },
+                            { id: 2, book: { title: 'Test Book 2', author: 'Test Author 2' }, status: 'READ' }
+                        ],
+                        page: { number: 0, size: 20, totalElements: 2 }
+                    }
+                });
+
+                const libraryResult = await service.getUserLibrary();
+                if (libraryResult.success && libraryResult.data.content.length === 2) {
+                    addResult('Get User Library', true, 'Successfully fetched user library', libraryResult.data);
+                } else {
+                    addResult('Get User Library', false, 'Failed to fetch user library', libraryResult);
+                }
+
+                // Test 5: Test library search
+                mockFetch({
+                    ok: true,
+                    data: {
+                        content: [
+                            { id: 1, book: { title: 'Matching Book', author: 'Author' }, status: 'READ' }
+                        ],
+                        page: { number: 0, size: 20, totalElements: 1 }
+                    }
+                });
+
+                const searchResult = await service.searchUserLibrary('test query');
+                if (searchResult.success) {
+                    addResult('Search User Library', true, 'Library search completed successfully', searchResult.data);
+                } else {
+                    addResult('Search User Library', false, 'Library search failed', searchResult);
+                }
+
+                // Test 6: Test adding book to library
+                mockFetch({
+                    ok: true,
+                    data: {
+                        id: 3,
+                        bookId: 123,
+                        status: 'READING',
+                        userRating: 4,
+                        personalNotes: 'Great book!',
+                        dateAdded: new Date().toISOString()
+                    }
+                });
+
+                const addResult = await service.addBookToLibrary({
+                    bookId: 123,
+                    status: 'READING',
+                    userRating: 4,
+                    personalNotes: 'Great book!'
+                });
+
+                if (addResult.success) {
+                    addResult('Add Book to Library', true, 'Book added to library successfully', addResult.data);
+                } else {
+                    addResult('Add Book to Library', false, 'Failed to add book to library', addResult);
+                }
+
+                resetFetch();
+
+            } catch (error) {
+                addResult('Basic Functionality Tests', false, `Error during basic functionality tests: ${error.message}`, error);
+                resetFetch();
+            }
+        }
+
+        async function testValidation() {
+            addResult('Validation Tests', true, 'Starting validation tests...');
+
+            try {
+                const service = new LibraryService();
+
+                // Test 1: Add book without book ID
+                const result1 = await service.addBookToLibrary({ status: 'READING' });
+                if (!result1.success && result1.message.includes('Book ID is required')) {
+                    addResult('Validation - Missing Book ID', true, 'Correctly validates missing book ID');
+                } else {
+                    addResult('Validation - Missing Book ID', false, 'Failed to validate missing book ID', result1);
+                }
+
+                // Test 2: Add book with invalid status
+                const result2 = await service.addBookToLibrary({ bookId: 123, status: 'INVALID_STATUS' });
+                if (!result2.success && result2.message.includes('Valid reading status is required')) {
+                    addResult('Validation - Invalid Status', true, 'Correctly validates invalid reading status');
+                } else {
+                    addResult('Validation - Invalid Status', false, 'Failed to validate invalid reading status', result2);
+                }
+
+                // Test 3: Update without entry ID
+                const result3 = await service.updateLibraryEntry(null, { status: 'READ' });
+                if (!result3.success && result3.message.includes('Entry ID is required')) {
+                    addResult('Validation - Missing Entry ID', true, 'Correctly validates missing entry ID');
+                } else {
+                    addResult('Validation - Missing Entry ID', false, 'Failed to validate missing entry ID', result3);
+                }
+
+                // Test 4: Remove without entry ID
+                const result4 = await service.removeBookFromLibrary(null);
+                if (!result4.success && result4.message.includes('Entry ID is required')) {
+                    addResult('Validation - Remove Missing ID', true, 'Correctly validates missing entry ID for removal');
+                } else {
+                    addResult('Validation - Remove Missing ID', false, 'Failed to validate missing entry ID for removal', result4);
+                }
+
+            } catch (error) {
+                addResult('Validation Tests', false, `Error during validation tests: ${error.message}`, error);
+            }
+        }
+
+        function testUtilities() {
+            addResult('Utility Tests', true, 'Starting utility function tests...');
+
+            try {
+                const service = new LibraryService();
+
+                // Test 1: isValidReadingStatus
+                const validStatuses = ['UNREAD', 'READING', 'read', 'DNF'];
+                const invalidStatuses = ['INVALID', '', null, undefined];
+
+                let validationTest = true;
+                validStatuses.forEach(status => {
+                    if (!service.isValidReadingStatus(status)) {
+                        validationTest = false;
+                    }
+                });
+                invalidStatuses.forEach(status => {
+                    if (service.isValidReadingStatus(status)) {
+                        validationTest = false;
+                    }
+                });
+
+                if (validationTest) {
+                    addResult('Utility - isValidReadingStatus', true, 'Reading status validation works correctly');
+                } else {
+                    addResult('Utility - isValidReadingStatus', false, 'Reading status validation failed');
+                }
+
+                // Test 2: isValidRating
+                const validRatings = [1, 2, 3, 4, 5];
+                const invalidRatings = [0, 6, 3.5, -1, 'invalid'];
+
+                let ratingTest = true;
+                validRatings.forEach(rating => {
+                    if (!service.isValidRating(rating)) {
+                        ratingTest = false;
+                    }
+                });
+                invalidRatings.forEach(rating => {
+                    if (service.isValidRating(rating)) {
+                        ratingTest = false;
+                    }
+                });
+
+                if (ratingTest) {
+                    addResult('Utility - isValidRating', true, 'Rating validation works correctly');
+                } else {
+                    addResult('Utility - isValidRating', false, 'Rating validation failed');
+                }
+
+                // Test 3: formatReadingStatus
+                const statusFormatTests = [
+                    { input: 'UNREAD', expected: 'Not Started' },
+                    { input: 'READING', expected: 'Currently Reading' },
+                    { input: 'read', expected: 'Completed' },
+                    { input: 'DNF', expected: 'Did Not Finish' },
+                    { input: 'UNKNOWN', expected: 'UNKNOWN' }
+                ];
+
+                let formatTest = true;
+                statusFormatTests.forEach(test => {
+                    const result = service.formatReadingStatus(test.input);
+                    if (result !== test.expected) {
+                        formatTest = false;
+                    }
+                });
+
+                if (formatTest) {
+                    addResult('Utility - formatReadingStatus', true, 'Status formatting works correctly');
+                } else {
+                    addResult('Utility - formatReadingStatus', false, 'Status formatting failed');
+                }
+
+                // Test 4: formatDateForAPI
+                const date = new Date('2023-12-25T10:30:00Z');
+                const formattedDate = service.formatDateForAPI(date);
+                
+                if (formattedDate === '2023-12-25') {
+                    addResult('Utility - formatDateForAPI', true, 'Date formatting works correctly');
+                } else {
+                    addResult('Utility - formatDateForAPI', false, `Expected '2023-12-25', got '${formattedDate}'`);
+                }
+
+                // Test 5: buildQueryParams
+                const params = {
+                    page: 1,
+                    size: 10,
+                    status: 'READING',
+                    empty: '',
+                    nullValue: null,
+                    undefinedValue: undefined
+                };
+
+                const queryParams = service.buildQueryParams(params);
+                const queryString = queryParams.toString();
+                
+                if (queryString === 'page=1&size=10&status=READING') {
+                    addResult('Utility - buildQueryParams', true, 'Query parameter building works correctly');
+                } else {
+                    addResult('Utility - buildQueryParams', false, `Expected 'page=1&size=10&status=READING', got '${queryString}'`);
+                }
+
+            } catch (error) {
+                addResult('Utility Tests', false, `Error during utility tests: ${error.message}`, error);
+            }
+        }
+
+        async function runAllTests() {
+            clearResults();
+            addResult('Test Suite', true, 'Starting complete test suite for LibraryService...');
+            
+            await testBasicFunctionality();
+            await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
+            
+            await testValidation();
+            await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
+            
+            testUtilities();
+            
+            // Summary
+            const totalTests = testResults.filter(r => r.testName !== 'Test Suite' && r.testName !== 'Basic Functionality Tests' && r.testName !== 'Validation Tests' && r.testName !== 'Utility Tests').length;
+            const passedTests = testResults.filter(r => r.success && r.testName !== 'Test Suite' && r.testName !== 'Basic Functionality Tests' && r.testName !== 'Validation Tests' && r.testName !== 'Utility Tests').length;
+            
+            addResult('Test Summary', passedTests === totalTests, 
+                `Tests completed: ${passedTests}/${totalTests} passed`,
+                { totalTests, passedTests, failedTests: totalTests - passedTests }
+            );
+        }
+
+        // Auto-run tests when page loads
+        window.onload = () => {
+            setTimeout(runAllTests, 500);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,819 @@
+/**
+ * Mobile Responsive Design for Dark Academia Library
+ * 
+ * Responsive breakpoints and mobile-optimized styles for the library application.
+ * Maintains the dark academia aesthetic while optimizing for touch interfaces
+ * and smaller screen sizes.
+ * 
+ * Breakpoints:
+ * - xs: 0-479px (small phones)
+ * - sm: 480-767px (large phones)
+ * - md: 768-1023px (tablets)
+ * - lg: 1024-1199px (small desktops)
+ * - xl: 1200px+ (large desktops)
+ */
+
+/* ========================================
+   MOBILE-FIRST BASE STYLES
+   ======================================== */
+
+/* Ensure mobile viewport is handled correctly */
+@viewport {
+    width: device-width;
+    zoom: 1.0;
+}
+
+/* Base mobile improvements */
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    touch-action: manipulation;
+}
+
+body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+/* Improve touch targets */
+button, 
+a, 
+input, 
+select, 
+textarea,
+.clickable,
+.touch-target {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* ========================================
+   TYPOGRAPHY RESPONSIVE SCALING
+   ======================================== */
+
+/* Small phones (up to 479px) */
+@media (max-width: 479px) {
+    :root {
+        --da-font-size-xs: 0.7rem;     /* 11.2px */
+        --da-font-size-sm: 0.8rem;     /* 12.8px */
+        --da-font-size-base: 0.9rem;   /* 14.4px */
+        --da-font-size-md: 1rem;       /* 16px */
+        --da-font-size-lg: 1.1rem;     /* 17.6px */
+        --da-font-size-xl: 1.25rem;    /* 20px */
+        --da-font-size-2xl: 1.5rem;    /* 24px */
+        --da-font-size-3xl: 1.75rem;   /* 28px */
+        --da-font-size-4xl: 2rem;      /* 32px */
+    }
+    
+    html {
+        font-size: 14px;
+    }
+}
+
+/* Large phones (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+    :root {
+        --da-font-size-xs: 0.75rem;    /* 12px */
+        --da-font-size-sm: 0.85rem;    /* 13.6px */
+        --da-font-size-base: 0.95rem;  /* 15.2px */
+        --da-font-size-md: 1.05rem;    /* 16.8px */
+        --da-font-size-lg: 1.15rem;    /* 18.4px */
+        --da-font-size-xl: 1.35rem;    /* 21.6px */
+        --da-font-size-2xl: 1.65rem;   /* 26.4px */
+        --da-font-size-3xl: 2rem;      /* 32px */
+        --da-font-size-4xl: 2.5rem;    /* 40px */
+    }
+    
+    html {
+        font-size: 15px;
+    }
+}
+
+/* Tablets (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* ========================================
+   LAYOUT CONTAINERS
+   ======================================== */
+
+/* Container responsive behavior */
+.da-container {
+    padding-left: var(--da-space-base);
+    padding-right: var(--da-space-base);
+}
+
+@media (max-width: 479px) {
+    .da-container {
+        padding-left: var(--da-space-sm);
+        padding-right: var(--da-space-sm);
+    }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+    .da-container {
+        padding-left: var(--da-space-md);
+        padding-right: var(--da-space-md);
+    }
+}
+
+@media (min-width: 768px) {
+    .da-container {
+        padding-left: var(--da-space-lg);
+        padding-right: var(--da-space-lg);
+    }
+}
+
+/* ========================================
+   NAVIGATION & HEADER
+   ======================================== */
+
+/* Mobile navigation improvements */
+@media (max-width: 767px) {
+    .library-nav {
+        flex-direction: column;
+        gap: var(--da-space-sm);
+        padding: var(--da-space-md) 0;
+    }
+    
+    .nav-brand {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: var(--da-space-sm);
+    }
+    
+    .brand-title {
+        font-size: var(--da-font-size-lg);
+    }
+    
+    .nav-actions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: var(--da-space-sm);
+        flex-wrap: wrap;
+    }
+    
+    .nav-link {
+        padding: var(--da-space-sm) var(--da-space-md);
+        font-size: var(--da-font-size-sm);
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 479px) {
+    .library-nav {
+        padding: var(--da-space-sm) 0;
+    }
+    
+    .brand-title {
+        font-size: var(--da-font-size-md);
+    }
+    
+    .nav-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: var(--da-space-md);
+    }
+}
+
+/* ========================================
+   SEARCH AND FILTERS
+   ======================================== */
+
+/* Mobile search form */
+@media (max-width: 767px) {
+    .search-container {
+        margin-bottom: var(--da-space-lg);
+    }
+    
+    .search-form {
+        flex-direction: column;
+        gap: var(--da-space-md);
+    }
+    
+    .search-input {
+        width: 100%;
+        font-size: var(--da-font-size-base);
+        padding: var(--da-space-md) var(--da-space-base);
+    }
+    
+    .search-button {
+        width: 100%;
+        padding: var(--da-space-md);
+        font-size: var(--da-font-size-base);
+    }
+    
+    .filter-toggles {
+        flex-direction: column;
+        gap: var(--da-space-sm);
+    }
+    
+    .filter-toggle {
+        width: 100%;
+        justify-content: space-between;
+        padding: var(--da-space-md);
+    }
+    
+    .filters-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--da-bg-overlay);
+        z-index: var(--da-z-modal);
+        padding: var(--da-space-lg);
+        overflow-y: auto;
+    }
+    
+    .filters-content {
+        background: var(--da-bg-card);
+        border-radius: var(--da-radius-lg);
+        padding: var(--da-space-lg);
+        max-width: 400px;
+        margin: var(--da-space-2xl) auto;
+    }
+}
+
+/* ========================================
+   BOOK CARDS & GRID LAYOUT
+   ======================================== */
+
+/* Responsive grid system */
+.books-grid {
+    display: grid;
+    gap: var(--da-space-base);
+}
+
+/* Small phones - single column */
+@media (max-width: 479px) {
+    .books-grid {
+        grid-template-columns: 1fr;
+        gap: var(--da-space-md);
+    }
+    
+    .book-card {
+        max-width: 100%;
+    }
+    
+    /* Horizontal card layout for very small screens */
+    .book-card.horizontal {
+        display: flex;
+        flex-direction: row;
+        height: auto;
+    }
+    
+    .book-card.horizontal .book-cover-container {
+        width: 80px;
+        flex-shrink: 0;
+        aspect-ratio: 3/4;
+    }
+    
+    .book-card.horizontal .book-info {
+        flex: 1;
+        padding: var(--da-space-sm);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .book-card.horizontal .book-title {
+        font-size: var(--da-font-size-sm);
+        line-height: var(--da-line-height-tight);
+        margin-bottom: var(--da-space-xs);
+    }
+    
+    .book-card.horizontal .book-author {
+        font-size: var(--da-font-size-xs);
+        margin-bottom: var(--da-space-xs);
+    }
+}
+
+/* Large phones - two columns */
+@media (min-width: 480px) and (max-width: 767px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--da-space-md);
+    }
+    
+    .book-card {
+        font-size: var(--da-font-size-sm);
+    }
+    
+    .book-title {
+        font-size: var(--da-font-size-base);
+        line-height: var(--da-line-height-tight);
+    }
+}
+
+/* Tablets - three columns */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .books-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--da-space-base);
+    }
+}
+
+/* Small desktops - four columns */
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .books-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--da-space-lg);
+    }
+}
+
+/* Large desktops - five columns */
+@media (min-width: 1200px) {
+    .books-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: var(--da-space-lg);
+    }
+}
+
+/* ========================================
+   BOOK CARD RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 767px) {
+    .book-card {
+        border-radius: var(--da-radius-md);
+    }
+    
+    .book-info {
+        padding: var(--da-space-sm);
+    }
+    
+    .book-title {
+        font-size: var(--da-font-size-sm);
+        line-height: var(--da-line-height-tight);
+        margin-bottom: var(--da-space-xs);
+        /* Truncate long titles on mobile */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .book-author {
+        font-size: var(--da-font-size-xs);
+        margin-bottom: var(--da-space-xs);
+        /* Truncate long author names */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .book-metadata {
+        font-size: var(--da-font-size-xs);
+        gap: var(--da-space-xs);
+    }
+    
+    .book-actions {
+        flex-direction: column;
+        gap: var(--da-space-xs);
+    }
+    
+    .action-button {
+        width: 100%;
+        padding: var(--da-space-sm);
+        font-size: var(--da-font-size-xs);
+    }
+    
+    /* Mobile-friendly rating display */
+    .rating-display {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--da-space-xs);
+    }
+    
+    .stars {
+        font-size: var(--da-font-size-sm);
+    }
+}
+
+/* ========================================
+   LIST VIEW RESPONSIVE
+   ======================================== */
+
+@media (max-width: 767px) {
+    .books-list .book-item {
+        flex-direction: column;
+        align-items: stretch;
+        padding: var(--da-space-md);
+        gap: var(--da-space-sm);
+    }
+    
+    .book-item .book-cover-container {
+        width: 60px;
+        height: 80px;
+        flex-shrink: 0;
+        align-self: center;
+    }
+    
+    .book-item .book-details {
+        text-align: center;
+    }
+    
+    .book-item .book-title {
+        font-size: var(--da-font-size-base);
+        margin-bottom: var(--da-space-xs);
+    }
+    
+    .book-item .book-meta {
+        flex-direction: column;
+        gap: var(--da-space-xs);
+        align-items: center;
+    }
+    
+    .book-item .book-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--da-space-xs);
+    }
+}
+
+/* ========================================
+   MODALS & OVERLAYS
+   ======================================== */
+
+@media (max-width: 767px) {
+    .modal {
+        padding: var(--da-space-sm);
+    }
+    
+    .modal-content {
+        width: 100%;
+        max-width: none;
+        margin: var(--da-space-lg) 0;
+        border-radius: var(--da-radius-lg);
+        max-height: calc(100vh - 2 * var(--da-space-lg));
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        padding: var(--da-space-md) var(--da-space-base);
+    }
+    
+    .modal-title {
+        font-size: var(--da-font-size-lg);
+    }
+    
+    .modal-body {
+        padding: var(--da-space-base);
+    }
+    
+    .modal-footer {
+        padding: var(--da-space-base);
+        flex-direction: column;
+        gap: var(--da-space-sm);
+    }
+    
+    .modal-footer .button {
+        width: 100%;
+    }
+    
+    /* Book detail modal specific */
+    .book-detail-modal .book-cover {
+        width: 120px;
+        height: 160px;
+        margin: 0 auto var(--da-space-lg);
+    }
+    
+    .book-detail-content {
+        text-align: center;
+    }
+    
+    .book-detail-actions {
+        flex-direction: column;
+        gap: var(--da-space-sm);
+    }
+}
+
+/* ========================================
+   FORMS & INPUTS
+   ======================================== */
+
+@media (max-width: 767px) {
+    .form-group {
+        margin-bottom: var(--da-space-md);
+    }
+    
+    .form-label {
+        font-size: var(--da-font-size-sm);
+        margin-bottom: var(--da-space-xs);
+    }
+    
+    .form-input {
+        padding: var(--da-space-md);
+        font-size: var(--da-font-size-base);
+        border-radius: var(--da-radius-md);
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: var(--da-space-md);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: var(--da-space-sm);
+    }
+    
+    .form-actions .button {
+        width: 100%;
+        padding: var(--da-space-md);
+    }
+    
+    /* Select dropdowns */
+    select.form-input {
+        background-size: 16px;
+        background-position: right var(--da-space-sm) center;
+    }
+}
+
+/* ========================================
+   PAGINATION
+   ======================================== */
+
+@media (max-width: 767px) {
+    .pagination {
+        flex-direction: column;
+        gap: var(--da-space-sm);
+        align-items: center;
+    }
+    
+    .pagination-info {
+        order: 1;
+        text-align: center;
+        font-size: var(--da-font-size-sm);
+    }
+    
+    .pagination-controls {
+        order: 2;
+        gap: var(--da-space-xs);
+    }
+    
+    .pagination-button {
+        padding: var(--da-space-sm) var(--da-space-md);
+        font-size: var(--da-font-size-sm);
+    }
+    
+    /* Hide page numbers on very small screens, keep prev/next */
+    .pagination-numbers {
+        display: none;
+    }
+    
+    .pagination-simple {
+        display: flex;
+        gap: var(--da-space-sm);
+    }
+}
+
+/* ========================================
+   STATISTICS & DASHBOARD
+   ======================================== */
+
+@media (max-width: 767px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--da-space-md);
+    }
+    
+    .stat-card {
+        padding: var(--da-space-md);
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: var(--da-font-size-xl);
+    }
+    
+    .stat-label {
+        font-size: var(--da-font-size-sm);
+    }
+    
+    .dashboard-section {
+        margin-bottom: var(--da-space-lg);
+    }
+    
+    .section-title {
+        font-size: var(--da-font-size-lg);
+        margin-bottom: var(--da-space-md);
+        text-align: center;
+    }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ========================================
+   SEARCH RESULTS & SUGGESTIONS
+   ======================================== */
+
+@media (max-width: 767px) {
+    .search-suggestions {
+        position: static;
+        box-shadow: none;
+        border: 1px solid var(--da-border-primary);
+        border-top: none;
+        border-radius: 0 0 var(--da-radius-md) var(--da-radius-md);
+    }
+    
+    .suggestion-item {
+        padding: var(--da-space-md);
+        font-size: var(--da-font-size-base);
+    }
+    
+    .search-results-header {
+        flex-direction: column;
+        gap: var(--da-space-md);
+        align-items: stretch;
+    }
+    
+    .results-count {
+        text-align: center;
+        font-size: var(--da-font-size-sm);
+    }
+    
+    .view-toggle {
+        justify-content: center;
+    }
+    
+    .sort-options {
+        flex-direction: column;
+        gap: var(--da-space-sm);
+    }
+    
+    .sort-select {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   LOADING STATES & ANIMATIONS
+   ======================================== */
+
+@media (max-width: 767px) {
+    .loading-spinner {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .loading-text {
+        font-size: var(--da-font-size-sm);
+        margin-top: var(--da-space-sm);
+    }
+    
+    .loading-overlay {
+        padding: var(--da-space-lg);
+    }
+    
+    /* Skeleton loading for mobile */
+    .book-card-skeleton {
+        height: 280px;
+    }
+    
+    .book-card-skeleton.horizontal {
+        height: 100px;
+    }
+}
+
+/* ========================================
+   ACCESSIBILITY & FOCUS
+   ======================================== */
+
+/* Enhanced focus indicators for touch devices */
+@media (max-width: 767px) {
+    button:focus,
+    input:focus,
+    select:focus,
+    textarea:focus,
+    a:focus,
+    .clickable:focus {
+        outline: 3px solid var(--da-state-focus);
+        outline-offset: 2px;
+    }
+    
+    /* Touch-friendly spacing */
+    .touch-target {
+        padding: var(--da-space-md);
+        margin: var(--da-space-xs) 0;
+    }
+}
+
+/* ========================================
+   UTILITY CLASSES FOR MOBILE
+   ======================================== */
+
+/* Hide/show utilities */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+@media (max-width: 767px) {
+    .mobile-only {
+        display: block;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+    
+    .mobile-hidden {
+        display: none !important;
+    }
+    
+    .mobile-center {
+        text-align: center;
+    }
+    
+    .mobile-full-width {
+        width: 100%;
+    }
+    
+    .mobile-stack {
+        flex-direction: column !important;
+    }
+    
+    .mobile-no-padding {
+        padding: 0 !important;
+    }
+    
+    .mobile-small-padding {
+        padding: var(--da-space-sm) !important;
+    }
+}
+
+/* ========================================
+   PERFORMANCE OPTIMIZATIONS
+   ======================================== */
+
+/* Optimize animations for mobile */
+@media (max-width: 767px) {
+    .book-card:hover {
+        transform: none; /* Disable hover transforms on mobile */
+    }
+    
+    /* Reduce motion for users who prefer it */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+    .mobile-only,
+    .nav-actions,
+    .search-container,
+    .filter-toggles,
+    .book-actions,
+    button {
+        display: none !important;
+    }
+    
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: var(--da-space-sm) !important;
+    }
+    
+    .book-card {
+        break-inside: avoid;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+    }
+}
+
+/* ========================================
+   DARK MODE ADJUSTMENTS (if implemented)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    /* Dark mode specific mobile adjustments would go here */
+    /* This maintains the dark academia theme while respecting system preferences */
+}

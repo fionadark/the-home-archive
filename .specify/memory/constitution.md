@@ -45,12 +45,12 @@ Book objects must contain minimum required fields: title (String, required) and 
 - Book repository pattern with CRUD operations and custom queries (search by title, author, genre)
 
 ### External Integration
-- Book information enrichment APIs (Google Books API, OpenLibrary API) for metadata lookup
+- Book information enrichment API (OpenLibrary API) for metadata lookup
 - OpenFeign or WebClient for REST API consumption with proper error handling
 - Jackson for JSON serialization/deserialization
-- Resilience4j for circuit breaker and retry patterns on external book APIs
+- Resilience4j for circuit breaker and retry patterns on external book API
 - Configuration properties for API endpoints and credentials
-- Graceful degradation when external APIs are unavailable
+- Graceful degradation when external API is unavailable
 
 ### Quality & Monitoring
 - SLF4J with Logback for structured logging
@@ -65,7 +65,7 @@ Book objects must contain minimum required fields: title (String, required) and 
 - Package structure: controller → service → repository → entity (focused on book domain)
 - Book DTOs for API requests/responses, separate from JPA entities
 - RESTful controllers with proper HTTP status codes and JSON responses for web/mobile clients
-- Configuration classes for database profiles (local/RDS), external book APIs, and CORS settings
+- Configuration classes for database profiles (local/RDS), external book API, and CORS settings
 - Utility classes for book validation, ISBN formatting, and search/sort operations
 - Mock data service for development when database is unavailable
 

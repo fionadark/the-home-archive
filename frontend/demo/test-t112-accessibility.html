@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Testing - The Home Archive</title>
+    
+    <!-- Dark Academia Theme -->
+    <style>
+        :root {
+            --da-dark: #1a1a1a;
+            --da-light: #f8f9fa;
+            --da-gold: #d4af37;
+            --da-warm: #8b4513;
+            --da-gray: #495057;
+        }
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: var(--da-dark);
+            color: var(--da-light);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--da-gray);
+            border-radius: 8px;
+            border: 2px solid var(--da-gold);
+        }
+        
+        .test-section {
+            background: var(--da-gray);
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--da-gold);
+        }
+        
+        .test-section h2 {
+            color: var(--da-gold);
+            margin-top: 0;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        
+        button {
+            background: var(--da-gold);
+            color: var(--da-dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #b8941f;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .form-group {
+            margin: 1rem 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--da-gray);
+            border-radius: 4px;
+            background: var(--da-dark);
+            color: var(--da-light);
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--da-gold);
+            outline: none;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .card {
+            background: var(--da-dark);
+            border: 2px solid var(--da-gold);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover, .card:focus {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(212, 175, 55, 0.3);
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--da-gray);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 2px solid var(--da-gold);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-title {
+            color: var(--da-gold);
+            margin-top: 0;
+        }
+        
+        .close-btn {
+            background: #dc3545;
+            color: white;
+            float: right;
+            margin-top: -1rem;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--da-gray);
+            min-width: 200px;
+            border: 2px solid var(--da-gold);
+            border-radius: 4px;
+            z-index: 1;
+            top: 100%;
+            left: 0;
+        }
+        
+        .dropdown.open .dropdown-content {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--da-dark);
+        }
+        
+        .dropdown-item:hover {
+            background: var(--da-dark);
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--da-gray);
+            border: 2px solid var(--da-gold);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .search-result {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--da-dark);
+        }
+        
+        .search-result:hover, .search-result:focus {
+            background: var(--da-dark);
+        }
+        
+        .tab-container {
+            margin: 1rem 0;
+        }
+        
+        .tab-list {
+            display: flex;
+            border-bottom: 2px solid var(--da-gold);
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: var(--da-gray);
+            border: 2px solid var(--da-gold);
+            border-bottom: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background: var(--da-gold);
+            color: var(--da-dark);
+        }
+        
+        .tab-panel {
+            display: none;
+            padding: 1rem;
+            background: var(--da-gray);
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        .status {
+            background: var(--da-dark);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-family: monospace;
+            border-left: 4px solid var(--da-gold);
+        }
+        
+        .keyboard-shortcuts {
+            background: var(--da-dark);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-size: 0.9em;
+        }
+        
+        .shortcut {
+            margin: 0.5rem 0;
+        }
+        
+        .key {
+            background: var(--da-gold);
+            color: var(--da-dark);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>
+                <span role="img" aria-label="Books">📚</span>
+                Accessibility Testing Interface
+            </h1>
+            <p>Testing ARIA labels, keyboard navigation, and accessibility features for The Home Archive</p>
+        </header>
+        
+        <main role="main" id="main-content">
+            <!-- Keyboard Shortcuts Guide -->
+            <section class="test-section">
+                <h2>⌨️ Keyboard Shortcuts</h2>
+                <div class="keyboard-shortcuts">
+                    <div class="shortcut"><span class="key">Alt + S</span> - Activate skip links</div>
+                    <div class="shortcut"><span class="key">Alt + H</span> - Navigate to main heading</div>
+                    <div class="shortcut"><span class="key">Alt + M</span> - Navigate to main content</div>
+                    <div class="shortcut"><span class="key">Alt + N</span> - Navigate to navigation</div>
+                    <div class="shortcut"><span class="key">Alt + F</span> - Navigate to form</div>
+                    <div class="shortcut"><span class="key">Alt + B</span> - Navigate to button</div>
+                    <div class="shortcut"><span class="key">Escape</span> - Close modals/dropdowns</div>
+                    <div class="shortcut"><span class="key">Tab</span> - Navigate between elements</div>
+                </div>
+            </section>
+
+            <!-- Form Accessibility -->
+            <section class="test-section">
+                <h2>📝 Form Accessibility</h2>
+                <form id="test-form" role="form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required aria-describedby="name-help">
+                        <small id="name-help">Enter your first and last name</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Book Category</label>
+                        <select id="category" name="category" required>
+                            <option value="">Choose a category</option>
+                            <option value="fiction">Fiction</option>
+                            <option value="non-fiction">Non-Fiction</option>
+                            <option value="poetry">Poetry</option>
+                            <option value="philosophy">Philosophy</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes" rows="4" placeholder="Optional notes about your book collection"></textarea>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit">Submit Form</button>
+                        <button type="reset">Reset Form</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Button States -->
+            <section class="test-section">
+                <h2>🔘 Button States & Loading</h2>
+                <div class="button-group">
+                    <button id="load-btn" onclick="testButtonLoading(this)">Test Loading State</button>
+                    <button onclick="showModal('test-modal')">Open Modal</button>
+                    <button onclick="toggleDropdown('test-dropdown')">Toggle Dropdown</button>
+                    <button disabled>Disabled Button</button>
+                </div>
+                
+                <div class="dropdown" id="test-dropdown">
+                    <div class="dropdown-content">
+                        <div class="dropdown-item" tabindex="0" onclick="alert('Option 1 selected')">Option 1</div>
+                        <div class="dropdown-item" tabindex="0" onclick="alert('Option 2 selected')">Option 2</div>
+                        <div class="dropdown-item" tabindex="0" onclick="alert('Option 3 selected')">Option 3</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search Accessibility -->
+            <section class="test-section">
+                <h2>🔍 Search with ARIA</h2>
+                <div role="search">
+                    <div class="form-group">
+                        <label for="book-search">Search Books</label>
+                        <div class="search-container">
+                            <input type="text" 
+                                   id="book-search" 
+                                   placeholder="Type to search books..." 
+                                   oninput="performSearch(this.value)">
+                            <div id="search-results" class="search-results" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Card Grid Navigation -->
+            <section class="test-section">
+                <h2>📚 Book Card Grid</h2>
+                <p>Use arrow keys to navigate between cards</p>
+                <div class="card-grid" id="book-grid">
+                    <div class="card" data-card="1" tabindex="0" onclick="alert('Selected Book 1')">
+                        <h3>Pride and Prejudice</h3>
+                        <p>By Jane Austen</p>
+                        <p>Classic literature exploring themes of love, marriage, and social class.</p>
+                    </div>
+                    <div class="card" data-card="2" tabindex="-1" onclick="alert('Selected Book 2')">
+                        <h3>The Great Gatsby</h3>
+                        <p>By F. Scott Fitzgerald</p>
+                        <p>A tale of decadence and idealism in Jazz Age America.</p>
+                    </div>
+                    <div class="card" data-card="3" tabindex="-1" onclick="alert('Selected Book 3')">
+                        <h3>To Kill a Mockingbird</h3>
+                        <p>By Harper Lee</p>
+                        <p>A story of moral growth and racial injustice in the American South.</p>
+                    </div>
+                    <div class="card" data-card="4" tabindex="-1" onclick="alert('Selected Book 4')">
+                        <h3>1984</h3>
+                        <p>By George Orwell</p>
+                        <p>A dystopian vision of totalitarian control and surveillance.</p>
+                    </div>
+                    <div class="card" data-card="5" tabindex="-1" onclick="alert('Selected Book 5')">
+                        <h3>Jane Eyre</h3>
+                        <p>By Charlotte Brontë</p>
+                        <p>A Gothic romance of independence and passionate love.</p>
+                    </div>
+                    <div class="card" data-card="6" tabindex="-1" onclick="alert('Selected Book 6')">
+                        <h3>Wuthering Heights</h3>
+                        <p>By Emily Brontë</p>
+                        <p>A dark tale of obsessive love and revenge on the Yorkshire moors.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab Navigation -->
+            <section class="test-section">
+                <h2>📑 Tab Navigation</h2>
+                <div class="tab-container">
+                    <ul class="tab-list" role="tablist">
+                        <li class="tab active" role="tab" aria-selected="true" aria-controls="tab1" id="tab-btn-1" tabindex="0" onclick="switchTab(1)">Fiction</li>
+                        <li class="tab" role="tab" aria-selected="false" aria-controls="tab2" id="tab-btn-2" tabindex="-1" onclick="switchTab(2)">Non-Fiction</li>
+                        <li class="tab" role="tab" aria-selected="false" aria-controls="tab3" id="tab-btn-3" tabindex="-1" onclick="switchTab(3)">Poetry</li>
+                    </ul>
+                    <div id="tab1" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-1">
+                        <h3>Fiction Books</h3>
+                        <p>Explore our collection of fictional works including novels, short stories, and literary fiction.</p>
+                    </div>
+                    <div id="tab2" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-2">
+                        <h3>Non-Fiction Books</h3>
+                        <p>Discover factual works including biographies, history, science, and self-help books.</p>
+                    </div>
+                    <div id="tab3" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-3">
+                        <h3>Poetry Collection</h3>
+                        <p>Browse our curated selection of poetry from classical to contemporary poets.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status Information -->
+            <section class="test-section">
+                <h2>📊 Accessibility Status</h2>
+                <div id="status-info" class="status">
+                    Accessibility utilities loaded. Use keyboard shortcuts to test navigation.
+                </div>
+                <div class="button-group">
+                    <button onclick="announceTest()">Test Screen Reader Announcement</button>
+                    <button onclick="checkFocusableElements()">Check Focusable Elements</button>
+                    <button onclick="validateAccessibility()">Validate Accessibility</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Test Modal -->
+    <div id="test-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideModal('test-modal')" aria-label="Close modal">&times;</button>
+            <h2 class="modal-title">Test Modal Dialog</h2>
+            <p>This modal demonstrates focus trapping and keyboard navigation. Use Tab to navigate between elements and Escape to close.</p>
+            <div class="button-group">
+                <button onclick="alert('Action performed!')">Perform Action</button>
+                <button onclick="hideModal('test-modal')">Close Modal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Accessibility Utilities -->
+    <script src="src/js/utils/accessibility.js"></script>
+
+    <script>
+        // Test Functions
+        function testButtonLoading(button) {
+            if (window.accessibility) {
+                window.accessibility.setButtonLoading(button, true, 'Processing...');
+                
+                setTimeout(() => {
+                    window.accessibility.setButtonLoading(button, false);
+                    if (window.accessibility) {
+                        window.accessibility.announce('Processing completed successfully');
+                    }
+                }, 3000);
+            }
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal && window.accessibility) {
+                modal.classList.add('active');
+                window.accessibility.openModal(modalId, document.activeElement);
+            }
+        }
+
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal && window.accessibility) {
+                modal.classList.remove('active');
+                window.accessibility.closeModal(modal);
+            }
+        }
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            if (dropdown) {
+                dropdown.classList.toggle('open');
+                
+                const button = document.activeElement;
+                if (button) {
+                    const isOpen = dropdown.classList.contains('open');
+                    button.setAttribute('aria-expanded', isOpen.toString());
+                    
+                    if (isOpen && window.accessibility) {
+                        window.accessibility.announce('Dropdown opened');
+                    }
+                }
+            }
+        }
+
+        function performSearch(query) {
+            const resultsContainer = document.getElementById('search-results');
+            
+            if (query.length < 2) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+
+            // Simulate search results
+            const books = [
+                'Pride and Prejudice',
+                'The Great Gatsby', 
+                'To Kill a Mockingbird',
+                '1984',
+                'Jane Eyre',
+                'Wuthering Heights'
+            ];
+
+            const results = books.filter(book => 
+                book.toLowerCase().includes(query.toLowerCase())
+            );
+
+            resultsContainer.innerHTML = results.map(book => 
+                `<div class="search-result" role="option" onclick="selectBook('${book}')">${book}</div>`
+            ).join('');
+
+            resultsContainer.style.display = results.length > 0 ? 'block' : 'none';
+        }
+
+        function selectBook(bookTitle) {
+            const searchInput = document.getElementById('book-search');
+            searchInput.value = bookTitle;
+            document.getElementById('search-results').style.display = 'none';
+            
+            if (window.accessibility) {
+                window.accessibility.announce(`Selected ${bookTitle}`);
+            }
+        }
+
+        function switchTab(tabNumber) {
+            // Hide all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.setAttribute('aria-selected', 'false');
+                tab.setAttribute('tabindex', '-1');
+            });
+            
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Show selected tab
+            const selectedTab = document.getElementById(`tab-btn-${tabNumber}`);
+            const selectedPanel = document.getElementById(`tab${tabNumber}`);
+            
+            selectedTab.classList.add('active');
+            selectedTab.setAttribute('aria-selected', 'true');
+            selectedTab.setAttribute('tabindex', '0');
+            selectedPanel.classList.add('active');
+
+            if (window.accessibility) {
+                window.accessibility.announce(`Switched to ${selectedTab.textContent} tab`);
+            }
+        }
+
+        function announceTest() {
+            if (window.accessibility) {
+                window.accessibility.announce('This is a test announcement for screen readers', 'assertive');
+            }
+        }
+
+        function checkFocusableElements() {
+            const focusable = document.querySelectorAll(
+                'button, input, select, textarea, a[href], [tabindex]:not([tabindex="-1"]), [contenteditable]'
+            );
+            
+            document.getElementById('status-info').textContent = 
+                `Found ${focusable.length} focusable elements on this page`;
+            
+            if (window.accessibility) {
+                window.accessibility.announce(`Found ${focusable.length} focusable elements`);
+            }
+        }
+
+        function validateAccessibility() {
+            const issues = [];
+            
+            // Check for images without alt text
+            const images = document.querySelectorAll('img:not([alt])');
+            if (images.length > 0) {
+                issues.push(`${images.length} images missing alt text`);
+            }
+            
+            // Check for form inputs without labels
+            const inputs = document.querySelectorAll('input:not([aria-label]):not([aria-labelledby])');
+            const unlabeledInputs = Array.from(inputs).filter(input => {
+                return !document.querySelector(`label[for="${input.id}"]`) && !input.closest('label');
+            });
+            if (unlabeledInputs.length > 0) {
+                issues.push(`${unlabeledInputs.length} form inputs without labels`);
+            }
+            
+            // Check for buttons without accessible names
+            const buttons = document.querySelectorAll('button:not([aria-label]):not([aria-labelledby])');
+            const unlabeledButtons = Array.from(buttons).filter(button => !button.textContent.trim());
+            if (unlabeledButtons.length > 0) {
+                issues.push(`${unlabeledButtons.length} buttons without accessible names`);
+            }
+            
+            const statusText = issues.length > 0 
+                ? `Accessibility issues found: ${issues.join(', ')}`
+                : 'No major accessibility issues detected!';
+            
+            document.getElementById('status-info').textContent = statusText;
+            
+            if (window.accessibility) {
+                window.accessibility.announce(statusText);
+            }
+        }
+
+        // Initialize enhancements when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enhance search functionality
+            const searchInput = document.getElementById('book-search');
+            const resultsContainer = document.getElementById('search-results');
+            
+            if (window.accessibility && searchInput && resultsContainer) {
+                window.accessibility.enhanceSearch(searchInput, resultsContainer);
+            }
+            
+            // Enhance card grid
+            const cardGrid = document.getElementById('book-grid');
+            if (window.AccessibilityUtils && cardGrid) {
+                window.AccessibilityUtils.enhanceCardGrid(cardGrid);
+            }
+            
+            // Initial status
+            document.getElementById('status-info').textContent = 
+                'Accessibility utilities loaded and active. Test keyboard navigation and screen reader features.';
+        });
+
+        // Handle form submission
+        document.getElementById('test-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            if (window.accessibility) {
+                window.accessibility.announce('Form submitted successfully!', 'assertive');
+            }
+            
+            setTimeout(() => {
+                this.reset();
+                if (window.accessibility) {
+                    window.accessibility.announce('Form has been reset');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
