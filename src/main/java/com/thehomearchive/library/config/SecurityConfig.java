@@ -144,7 +144,9 @@ public class SecurityConfig {
                     "/fonts/**",              // Font files
                     "/static/**",             // Static resources
                     "/*.html",                // HTML pages (login, register, etc.)
-                    "/**/*.html",             // HTML pages in subdirectories
+                    "/dashboard.html",        // Dashboard page
+                    "/login.html",            // Login page  
+                    "/register.html",         // Registration page
                     "/*.css",                 // Root CSS files
                     "/*.js"                   // Root JavaScript files
                 ).permitAll()
