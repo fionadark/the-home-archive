@@ -63,7 +63,7 @@ public class DevController {
                     info.put("type", verification.getVerificationType().toString());
                     info.put("createdAt", verification.getCreatedAt());
                     info.put("expiryDate", verification.getExpiryDate());
-                    info.put("verificationUrl", "http://localhost:8080/verify-email?token=" + verification.getVerificationToken());
+                    info.put("verificationUrl", "http://localhost:8080/api/verify-email.html?token=" + verification.getVerificationToken());
                     return info;
                 })
                 .collect(Collectors.toList());

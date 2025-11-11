@@ -60,7 +60,7 @@ public class EmailService {
         // TODO: Actually send email - for now we'll just log it
         System.out.println("Verification email would be sent to: " + user.getEmail());
         System.out.println("Verification token: " + token);
-        System.out.println("Verification URL: http://localhost:8080/verify-email?token=" + token);
+        System.out.println("Verification URL: http://localhost:8080/api/verify-email.html?token=" + token);
     }
     
     /**

@@ -336,7 +336,7 @@ lsof -i :8080
 **Database connection issues**:
 ```bash
 # Verify H2 console access
-curl http://localhost:8080/h2-console
+curl http://localhost:8080/api/h2-console
 
 # Check MySQL service
 brew services list | grep mysql
