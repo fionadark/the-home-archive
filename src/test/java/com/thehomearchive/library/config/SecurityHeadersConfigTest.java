@@ -25,7 +25,7 @@ class SecurityHeadersConfigTest {
 
     @Test
     void shouldApplySecurityHeaders() {
-        String url = "http://localhost:" + port + "/actuator/health";
+        String url = "http://localhost:" + port + "/api/actuator/health";
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);
         
