@@ -12,7 +12,7 @@ import java.util.Map;
  * Provides basic dashboard data and user statistics.
  */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 public class DashboardController {
 
     /**

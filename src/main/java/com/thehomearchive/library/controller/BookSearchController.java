@@ -39,7 +39,7 @@ import java.util.List;
  * - Search history management
  */
 @RestController
-@RequestMapping("/api/v1/search")
+@RequestMapping("/v1/search")
 public class BookSearchController {
 
     private static final Logger logger = LoggerFactory.getLogger(BookSearchController.class);

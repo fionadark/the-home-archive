@@ -23,7 +23,7 @@ import java.util.Optional;
  * Handles user registration, login, logout, and email verification endpoints.
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
     
     private final UserService userService;

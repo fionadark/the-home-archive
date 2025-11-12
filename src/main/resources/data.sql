@@ -23,18 +23,18 @@
 
 INSERT INTO users (email, password_hash, first_name, last_name, role, email_verified, created_at, updated_at, last_login_at) VALUES
 -- Admin user
-('admin@thehomearchive.com', '$2a$10$jH.F8f0qHqKLfJAQo2j6bOjX1P8yKs.KfnYVZRh0f9k2TqGhM5YWu', 'Library', 'Administrator', 'ADMIN', TRUE, '2024-01-15 10:00:00', '2024-01-15 10:00:00', '2024-12-20 09:30:00'),
+('admin@thehomearchive.com', '$2a$10$XCpXul8t4A.XocjOxg3C5.4m/8zcPp/ua4oukVOXpe10P3ZCQYOp.', 'Library', 'Administrator', 'ADMIN', TRUE, '2024-01-15 10:00:00', '2024-01-15 10:00:00', '2024-12-20 09:30:00'),
 
 -- Regular users with various reading preferences
-('alice.scholar@university.edu', '$2a$10$jH.F8f0qHqKLfJAQo2j6bOjX1P8yKs.KfnYVZRh0f9k2TqGhM5YWu', 'Alice', 'Scholar', 'USER', TRUE, '2024-02-01 14:30:00', '2024-02-01 14:30:00', '2024-12-19 18:45:00'),
-('benjamin.reader@literature.org', '$2a$10$jH.F8f0qHqKLfJAQo2j6bOjX1P8yKs.KfnYVZRh0f9k2TqGhM5YWu', 'Benjamin', 'Reader', 'USER', TRUE, '2024-02-15 09:15:00', '2024-02-15 09:15:00', '2024-12-18 20:15:00'),
-('charlotte.novelist@writers.com', '$2a$10$jH.F8f0qHqKLfJAQo2j6bOjX1P8yKs.KfnYVZRh0f9k2TqGhM5YWu', 'Charlotte', 'Novelist', 'USER', TRUE, '2024-03-01 16:20:00', '2024-03-01 16:20:00', '2024-12-17 15:30:00'),
-('david.historian@academy.edu', '$2a$10$jH.F8f0qHqKLfJAQo2j6bOjX1P8yKs.KfnYVZRh0f9k2TqGhM5YWu', 'David', 'Historian', 'USER', TRUE, '2024-03-10 11:45:00', '2024-03-10 11:45:00', '2024-12-16 12:00:00'),
-('emily.philosopher@classics.org', '$2a$10$jH.F8f0qHqKLfJAQo2j6bOjX1P8yKs.KfnYVZRh0f9k2TqGhM5YWu', 'Emily', 'Philosopher', 'USER', TRUE, '2024-04-01 08:30:00', '2024-04-01 08:30:00', '2024-12-15 19:20:00'),
-('frank.scientist@research.edu', '$2a$10$jH.F8f0qHqKLfJAQo2j6bOjX1P8yKs.KfnYVZRh0f9k2TqGhM5YWu', 'Frank', 'Scientist', 'USER', TRUE, '2024-04-15 13:00:00', '2024-04-15 13:00:00', '2024-12-14 10:45:00'),
+('alice.scholar@university.edu', '$2a$10$XCpXul8t4A.XocjOxg3C5.4m/8zcPp/ua4oukVOXpe10P3ZCQYOp.', 'Alice', 'Scholar', 'USER', TRUE, '2024-02-01 14:30:00', '2024-02-01 14:30:00', '2024-12-19 18:45:00'),
+('benjamin.reader@literature.org', '$2a$10$XCpXul8t4A.XocjOxg3C5.4m/8zcPp/ua4oukVOXpe10P3ZCQYOp.', 'Benjamin', 'Reader', 'USER', TRUE, '2024-02-15 09:15:00', '2024-02-15 09:15:00', '2024-12-18 20:15:00'),
+('charlotte.novelist@writers.com', '$2a$10$XCpXul8t4A.XocjOxg3C5.4m/8zcPp/ua4oukVOXpe10P3ZCQYOp.', 'Charlotte', 'Novelist', 'USER', TRUE, '2024-03-01 16:20:00', '2024-03-01 16:20:00', '2024-12-17 15:30:00'),
+('david.historian@academy.edu', '$2a$10$XCpXul8t4A.XocjOxg3C5.4m/8zcPp/ua4oukVOXpe10P3ZCQYOp.', 'David', 'Historian', 'USER', TRUE, '2024-03-10 11:45:00', '2024-03-10 11:45:00', '2024-12-16 12:00:00'),
+('emily.philosopher@classics.org', '$2a$10$XCpXul8t4A.XocjOxg3C5.4m/8zcPp/ua4oukVOXpe10P3ZCQYOp.', 'Emily', 'Philosopher', 'USER', TRUE, '2024-04-01 08:30:00', '2024-04-01 08:30:00', '2024-12-15 19:20:00'),
+('frank.scientist@research.edu', '$2a$10$XCpXul8t4A.XocjOxg3C5.4m/8zcPp/ua4oukVOXpe10P3ZCQYOp.', 'Frank', 'Scientist', 'USER', TRUE, '2024-04-15 13:00:00', '2024-04-15 13:00:00', '2024-12-14 10:45:00'),
 
 -- New user (not yet verified)
-('grace.newuser@student.edu', '$2a$10$jH.F8f0qHqKLfJAQo2j6bOjX1P8yKs.KfnYVZRh0f9k2TqGhM5YWu', 'Grace', 'Newuser', 'USER', FALSE, '2024-12-20 08:00:00', '2024-12-20 08:00:00', NULL);
+('grace.newuser@student.edu', '$2a$10$XCpXul8t4A.XocjOxg3C5.4m/8zcPp/ua4oukVOXpe10P3ZCQYOp.', 'Grace', 'Newuser', 'USER', FALSE, '2024-12-20 08:00:00', '2024-12-20 08:00:00', NULL);
 
 -- ======================================================================
 -- SAMPLE CATEGORIES (Required before books)

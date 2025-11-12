@@ -17,7 +17,7 @@ import java.util.Map;
  * Provides administrative access to system monitoring data
  */
 @RestController
-@RequestMapping("/api/admin/monitoring")
+@RequestMapping("/admin/monitoring")
 @PreAuthorize("hasRole('ADMIN')")
 public class MonitoringController {
 

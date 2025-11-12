@@ -8,6 +8,7 @@ import com.thehomearchive.library.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -22,21 +23,24 @@ import java.util.stream.Collectors;
  * Only available when the 'dev' profile is active.
  */
 @RestController
-@RequestMapping("/api/dev")
+@RequestMapping("/dev")
 @Profile("dev")
 public class DevController {
 
     private final EmailVerificationRepository emailVerificationRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public DevController(EmailVerificationRepository emailVerificationRepository,
                         UserRepository userRepository,
-                        EmailService emailService) {
+                        EmailService emailService,
+                        PasswordEncoder passwordEncoder) {
         this.emailVerificationRepository = emailVerificationRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -200,5 +204,31 @@ public class DevController {
             response.put("message", "Cleanup failed: " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
+    }
+    
+    /**
+     * Generate BCrypt hash for a password.
+     * Useful for generating password hashes for test data.
+     *
+     * @param request Map containing "password" key
+     * @return BCrypt hash
+     */
+    @PostMapping("/hash-password")
+    public ResponseEntity<Map<String, Object>> hashPassword(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        String password = request.get("password");
+        if (password == null || password.isEmpty()) {
+            response.put("success", false);
+            response.put("message", "Password is required");
+            return ResponseEntity.badRequest().body(response);
+        }
+        
+        String hash = passwordEncoder.encode(password);
+        response.put("success", true);
+        response.put("password", password);
+        response.put("hash", hash);
+        
+        return ResponseEntity.ok(response);
     }
 }

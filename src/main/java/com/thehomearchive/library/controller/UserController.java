@@ -14,7 +14,7 @@ import java.util.Map;
  * Requires authentication for all operations.
  */
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/v1/user")
 @PreAuthorize("hasRole('USER')")
 public class UserController {
 

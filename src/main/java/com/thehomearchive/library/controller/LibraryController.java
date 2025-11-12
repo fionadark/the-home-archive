@@ -26,7 +26,7 @@ import java.util.Map;
  * Handles user's personal book collection management.
  */
 @RestController
-@RequestMapping("/api/v1/library")
+@RequestMapping("/v1/library")
 @PreAuthorize("hasRole('USER')")
 public class LibraryController {
 

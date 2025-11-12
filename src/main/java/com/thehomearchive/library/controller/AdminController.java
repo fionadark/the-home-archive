@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * Requires ADMIN role for all operations.
  */
 @RestController
-@RequestMapping("/api/v1/admin")
+@RequestMapping("/v1/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 

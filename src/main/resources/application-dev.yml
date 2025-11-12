@@ -38,13 +38,6 @@ spring:
         format_sql: true
     defer-datasource-initialization: true
   
-  # SQL Initialization
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:data.sql
-      encoding: utf-8
-  
   # Flyway Configuration
   flyway:
     enabled: false # Disable for H2 development, use ddl-auto instead
@@ -107,6 +100,8 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.jdbc.datasource.init: DEBUG
+    org.springframework.boot.autoconfigure.sql.init: DEBUG
   pattern:
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

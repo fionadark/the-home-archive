@@ -126,9 +126,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints (no authentication required)
                 .requestMatchers(
-                    "/api/auth/**",           // Authentication endpoints
-                    "/api/v1/auth/**",        // Authentication endpoints (v1)
-                    "/api/public/**",         // Public API endpoints
+                    "/auth/**",               // Authentication endpoints
+                    "/dev/**",                // Development endpoints (dev profile only)
                     "/h2-console/**",         // H2 database console (dev only)
                     "/actuator/health",       // Health check
                     "/actuator/info",         // Application info
@@ -152,7 +151,7 @@ public class SecurityConfig {
                 ).permitAll()
                 
                 // Admin-only endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/admin/**", "/v1/admin/**").hasRole("ADMIN")
                 
                 // All other endpoints require authentication
                 .anyRequest().authenticated()

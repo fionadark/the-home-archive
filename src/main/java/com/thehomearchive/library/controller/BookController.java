@@ -26,7 +26,7 @@ import java.util.Map;
  * Handles CRUD operations for books in the global catalog.
  */
 @RestController
-@RequestMapping("/api/v1/books")
+@RequestMapping("/v1/books")
 @PreAuthorize("hasRole('USER')")
 public class BookController {
 
